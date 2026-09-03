@@ -1,0 +1,557 @@
+{
+  "campanha": {
+    "nome": "Arquivo Paranormal — Operação Véu Partido",
+    "sistema": "Ordem Paranormal",
+    "local": "Prédio abandonado — 5 andares",
+    "elemento": "Múltiplos elementos do Paranormal",
+    "nex": "5%",
+    "ameaca": "4 assassinos paranormais + criaturas básicas",
+    "descricao": "Os agentes começam no 5º andar e precisam descer até a saída, encontrando chaves e resolvendo enigmas enquanto evitam quatro assassinos inspirados em slashers.",
+    "andarAtual": 5,
+    "objetivoAtual": "Explorar o 5º andar e encontrar a primeira chave.",
+    "perseguicao": "Normal",
+    "chavesEncontradas": []
+  },
+  "andares": [
+    {
+      "id": 5,
+      "nome": "O Despertar",
+      "elemento": "Sangue",
+      "descricao": "Andar inicial. Apenas criaturas básicas, como Zumbis de Sangue.",
+      "salas": [
+        "Recepção",
+        "Apartamento 501",
+        "Corredor Norte",
+        "Lavanderia",
+        "Sala Técnica"
+      ],
+      "chave": "Chave do 5º Andar"
+    },
+    {
+      "id": 4,
+      "nome": "O Andar do Sangue",
+      "elemento": "Sangue",
+      "descricao": "Primeira zona de caça. O primeiro assassino pode aparecer.",
+      "salas": [
+        "Hall",
+        "Apartamento 401",
+        "Corredor Sul",
+        "Depósito",
+        "Escadaria"
+      ],
+      "chave": "Chave do 4º Andar"
+    },
+    {
+      "id": 3,
+      "nome": "O Andar dos Pesadelos",
+      "elemento": "Conhecimento",
+      "descricao": "Corredores e salas começam a se comportar de maneira impossível.",
+      "salas": [
+        "Biblioteca",
+        "Quarto 302",
+        "Corredor Infinito",
+        "Sala de Espelhos",
+        "Escadaria"
+      ],
+      "chave": "Chave do 3º Andar"
+    },
+    {
+      "id": 2,
+      "nome": "O Andar da Paranoia",
+      "elemento": "Medo",
+      "descricao": "Vozes, telefones e mensagens fazem o grupo desconfiar de tudo.",
+      "salas": [
+        "Sala de Segurança",
+        "Escritório",
+        "Quarto 201",
+        "Corredor Central",
+        "Escadaria"
+      ],
+      "chave": "Chave do 2º Andar"
+    },
+    {
+      "id": 1,
+      "nome": "A Saída",
+      "elemento": "Múltiplos",
+      "descricao": "Os quatro assassinos convergem para a área final.",
+      "salas": [
+        "Lobby",
+        "Recepção",
+        "Garagem",
+        "Porta de Saída",
+        "Subsolo"
+      ],
+      "chave": "Chave da Saída"
+    }
+  ],
+  "jogadores": [
+    {
+      "id": "p1",
+      "nome": "Arthur Reis",
+      "classe": "Especialista",
+      "nex": "5%",
+      "pv": 16,
+      "pvMax": 16,
+      "pe": 10,
+      "peMax": 10,
+      "san": 18,
+      "sanMax": 18,
+      "atributos": {
+        "FOR": 1,
+        "AGI": 2,
+        "INT": 3,
+        "PRE": 2,
+        "VIG": 1
+      },
+      "defesa": 12,
+      "itens": [
+        {
+          "nome": "Pistola",
+          "descricao": "Arma de fogo curta.",
+          "quantidade": 1
+        },
+        {
+          "nome": "Munição",
+          "descricao": "Munição para pistola.",
+          "quantidade": 5
+        },
+        {
+          "nome": "Lanterna",
+          "descricao": "Iluminação portátil.",
+          "quantidade": 1
+        }
+      ],
+      "pericias": [
+        {
+          "nome": "Investigação",
+          "teste": "1d20+5"
+        },
+        {
+          "nome": "Tecnologia",
+          "teste": "1d20+5"
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Pistola",
+          "teste": "1d20+2",
+          "dano": "1d12"
+        },
+        {
+          "nome": "Improvisado",
+          "teste": "1d20+1",
+          "dano": "1d4"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "nome": "Mariane Alves",
+      "classe": "Ocultista",
+      "nex": "5%",
+      "pv": 14,
+      "pvMax": 18,
+      "pe": 12,
+      "peMax": 12,
+      "san": 20,
+      "sanMax": 20,
+      "atributos": {
+        "FOR": 0,
+        "AGI": 1,
+        "INT": 2,
+        "PRE": 3,
+        "VIG": 1
+      },
+      "defesa": 11,
+      "itens": [
+        {
+          "nome": "Grimório",
+          "descricao": "Registro de conhecimentos ocultos.",
+          "quantidade": 1
+        },
+        {
+          "nome": "Componente ritualístico",
+          "descricao": "Material para rituais.",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "descricao": "Iluminação portátil.",
+          "quantidade": 1
+        }
+      ],
+      "pericias": [
+        {
+          "nome": "Ocultismo",
+          "teste": "1d20+5"
+        },
+        {
+          "nome": "Vontade",
+          "teste": "1d20+4"
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Ritual Ofensivo",
+          "teste": "1d20+3",
+          "dano": "2d6"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "nome": "Lucas Martins",
+      "classe": "Combatente",
+      "nex": "5%",
+      "pv": 22,
+      "pvMax": 24,
+      "pe": 8,
+      "peMax": 8,
+      "san": 14,
+      "sanMax": 14,
+      "atributos": {
+        "FOR": 3,
+        "AGI": 2,
+        "INT": 1,
+        "PRE": 1,
+        "VIG": 3
+      },
+      "defesa": 13,
+      "itens": [
+        {
+          "nome": "Faca",
+          "descricao": "Arma corpo a corpo.",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "descricao": "Iluminação portátil.",
+          "quantidade": 1
+        }
+      ],
+      "pericias": [
+        {
+          "nome": "Luta",
+          "teste": "1d20+5"
+        },
+        {
+          "nome": "Fortitude",
+          "teste": "1d20+6"
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Faca",
+          "teste": "1d20+3",
+          "dano": "1d4+3"
+        },
+        {
+          "nome": "Soco",
+          "teste": "1d20+3",
+          "dano": "1d3+3"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "nome": "Beatriz Lima",
+      "classe": "Especialista",
+      "nex": "5%",
+      "pv": 11,
+      "pvMax": 15,
+      "pe": 10,
+      "peMax": 10,
+      "san": 17,
+      "sanMax": 17,
+      "atributos": {
+        "FOR": 1,
+        "AGI": 3,
+        "INT": 2,
+        "PRE": 2,
+        "VIG": 1
+      },
+      "defesa": 13,
+      "itens": [
+        {
+          "nome": "Pistola",
+          "descricao": "Arma de fogo curta.",
+          "quantidade": 1
+        },
+        {
+          "nome": "Munição",
+          "descricao": "Munição para pistola.",
+          "quantidade": 4
+        },
+        {
+          "nome": "Kit médico",
+          "descricao": "Primeiros socorros.",
+          "quantidade": 1
+        }
+      ],
+      "pericias": [
+        {
+          "nome": "Furtividade",
+          "teste": "1d20+5"
+        },
+        {
+          "nome": "Percepção",
+          "teste": "1d20+5"
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Pistola",
+          "teste": "1d20+3",
+          "dano": "1d12"
+        }
+      ]
+    }
+  ],
+  "monstros": [
+    {
+      "id": "m1",
+      "nome": "Zumbi de Sangue #1",
+      "tipo": "Básico • Sangue",
+      "pv": 10,
+      "pvMax": 10,
+      "defesa": 10,
+      "andar": 5,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "1d20+2",
+          "dano": "1d6+1"
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "nome": "Zumbi de Sangue #2",
+      "tipo": "Básico • Sangue",
+      "pv": 10,
+      "pvMax": 10,
+      "defesa": 10,
+      "andar": 5,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "1d20+2",
+          "dano": "1d6+1"
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "nome": "Cão Sem-Rosto",
+      "tipo": "Básico • Medo",
+      "pv": 18,
+      "pvMax": 18,
+      "defesa": 12,
+      "andar": 2,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "1d20+4",
+          "dano": "1d8+2"
+        }
+      ]
+    }
+  ],
+  "assassinos": [
+    {
+      "id": "k1",
+      "nome": "O Açougueiro",
+      "elemento": "Sangue",
+      "inspiracao": "slasher brutal",
+      "andar": 4,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 80,
+      "defesa": 16,
+      "descricao": "Perseguidor brutal. A intenção é fugir, não derrotá-lo.",
+      "fraquezas": [
+        "Luz intensa",
+        "Ambientes estreitos",
+        "Distrair com ruído"
+      ],
+      "ataques": [
+        {
+          "nome": "Golpe do Cutelo",
+          "teste": "1d20+8",
+          "dano": "2d10+6"
+        },
+        {
+          "nome": "Investida Brutal",
+          "teste": "1d20+6",
+          "dano": "3d6+4"
+        }
+      ]
+    },
+    {
+      "id": "k2",
+      "nome": "O Pesadelo",
+      "elemento": "Conhecimento",
+      "inspiracao": "terror dos sonhos",
+      "andar": 3,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 70,
+      "defesa": 15,
+      "descricao": "Manipula percepção, corredores e aparições.",
+      "fraquezas": [
+        "Símbolos de proteção",
+        "Luz contínua",
+        "Quebrar a ilusão"
+      ],
+      "ataques": [
+        {
+          "nome": "Garra Onírica",
+          "teste": "1d20+7",
+          "dano": "2d8+5"
+        },
+        {
+          "nome": "Pesadelo",
+          "teste": "1d20+9",
+          "dano": "2d6+SAN"
+        }
+      ]
+    },
+    {
+      "id": "k3",
+      "nome": "O Mascarado",
+      "elemento": "Medo",
+      "inspiracao": "slasher mascarado",
+      "andar": 2,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 75,
+      "defesa": 16,
+      "descricao": "Especialista em paranoia, vozes e perseguição.",
+      "fraquezas": [
+        "Trabalho em equipe",
+        "Câmeras e espelhos",
+        "Exposição sonora"
+      ],
+      "ataques": [
+        {
+          "nome": "Facada Precisa",
+          "teste": "1d20+8",
+          "dano": "2d8+4"
+        },
+        {
+          "nome": "Perseguição Silenciosa",
+          "teste": "1d20+6",
+          "dano": "1d10+3"
+        }
+      ]
+    },
+    {
+      "id": "k4",
+      "nome": "O Incendiário",
+      "elemento": "Energia",
+      "inspiracao": "slasher incendiário",
+      "andar": 1,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 85,
+      "defesa": 17,
+      "descricao": "Ameaça final associada à destruição e ao caos.",
+      "fraquezas": [
+        "Água",
+        "Extintores",
+        "Ambientes sem oxigênio"
+      ],
+      "ataques": [
+        {
+          "nome": "Machado Incandescente",
+          "teste": "1d20+9",
+          "dano": "2d12+5"
+        },
+        {
+          "nome": "Explosão de Energia",
+          "teste": "1d20+7",
+          "dano": "3d8+2"
+        }
+      ]
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "e5",
+      "andar": 5,
+      "nome": "Os Três Quadros",
+      "descricao": "A ordem correta dos quadros abre o compartimento da primeira chave.",
+      "pista": "Organize as datas do mais antigo para o mais recente.",
+      "solucao": "ordem cronológica",
+      "resolvido": false,
+      "recompensa": "Chave do 5º Andar"
+    },
+    {
+      "id": "e4",
+      "andar": 4,
+      "nome": "A Lavadora",
+      "descricao": "Uma sequência de símbolos precisa ser reproduzida.",
+      "pista": "A pista está atrás do relógio quebrado.",
+      "solucao": "triângulo → círculo → quadrado",
+      "resolvido": false,
+      "recompensa": "Chave do 4º Andar"
+    },
+    {
+      "id": "e3",
+      "andar": 3,
+      "nome": "Corredor Impossível",
+      "descricao": "As portas corretas seguem uma sequência ligada aos espelhos.",
+      "pista": "O número de espelhos indica a próxima porta.",
+      "solucao": "sequência dos espelhos",
+      "resolvido": false,
+      "recompensa": "Chave do 3º Andar"
+    },
+    {
+      "id": "e2",
+      "andar": 2,
+      "nome": "Telefone",
+      "descricao": "Uma ligação fornece metade de uma senha; a outra parte está em uma câmera.",
+      "pista": "Procure a segunda metade na sala de segurança.",
+      "solucao": "senha da câmera",
+      "resolvido": false,
+      "recompensa": "Chave do 2º Andar"
+    },
+    {
+      "id": "e1",
+      "andar": 1,
+      "nome": "A Última Porta",
+      "descricao": "As chaves precisam ser posicionadas pelos símbolos dos andares.",
+      "pista": "Cada chave possui relação com o andar onde foi encontrada.",
+      "solucao": "símbolos dos andares",
+      "resolvido": false,
+      "recompensa": "Chave da Saída"
+    }
+  ],
+  "atividades": [
+    {
+      "id": 1,
+      "nome": "Escapar do 5º andar",
+      "status": "Em andamento"
+    },
+    {
+      "id": 2,
+      "nome": "Encontrar a origem do ritual",
+      "status": "Bloqueada"
+    },
+    {
+      "id": 3,
+      "nome": "Sobreviver aos quatro assassinos",
+      "status": "Bloqueada"
+    },
+    {
+      "id": 4,
+      "nome": "Abrir a saída do prédio",
+      "status": "Bloqueada"
+    }
+  ],
+  "logs": []
+}
