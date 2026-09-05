@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Arquivo Paranormal — One-Shot</title>
+<title>O Hotel Espelho — One-Shot Ordem Paranormal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -10,18 +10,18 @@
 <body>
 <div class="grain"></div>
 <header class="topbar">
-  <div class="brand"><div class="sigil">✦</div><div><strong>ARQUIVO PARANORMAL</strong><span>ONE-SHOT • OPERAÇÃO 017</span></div></div>
+  <div class="brand"><div class="sigil">✦</div><div><strong>ARQUIVO PARANORMAL</strong><span>ONE-SHOT • O HOTEL ESPELHO</span></div></div>
   <div class="top-actions"><button class="role-btn active" data-screen="playerHome">FICHAS</button><button class="role-btn" data-screen="masterLogin">MESTRE</button><span class="status"><i></i> Sessão</span></div>
 </header>
 <main>
 <section id="playerHome" class="screen active">
   <div class="hero"><div><p class="eyebrow">VISÃO DOS JOGADORES</p><h1>Escolha sua <span>ficha</span></h1><p class="muted">Acesso somente à ficha individual. Perícias treinadas recebem +5; perícias com * exigem treinamento.</p></div></div>
-  <div id="playerCards" class="player-select"></div>
+  <div class="player-create-bar"><div><b>Não encontrou sua ficha?</b><small>Crie seu personagem respeitando as regras iniciais da campanha.</small></div><button id="openCreateSheet" class="primary">＋ CRIAR FICHA</button></div><div id="playerCards" class="player-select"></div>
 </section>
 
 <section id="playerSheet" class="screen">
   <button class="back" data-screen="playerHome">← Voltar para fichas</button>
-  <div id="sheetContent"></div>
+  <div id="playerSystems" class="v030-player-systems"></div><div id="sheetContent"></div>
 </section>
 
 <section id="masterLogin" class="screen narrow">
@@ -33,9 +33,9 @@
 </section>
 
 <section id="masterScreen" class="screen">
-  <div class="hero"><div><p class="eyebrow">CENTRAL DO MESTRE</p><h1>Operação <span>Véu Partido</span></h1><p class="muted">Controle manual de fichas, ameaças e rolagens.</p></div><button id="logoutBtn" class="ghost">SAIR</button></div>
+  <div class="hero"><div><p class="eyebrow">CENTRAL DO MESTRE</p><h1>O <span>Hotel Espelho</span></h1><p class="muted">Controle manual de fichas, ameaças e rolagens.</p></div><button id="logoutBtn" class="ghost">SAIR</button></div>
   <div class="master-toolbar"><div><b>Arquivo de fichas</b><small>Dados carregados de <code>fichas.json</code></small></div><button id="reloadJson" class="ghost">↻ Recarregar JSON</button></div>
-  <div class="grid master-grid"><div class="panel"><div class="panel-title"><div><span class="icon">♟</span><div><h2>Jogadores</h2><p>PV alterado manualmente pelo mestre</p></div></div></div><div id="masterPlayers" class="cards-list"></div></div>
+  <div id="hotelMap" class="panel hotel-map-panel"></div><div id="v030Systems" class="v030-systems"></div><div id="masterDashboard" class="panel master-dashboard"></div><div class="grid master-grid"><div class="panel"><div class="panel-title"><div><span class="icon">♟</span><div><h2>Jogadores</h2><p>PV alterado manualmente pelo mestre</p></div></div></div><div id="masterPlayers" class="cards-list"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">☠</span><div><h2>Monstros</h2><p>PV e ataques</p></div></div></div><div id="masterMonsters" class="cards-list"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">◈</span><div><h2>Controle da campanha</h2><p>Andar, objetivo e perseguição</p></div></div></div><div id="campaignInfo" class="campaign-info"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">🔪</span><div><h2>Os 4 Assassinos</h2><p>Informações exclusivas do Mestre</p></div></div></div><div id="killerInfo" class="cards-list"></div></div>
@@ -43,8 +43,75 @@
   <div class="panel"><div class="panel-title"><div><span class="icon">▣</span><div><h2>Atividades</h2><p>Controle da sessão</p></div></div></div><div id="activityInfo" class="cards-list"></div></div></div>
 </section>
 </main>
+
+<div id="createSheetModal" class="modal create-sheet-modal" aria-hidden="true">
+  <div class="create-sheet-box panel">
+    <button class="close" id="closeCreateSheet">×</button>
+    <p class="eyebrow">NOVA FICHA</p>
+    <h2>Criar personagem</h2>
+    <p class="muted">Sua ficha será criada automaticamente com as regras iniciais de <b>O Hotel Espelho</b>. A classe permanece indefinida até o momento de descoberta no 5º andar.</p>
+    <label>Nome do personagem
+      <input id="newCharacterName" class="control-input" type="text" maxlength="50" placeholder="Ex.: Rafael Almeida" autocomplete="off">
+    </label>
+    <label>Profissão / Origem
+      <select id="newCharacterOrigin" class="control-select">
+        <option value="">Selecione uma profissão/origem</option>
+        <option>Acadêmico</option><option>Agente de Saúde</option><option>Amnésico</option><option>Artista</option><option>Atleta</option><option>Chef</option><option>Criminoso</option><option>Cultista Arrependido</option><option>Desgarrado</option><option>Engenheiro</option><option>Executivo</option><option>Investigador</option><option>Lutador</option><option>Magnata</option><option>Mercenário</option><option>Militar</option><option>Operário</option><option>Policial</option><option>Religioso</option><option>Servidor Público</option><option>Teórico da Conspiração</option><option>T.I.</option><option>Trabalhador Rural</option><option>Trambiqueiro</option><option>Universitário</option><option>Vítima</option>
+      </select>
+      <small id="newCharacterOriginInfo" class="form-help">A escolha aplica automaticamente as duas perícias treinadas e os benefícios da origem.</small>
+    </label>
+    <div class="create-rule-grid">
+      <div><span>NEX</span><b>5%</b></div><div><span>PV</span><b>16 / 16</b></div><div><span>PE</span><b>10 / 10</b></div><div><span>SAN</span><b>18 / 18</b></div><div><span>DEFESA</span><b>11</b></div><div><span>CLASSE</span><b>Descoberta no 5º</b></div>
+    </div>
+    <div class="create-sheet-note">
+      <b>Ficha inicial automática</b>
+      <small>Todos os atributos começam em 1, as perícias seguem o catálogo da campanha, o personagem recebe uma Lanterna e começa com Soco e Improvisado. Não é possível alterar esses valores durante a criação.</small>
+    </div>
+    <div id="createSheetError" class="error"></div>
+    <div class="create-sheet-actions"><button id="cancelCreateSheet" class="ghost">CANCELAR</button><button id="saveCreateSheet" class="primary">CRIAR FICHA</button></div>
+  </div>
+</div>
+<div id="customCharacterModal" class="modal custom-character-modal" aria-hidden="true"><div class="custom-character-box panel"><button class="close" id="closeCharacterCustomization">×</button><p class="eyebrow">PERSONAGEM</p><h2>Personalizar personagem</h2><p class="muted">Defina a identidade e o passado do seu personagem. <b>PV, PE, SAN, Defesa, atributos, perícias, NEX, classe e ataques não podem ser alterados aqui.</b></p><input id="customCharacterPlayer" type="hidden"><div class="custom-form-grid"><label>Nome<input id="customCharacterName" class="control-input" type="text" maxlength="50" placeholder="Nome do personagem"></label><label>Idade<input id="customCharacterAge" class="control-input" type="text" maxlength="30" placeholder="Ex.: 24 anos"></label><label>Profissão / Origem<input id="customCharacterProfession" class="control-input" type="text" maxlength="60" readonly></label><label class="custom-full">Aparência<textarea id="customCharacterAppearance" class="control-input" maxlength="500" rows="3" placeholder="Descreva características físicas, roupas, marcas, postura..."></textarea></label><label>Personalidade<textarea id="customCharacterPersonality" class="control-input" maxlength="500" rows="4" placeholder="Como o personagem age, pensa e reage sob pressão?"></textarea></label><label>Histórico<textarea id="customCharacterHistory" class="control-input" maxlength="800" rows="4" placeholder="Conte brevemente quem era o personagem antes de chegar ao Hotel Espelho."></textarea></label></div><div class="custom-character-note"><b>Regra da campanha</b><small>A identidade pode ser personalizada livremente. A Profissão / Origem é definida pela lista oficial e seus benefícios mecânicos são aplicados automaticamente. Qualquer mudança mecânica continua sob controle das regras e do Mestre.</small></div><div id="customCharacterError" class="error"></div><div class="custom-character-actions"><button id="cancelCharacterCustomization" class="ghost">CANCELAR</button><button id="saveCharacterCustomization" class="primary">SALVAR PERSONAGEM</button></div></div></div>
 <div id="itemModal" class="modal item-modal"><div class="item-form panel"><button class="close" id="closeItemModal">×</button><p class="eyebrow">NOVO ITEM</p><h2>Criar item</h2><p class="muted">Adicionar diretamente ao inventário de <b id="itemModalPlayerName"></b>.</p><input id="itemModalPlayer" type="hidden"><label>Nome do item<input id="newItemName" class="control-input" type="text" maxlength="80" placeholder="Ex.: Pistola"></label><label>Descrição<input id="newItemDescription" class="control-input" type="text" maxlength="180" placeholder="Ex.: Arma de fogo compacta"></label><label>Tipo<select id="newItemType" class="control-select"><option value="equipamento">Equipamento</option><option value="arma">Arma</option></select></label><label class="item-check"><input id="newItemEquipped" type="checkbox"> Equipar imediatamente</label><div id="weaponFields" class="weapon-fields"><div class="form-two"><label>Teste de ataque<input id="newItemTest" class="control-input" type="text" maxlength="30" placeholder="Ex.: 1d20+3" inputmode="text"></label><label>Dado de dano<input id="newItemDamage" class="control-input" type="text" maxlength="30" placeholder="Ex.: 1d12" inputmode="text"></label></div><label>Bônus adicional <span class="muted">(opcional)</span><input id="newItemBonus" class="control-input" type="text" maxlength="30" placeholder="Ex.: +2 ou +2 dano"></label><small class="form-help">Para armas, informe pelo menos o teste e o dano. O bônus é apenas informativo e pode ser usado quando necessário.</small></div><label>Quantidade<input id="newItemQuantity" class="control-input" type="number" min="1" max="999" value="1" inputmode="numeric"></label><div class="item-form-actions"><button id="cancelNewItem" class="ghost">CANCELAR</button><button id="saveNewItem" class="primary">CRIAR E ADICIONAR</button></div></div></div>
+<div id="conditionModal" class="modal condition-modal" aria-hidden="true"><div class="condition-box panel"><button class="close" onclick="closeConditionModal()">×</button><p class="eyebrow">ESTADO DO PERSONAGEM</p><h2>Aplicar condições</h2><p class="muted">Selecione todas as condições que devem permanecer ativas em <b id="conditionModalPlayer"></b>.</p><div id="conditionOptions" class="condition-options"></div><div class="condition-modal-actions"><button class="ghost" onclick="closeConditionModal()">CANCELAR</button><button class="primary" onclick="saveConditionModal()">SALVAR CONDIÇÕES</button></div></div></div>
 <div id="diceModal" class="modal"><div class="dice-box panel"><button class="close" id="closeDice">×</button><p class="eyebrow">ROLAGEM</p><h2 id="diceTitle">Ataque</h2><div id="diceFormula" class="formula"></div><div id="diceDTWrap" class="dt-roll" style="display:none"><span>DT</span><input id="diceDT" type="number" min="1" max="50" disabled></div><div id="diceResult" class="dice-result">—</div><div id="diceOutcome" class="dice-outcome"></div><div id="diceBreakdown" class="breakdown"></div><button id="rollAgain" class="primary">ROLAR NOVAMENTE</button></div></div>
+<div id="alertLayer" class="alert-layer"></div>
+<div id="horrorOverlay" class="horror-overlay" aria-hidden="true"><div class="horror-vignette"></div><div class="horror-content"><div class="horror-icon">☠</div><p class="eyebrow">PERSEGUIÇÃO</p><h1 id="horrorTitle">VOCÊ ESTÁ SENDO CAÇADO</h1><p id="horrorText">Corra. Não olhe para trás.</p><div id="horrorMeta" class="horror-meta"></div><button id="closeHorror" class="primary">VOLTAR À FICHA</button></div></div>
 <div id="toast" class="toast"></div>
-<script src="script.js"></script>
+<script src="js/01-core.js"></script>
+<script src="js/02-players.js"></script>
+<script src="js/03-inventory.js"></script>
+<script src="js/04-master-campaign.js"></script>
+<script src="js/05-horror-map.js"></script>
+<script src="js/06-data-dice.js"></script>
+<script src="js/07-v030.js"></script>
+<script src="js/08-migrations.js"></script>
+<script src="js/09-v039.js"></script>
+<script src="js/10-campaign-engine.js"></script>
+<script src="js/11-investigation.js"></script>
+<script src="js/12-puzzles.js"></script>
+<script src="js/13-combat-engine.js"></script>
+<script src="js/14-campaign-save.js"></script>
+<script src="js/15-campaign-ui.js"></script>
+<script src="js/16-integrity.js"></script>
+<script src="js/17-state-machine.js"></script>
+<script src="js/18-investigation-plus.js"></script>
+<script src="js/19-puzzle-plus.js"></script>
+<script src="js/20-killer-ai.js"></script>
+<script src="js/21-combat-plus.js"></script>
+<script src="js/22-campaign-state-save.js"></script>
+<script src="js/23-qa.js"></script>
+<script src="js/24-evolution-ui.js"></script>
+<script src="js/25-master-ux.js"></script>
+<script src="js/26-sheet-integration.js"></script>
+<script src="js/27-hotel-game.js"></script>
+<script src="js/28-investigation-final.js"></script>
+<script src="js/29-endings.js"></script>
+<script src="js/30-qa-final.js"></script>
+<script src="js/31-rituals.js"></script>
+<script src="js/32-rules-engine.js"></script>
+<script src="js/33-conditions.js"></script>
+<script src="js/34-investigation-v061.js"></script>
+<script src="js/35-combat-v060.js"></script>
+<script src="js/36-v061-ui.js"></script>
 </body></html>
