@@ -577,3 +577,104 @@ body{font-size:var(--font-ui);line-height:1.45}
   .v071-actions{grid-template-columns:1fr}
   .v071-actions button:nth-child(n+3){grid-column:auto}
 }
+/* ==========================================================
+   V0.73–V0.80 — REDESIGN VISUAL FINAL DO HOTEL ESPELHO
+   Camada de apresentação. Não altera regras ou valores mecânicos.
+   ========================================================== */
+:root{
+  --he-bg:#07080a;
+  --he-surface:#0d0f12;
+  --he-surface-2:#111419;
+  --he-line:rgba(255,255,255,.085);
+  --he-line-strong:rgba(255,255,255,.14);
+  --he-text:#e9e9e7;
+  --he-muted:#8d9199;
+  --he-accent:#b9b0a0;
+  --he-danger:#a33b45;
+  --he-danger-soft:rgba(163,59,69,.13);
+  --he-glow:rgba(190,181,164,.08);
+  --he-radius:14px;
+  --he-shadow:0 18px 55px rgba(0,0,0,.36);
+}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(circle at 50% -10%,rgba(145,132,112,.08),transparent 34%),var(--he-bg);color:var(--he-text)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(90deg,transparent 0 49.7%,rgba(255,255,255,.012) 50%,transparent 50.3%);opacity:.35}
+.grain{opacity:.035!important;mix-blend-mode:screen}
+.topbar{background:rgba(6,7,9,.9)!important;border-bottom:1px solid var(--he-line)!important;backdrop-filter:blur(18px);box-shadow:0 8px 28px rgba(0,0,0,.24)}
+.brand .sigil{box-shadow:0 0 30px rgba(185,176,160,.08);border-color:var(--he-line-strong)!important}
+.status{border:1px solid var(--he-line)!important;background:rgba(255,255,255,.025)!important;border-radius:999px;padding:7px 10px!important}
+.status i{box-shadow:0 0 10px currentColor}
+.role-btn,.ghost,.primary,.back,.dice-btn{transition:transform .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease!important}
+.role-btn:hover,.ghost:hover,.primary:hover,.back:hover,.dice-btn:hover{transform:translateY(-1px)}
+.role-btn:active,.ghost:active,.primary:active,.back:active,.dice-btn:active{transform:translateY(0) scale(.985)}
+.primary{box-shadow:0 8px 26px rgba(0,0,0,.28)}
+.panel{background:linear-gradient(145deg,rgba(17,19,23,.97),rgba(10,11,14,.97))!important;border:1px solid var(--he-line)!important;border-radius:var(--he-radius)!important;box-shadow:var(--he-shadow);overflow:hidden}
+.panel:hover{border-color:rgba(255,255,255,.105)!important}
+.panel-title{background:linear-gradient(90deg,rgba(255,255,255,.018),transparent)!important;border-bottom:1px solid rgba(255,255,255,.055)!important}
+.panel-title .icon{filter:drop-shadow(0 0 8px rgba(255,255,255,.08))}
+.hero{position:relative;padding:24px 0 20px}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,rgba(185,176,160,.32),transparent 55%)}
+.eyebrow,.v073-kicker{letter-spacing:.18em!important;font-weight:800!important;color:#a7a09a!important}
+.hero h1{letter-spacing:-.035em;text-shadow:0 8px 30px rgba(0,0,0,.4)}
+.hero h1 span{color:#c3bbb0!important}
+.player-create-bar{border:1px solid var(--he-line)!important;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012))!important;border-radius:var(--he-radius)!important;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+.player-card{position:relative!important;overflow:hidden;transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease!important;border:1px solid var(--he-line)!important;background:linear-gradient(145deg,#101216,#0b0c0f)!important;border-radius:13px!important}
+.player-card:before{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:linear-gradient(#c0b8ac,transparent);opacity:.45}
+.player-card:hover{transform:translateY(-3px)!important;border-color:rgba(190,181,164,.25)!important;box-shadow:0 15px 35px rgba(0,0,0,.3)!important}
+.player-card .avatar{background:linear-gradient(145deg,#1b1d22,#0c0d10)!important;border-color:var(--he-line-strong)!important}
+
+/* Landing visual do jogador */
+.v073-player-landing{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;margin:4px 0 18px;padding:16px 18px;border:1px solid var(--he-line);border-radius:var(--he-radius);background:linear-gradient(120deg,rgba(185,176,160,.07),rgba(255,255,255,.015) 55%,rgba(163,59,69,.035));box-shadow:0 14px 42px rgba(0,0,0,.2)}
+.v073-landing-mark{width:48px;height:48px;border:1px solid var(--he-line-strong);border-radius:12px;display:grid;place-items:center;background:rgba(0,0,0,.2);font-size:22px;color:#c5bdae;box-shadow:inset 0 0 25px rgba(255,255,255,.025)}
+.v073-landing-copy{display:grid;gap:3px}.v073-landing-copy strong{font-size:15px}.v073-landing-copy small{color:var(--he-muted);line-height:1.5}.v073-landing-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.v073-landing-tags span{font-size:9px;font-weight:800;letter-spacing:.12em;border:1px solid var(--he-line);border-radius:999px;padding:6px 8px;color:#aaa69f;background:rgba(255,255,255,.02)}
+
+/* Central operacional do Mestre */
+.v073-overview{margin:0 0 16px;padding:15px;border:1px solid var(--he-line);border-radius:var(--he-radius);background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.008));box-shadow:var(--he-shadow)}
+.v073-overview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px}.v073-overview-head>div{display:grid;gap:3px}.v073-overview-head strong{font-size:15px}.v073-live{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid rgba(255,255,255,.08);border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.12em;color:#aaa}.v073-live i{width:6px;height:6px;border-radius:50%;background:#b8b0a1;box-shadow:0 0 9px rgba(184,176,161,.7);animation:v073Pulse 1.8s infinite}
+.v073-overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.v073-overview-card{min-height:68px;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid rgba(255,255,255,.065);border-radius:11px;background:rgba(0,0,0,.16)}.v073-overview-card>span{font-size:20px;opacity:.72}.v073-overview-card div{display:grid;gap:1px}.v073-overview-card b{font-size:18px;line-height:1.1}.v073-overview-card small{font-size:9px;color:var(--he-muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* Barra operacional da ficha */
+.v073-sheet-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:11px 13px;border:1px solid var(--he-line);border-radius:12px;background:rgba(255,255,255,.018);box-shadow:0 10px 30px rgba(0,0,0,.18)}.v073-sheet-toolbar>div:first-child{display:grid;gap:2px}.v073-sheet-toolbar strong{font-size:14px}.v073-sheet-actions{display:flex;gap:6px}.v073-sheet-actions button{border:1px solid var(--he-line);background:rgba(255,255,255,.025);color:#aaa;padding:8px 10px;border-radius:8px;font-size:9px;font-weight:800;letter-spacing:.06em;cursor:pointer}.v073-sheet-actions button:hover{background:rgba(255,255,255,.07);color:#eee}
+
+/* Ficha: recursos com hierarquia */
+.v071-player-tracker{border-color:rgba(185,176,160,.12)!important;background:linear-gradient(135deg,rgba(185,176,160,.035),rgba(0,0,0,.16))!important}.v071-resource-editor label{color:#aaa}.v071-resource-editor input{border-color:rgba(255,255,255,.1)!important;background:#090a0c!important;border-radius:9px!important;transition:border-color .16s,box-shadow .16s}.v071-resource-editor input:focus{border-color:rgba(185,176,160,.42)!important;box-shadow:0 0 0 3px rgba(185,176,160,.07)}
+
+/* Cards de dados e fichas */
+.character-top{background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(0,0,0,.05))!important;border-bottom:1px solid var(--he-line)!important}.stat,.attribute-card{border-color:rgba(255,255,255,.07)!important;background:rgba(255,255,255,.018)!important;border-radius:10px!important}.stat strong,.attribute-card b{font-variant-numeric:tabular-nums}.stat:hover,.attribute-card:hover{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.12)!important}
+.item,.combat-row,.entity,.activity,.master-item-row{border-color:rgba(255,255,255,.065)!important;background:rgba(255,255,255,.014)!important;border-radius:9px!important}.item:hover,.combat-row:hover,.entity:hover{background:rgba(255,255,255,.03)!important}
+
+/* Mapa */
+.hotel-map-panel{position:relative}.hotel-floor-plan{background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.045),transparent 55%),#090a0d!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:12px!important;transition:transform .2s ease;transform:scale(var(--v073-map-zoom,1));transform-origin:center center}.hotel-floor-plan.v073-zoomed{margin:18px;box-shadow:0 20px 60px rgba(0,0,0,.3)}.map-floor-btn{border-color:rgba(255,255,255,.06)!important;border-radius:8px!important;transition:background .15s,border-color .15s,transform .15s}.map-floor-btn:hover{transform:translateX(2px)}.map-floor-btn.active{box-shadow:inset 2px 0 #c0b8ac,0 0 18px rgba(185,176,160,.05)!important}.hotel-rooms-grid .room-card{transition:transform .15s,border-color .15s,background .15s}.hotel-rooms-grid .room-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14)}
+.v073-map-controls{position:absolute;right:13px;top:62px;z-index:8;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid rgba(255,255,255,.09);border-radius:10px;background:rgba(7,8,10,.88);backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.35)}.v073-map-controls button{width:32px;height:30px;border:0;border-radius:7px;background:rgba(255,255,255,.04);color:#ddd;cursor:pointer;font-weight:800}.v073-map-controls button:hover{background:rgba(255,255,255,.09)}.v073-map-controls span{font-size:8px;letter-spacing:.12em;color:#777b82;padding:0 3px}
+
+/* Ameaças/assassinos */
+.threat-card,.master-monster-card,.killer-enhanced-card,.killer-sheet{border-color:rgba(255,255,255,.07)!important;background:linear-gradient(145deg,#101216,#0b0c0f)!important;border-radius:11px!important}.threat-card:hover,.master-monster-card:hover,.killer-enhanced-card:hover{border-color:rgba(255,255,255,.13)!important;box-shadow:0 10px 28px rgba(0,0,0,.22)}.killer-weakness{background:rgba(163,59,69,.07)!important;border-color:rgba(163,59,69,.2)!important}
+
+/* Combate */
+.v071-turn-row.active{background:linear-gradient(90deg,rgba(185,176,160,.09),transparent)!important;outline:1px solid rgba(185,176,160,.22)!important;box-shadow:inset 3px 0 rgba(185,176,160,.55)}.v071-turn-row.dead{filter:grayscale(.35)}.v071-hp-row input{border-radius:8px!important}.initiative-chip{border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.025)!important}
+
+/* Estado de horror: discreto, sem alterar jogabilidade */
+body[data-horror-level="alert"] .topbar{box-shadow:0 8px 28px rgba(0,0,0,.25),0 1px 20px rgba(163,59,69,.05)}
+body[data-horror-level="hunt"] .topbar{border-bottom-color:rgba(163,59,69,.2)!important}
+body[data-horror-level="pursuit"] .topbar{border-bottom-color:rgba(163,59,69,.42)!important;animation:v073DangerBar 1.5s infinite}
+body[data-horror-level="pursuit"] .v073-live i{background:#a33b45;box-shadow:0 0 12px rgba(163,59,69,.9)}
+
+/* Modais */
+.modal{backdrop-filter:blur(7px)!important;background:rgba(0,0,0,.72)!important}.modal .panel{box-shadow:0 28px 90px rgba(0,0,0,.65)!important}.close{transition:transform .15s ease,background .15s ease}.close:hover{transform:rotate(4deg) scale(1.05)}
+
+@keyframes v073Pulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes v073DangerBar{0%,100%{box-shadow:0 8px 28px rgba(0,0,0,.25),0 1px 0 rgba(163,59,69,.05)}50%{box-shadow:0 8px 28px rgba(0,0,0,.25),0 1px 22px rgba(163,59,69,.11)}}
+
+@media(max-width:700px){
+  .v073-player-landing{grid-template-columns:auto 1fr;gap:11px;padding:13px}.v073-landing-mark{width:42px;height:42px;font-size:18px}.v073-landing-copy strong{font-size:13px}.v073-landing-copy small{font-size:10px}.v073-landing-tags{grid-column:1/-1;justify-content:flex-start}.v073-landing-tags span{font-size:8px;padding:5px 7px}
+  .v073-overview{padding:11px;margin-bottom:11px}.v073-overview-grid{grid-template-columns:1fr 1fr}.v073-overview-card{min-height:62px;padding:9px}.v073-overview-card b{font-size:16px}.v073-overview-card small{font-size:8px}.v073-overview-card>span{font-size:17px}
+  .v073-sheet-toolbar{display:grid;gap:9px;padding:10px}.v073-sheet-actions{display:grid;grid-template-columns:repeat(3,1fr)}.v073-sheet-actions button{min-height:38px;padding:6px 4px;font-size:8px}
+  .v073-map-controls{right:8px;top:54px}.v073-map-controls button{width:36px;height:34px}.v073-map-controls span{display:none}.hotel-floor-plan.v073-zoomed{margin:12px}
+  .panel{box-shadow:0 12px 35px rgba(0,0,0,.28)!important}
+}
+@media(max-width:420px){
+  .v073-overview-grid{gap:6px}.v073-overview-card{gap:7px}.v073-overview-card>span{font-size:15px}.v073-overview-card b{font-size:15px}.v073-sheet-actions button{font-size:7px}.v073-map-controls{top:51px}
+}
+
+/* V0.81 — correção de compatibilidade: camada visual sem interferência nos eventos JS. */
+.v073-player-landing,.v073-overview,.v073-sheet-toolbar{isolation:isolate}
