@@ -6,7 +6,7 @@ function renderMasterBase(){
     players.querySelectorAll('[data-reset-class]').forEach(b=>b.onclick=()=>resetClassChoice(b.dataset.resetClass));
     players.querySelectorAll('[data-config-class-skills]').forEach(b=>b.onclick=()=>configureClassSkills(b.dataset.configClassSkills));
     players.querySelectorAll('[data-train-player]').forEach(i=>i.onchange=()=>setSkillTraining(i.dataset.trainPlayer,+i.dataset.trainIndex,i.checked));
-    players.querySelectorAll('[data-add-item]').forEach(b=>b.onclick=()=>addPlayerItem(b.dataset.addItem, b.parentElement.querySelector('[data-item-select]').value, b.parentElement.querySelector('[data-item-qty]').value));
+    players.querySelectorAll('[data-add-item]').forEach(b=>b.onclick=()=>{const sel=b.parentElement.querySelector('[data-item-select]');const [type,index]=String(sel?.value||'').split(':');if(!type||index==='')return toast('Selecione um item ou arma.');addPlayerItem(b.dataset.addItem,type,index,b.parentElement.querySelector('[data-item-qty]').value);});
     players.querySelectorAll('[data-new-item]').forEach(b=>b.onclick=()=>createAndAddPlayerItem(b.dataset.newItem));
     players.querySelectorAll('[data-toggle-equip]').forEach(b=>b.onclick=()=>togglePlayerItemEquipped(b.dataset.toggleEquip,+b.dataset.itemIndex));
     players.querySelectorAll('[data-remove-item]').forEach(b=>b.onclick=()=>removePlayerItem(b.dataset.removeItem,+b.dataset.itemIndex,1));
@@ -15,9 +15,22 @@ function renderMasterBase(){
     players.querySelectorAll('[data-toggle-ritual]').forEach(b=>b.onclick=()=>toggleRitualAvailability(b.dataset.toggleRitual,+b.dataset.ritualIndex));
   }
   const monsters=$('#masterMonsters'); if(monsters){
-    monsters.innerHTML=data.monstros.map(m=>`<div class="entity"><div class="entity-avatar">☠</div><div class="entity-info"><b>${esc(m.nome)}</b><small>${esc(m.tipo)} • Defesa ${m.defesa}</small></div><div class="manual-hp"><input type="number" min="0" max="${m.pvMax}" value="${m.pv}" data-id="${m.id}" data-monster="1"><small>/ ${m.pvMax} PV</small></div><button class="dice-btn" data-monster-roll="${m.id}">ROLAR</button></div>`).join('');
+    const catalog=Array.isArray(window.THREAT_CATALOG)?window.THREAT_CATALOG:[];
+    const options=catalog.map(m=>`<option value="${esc(m.catalogId||m.id)}">${esc(m.nome)}${m.vd!=null?` — VD ${esc(m.vd)}`:``}${m.elemento?` • ${esc(m.elemento)}`:``}</option>`).join('');
+    const rows=data.monstros.map(m=>{
+      const attacks=(m.ataques||[]).slice(0,3).map(a=>`${esc(a.nome)}: ${esc(a.teste||'—')} • ${esc(a.dano||'—')}`).join('<br>')||'Nenhum ataque cadastrado';
+      return `<article class="entity master-monster-card">
+        <div class="entity-avatar">☠</div>
+        <div class="entity-info"><b>${esc(m.nome)}</b><small>${esc(m.tipo||'Criatura')} • ${esc(m.elemento||'—')} • VD ${esc(m.vd??'—')} • Defesa ${esc(m.defesa??'—')}</small><small>PV ${esc(m.pv??0)}/${esc(m.pvMax??m.pvBase??0)}${m.catalogId?` • Catálogo: ${esc(m.catalogId)}`:''}</small><small class="monster-attacks">${attacks}</small></div>
+        <div class="manual-hp"><input type="number" min="0" max="${Number(m.pvMax??m.pvBase??m.pv??0)}" value="${Number(m.pv??0)}" data-id="${esc(m.id)}" data-monster="1"><small>/ ${Number(m.pvMax??m.pvBase??m.pv??0)} PV</small></div>
+        <div class="monster-actions"><button class="dice-btn" data-monster-roll="${esc(m.id)}">ROLAR</button><button class="dice-btn secondary" data-monster-delete="${esc(m.id)}">EXCLUIR</button></div>
+      </article>`;
+    }).join('');
+    monsters.innerHTML=`<div class="monster-manager-toolbar"><div class="monster-manager-copy"><b>Adicionar monstro</b><small>Catálogo carregado de <code>ameacas.json</code>. A criação adiciona uma instância à sessão.</small></div><select id="masterMonsterCatalogSelect" class="control-select"><option value="">Selecionar ameaça...</option>${options}</select><button class="dice-btn" id="masterMonsterAddBtn">＋ ADICIONAR</button></div><div class="master-monster-list">${rows||'<p class="muted">Nenhum monstro adicionado à sessão.</p>'}</div>`;
+    monsters.querySelector('#masterMonsterAddBtn')?.addEventListener('click',()=>{const id=monsters.querySelector('#masterMonsterCatalogSelect')?.value;if(!id)return toast('Selecione uma ameaça.');try{if(window.ThreatEngine?.add)ThreatEngine.add(id);else throw Error('Catálogo de ameaças ainda não carregado.');toast('Monstro adicionado à sessão.');renderMaster();}catch(err){toast(err.message||'Não foi possível adicionar o monstro.');}});
+    monsters.querySelectorAll('[data-monster-delete]').forEach(b=>b.onclick=()=>{const id=b.dataset.monsterDelete,m=data.monstros.find(x=>x.id===id);if(!m)return;if(!confirm(`Excluir "${m.nome}" da sessão?`))return;data.monstros=data.monstros.filter(x=>x.id!==id);GameEngineV070?.log?.('THREAT_REMOVED',{nome:m.nome,resumo:`Ameaça removida: ${m.nome}`});saveLocal();renderMaster();toast('Monstro excluído.');});
     monsters.querySelectorAll('[data-monster-roll]').forEach(b=>b.onclick=()=>openMonsterDice(b.dataset.monsterRoll));
-    monsters.querySelectorAll('.manual-hp input[data-monster]').forEach(i=>i.onchange=()=>{const m=data.monstros.find(x=>x.id===i.dataset.id);m.pv=Math.max(0,Math.min(m.pvMax,+i.value||0));saveLocal();toast('PV do monstro atualizado');});
+    monsters.querySelectorAll('.manual-hp input[data-monster]').forEach(i=>i.onchange=()=>{const m=data.monstros.find(x=>x.id===i.dataset.id);if(!m)return;m.pv=Math.max(0,Math.min(Number(m.pvMax??m.pvBase??m.pv??0),+i.value||0));saveLocal();toast('PV do monstro atualizado');});
   }
 }
 function setMasterClass(pid,classe){

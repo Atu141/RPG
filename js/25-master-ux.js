@@ -15,7 +15,7 @@ const MasterUX=(()=>{
   function resetLayout(){const u=ensure();u.collapsed={};u.activeTab='visao';saveLocal();renderMaster();toast('Layout do Mestre restaurado.');}
   function render(){
     const host=$('#masterUxPanel');if(!host||!data)return;const u=ensure();
-    const items=[['campaignEnginePanel','🎬 Campanha'],['campaignEvolutionPanel','⚙ Operação'],['hotelMap','🗺 Hotel'],['masterDashboard','◉ Painel rápido'],['masterPlayers','♟ Jogadores'],['masterMonsters','☠ Monstros']];
+    const items=[['campaignEnginePanel','🎬 Campanha'],['campaignEvolutionPanel','⚙ Operação'],['hotelMap','🗺 Hotel'],['masterPlayers','♟ Jogadores'],['masterMonsters','☠ Monstros']];
     host.innerHTML=`<div class="ux-head"><div><span class="eyebrow">V0.50 • EXPERIÊNCIA DO MESTRE</span><h2>Painel de Controle</h2><p>Acesso rápido aos módulos da sessão. As alterações continuam locais e persistentes.</p></div><div class="ux-actions"><button class="ghost small" onclick="MasterUX.resetLayout()">↺ LAYOUT</button><button class="ghost small" onclick="MasterUX.focus('campaignEnginePanel')">🎬 CAMPANHA</button><button class="ghost small" onclick="MasterUX.focus('hotelMap')">🗺 HOTEL</button><button class="ghost small" onclick="MasterUX.focus('masterPlayers')">♟ JOGADORES</button></div></div><div class="ux-shortcuts">${items.map(([id,label])=>`<button onclick="MasterUX.focus('${id}')">${label}</button>`).join('')}</div>`;
   }
   return {ensure,togglePanel,isCollapsed,focus,resetLayout,render};
@@ -28,7 +28,7 @@ const MasterUX=(()=>{
     const specs=[
       ['masterUxPanel','panel master-ux-panel','campaignEnginePanel'],
       ['hotelGamePanel','panel hotel-game-panel','hotelMap'],
-      ['investigationFinalPanel','panel investigation-final-panel','masterDashboard'],
+      ['investigationFinalPanel','panel investigation-final-panel','hotelMap'],
       ['endingsPanel','panel endings-panel','investigationFinalPanel']
     ];
     specs.forEach(([id,cls,afterId])=>{if(!document.getElementById(id)){const d=document.createElement('div');d.id=id;d.className=cls;const after=document.getElementById(afterId);if(after?.parentNode)after.parentNode.insertBefore(d,after.nextSibling);else document.querySelector('#masterScreen')?.appendChild(d);}});

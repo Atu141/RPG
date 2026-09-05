@@ -140,9 +140,9 @@ function restoreBaseSheet(p){
   applyOriginProfile(p);
 }
 const CLASS_ATTRIBUTE_BUILDS={
-  Combatente:{FOR:3,AGI:2,INT:1,PRE:1,VIG:3,prioridade:'Vigor + Força, com Agilidade como terceiro foco'},
-  Especialista:{FOR:1,AGI:3,INT:3,PRE:2,VIG:1,prioridade:'Agilidade + Intelecto, com Presença como terceiro foco'},
-  Ocultista:{FOR:1,AGI:1,INT:3,PRE:3,VIG:2,prioridade:'Intelecto + Presença, com Vigor como terceiro foco'}
+  Combatente:{FOR:3,AGI:2,INT:1,PRE:1,VIG:2,prioridade:'Força + Vigor, com Agilidade como apoio'},
+  Especialista:{FOR:1,AGI:3,INT:3,PRE:1,VIG:1,prioridade:'Agilidade + Intelecto, foco em perícias e investigação'},
+  Ocultista:{FOR:1,AGI:1,INT:3,PRE:3,VIG:1,prioridade:'Intelecto + Presença, foco em rituais e testes'}
 };
 function getClassAttributeBuild(classe){return CLASS_ATTRIBUTE_BUILDS?.[classe]||null;}
 function applyClassAttributeBuild(p,classe){
@@ -233,10 +233,22 @@ async function loadData(useSaved=true){
   if(useSaved){
     const saved = localStorage.getItem('op-fichas-state');
     if(saved){
-      try { data = normalizeData(JSON.parse(saved)); }
+      try {
+        const savedData = normalizeData(JSON.parse(saved));
+        const campaignKillers = Array.isArray(jsonData.assassinos) ? jsonData.assassinos : [];
+        const savedKillers = Array.isArray(savedData.assassinos) ? savedData.assassinos : [];
+        const byId = new Map(savedKillers.map(k=>[String(k.id),k]));
+        // Os 4 assassinos são registros fixos da campanha. Se um estado antigo
+        // não os tiver, recupera os registros originais sem apagar alterações existentes.
+        campaignKillers.forEach(k=>{ if(!byId.has(String(k.id))) byId.set(String(k.id), JSON.parse(JSON.stringify(k))); });
+        savedData.assassinos=[...byId.values()];
+        data = savedData;
+        localStorage.setItem('op-fichas-state',JSON.stringify(data));
+      }
       catch(error){ console.warn('Estado local inválido; usando fichas.json.', error); localStorage.removeItem('op-fichas-state'); }
     }
   }
+  if(typeof loadGameCatalogs==='function') await loadGameCatalogs();
   renderPlayerCards();
   renderMaster();
   renderCampaign();

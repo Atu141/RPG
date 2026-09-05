@@ -4,7 +4,7 @@ const HotelGame=(()=>{
     if(!data)return null;const c=data.campanha;
     c.hotelGame=c.hotelGame&&typeof c.hotelGame==='object'?c.hotelGame:{};const h=c.hotelGame;
     h.versao=52;h.portas=h.portas&&typeof h.portas==='object'?h.portas:{};h.pois=Array.isArray(h.pois)?h.pois:[];h.posicoes=h.posicoes&&typeof h.posicoes==='object'?h.posicoes:{};
-    data.jogadores.forEach(p=>{if(!h.posicoes[p.id])h.posicoes[p.id]={andar:5,sala:'Quarto 50'+(p.id==='p1'?'1':'')};});
+    data.jogadores.forEach((p,i)=>{if(!h.posicoes[p.id])h.posicoes[p.id]={andar:5,sala:`Quarto 5${String(i+1).padStart(2,'0')}`};});
     return h;
   }
   function roomId(floor,room){return `${Number(floor)}::${String(room).trim().toLowerCase()}`;}

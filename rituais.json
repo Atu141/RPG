@@ -1,0 +1,685 @@
+{
+  "versao": "Ordem Paranormal RPG v1.3",
+  "rituais": [
+    {
+      "id": "ritual_001",
+      "nome": "Amaldiçoar Arma",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_002",
+      "nome": "Compreensão Paranormal",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_003",
+      "nome": "Enfeitiçar",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_004",
+      "nome": "Perturbação",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "3d8"
+    },
+    {
+      "id": "ritual_005",
+      "nome": "Ouvir os Sussurros",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_006",
+      "nome": "Tecer Ilusão",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_007",
+      "nome": "Terceiro Olho",
+      "tipo": "Conhecimento",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_008",
+      "nome": "Amaldiçoar Arma",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_009",
+      "nome": "Amaldiçoar Tecnologia",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_010",
+      "nome": "Coincidência Forçada",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_011",
+      "nome": "Eletrocussão",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "3d6"
+    },
+    {
+      "id": "ritual_012",
+      "nome": "Embaralhar",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_013",
+      "nome": "Luz",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_014",
+      "nome": "Polarização Caótica",
+      "tipo": "Energia",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_015",
+      "nome": "Amaldiçoar Arma",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_016",
+      "nome": "Cicatrização",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "3d8+3"
+    },
+    {
+      "id": "ritual_017",
+      "nome": "Consumir Manancial",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "3d6"
+    },
+    {
+      "id": "ritual_018",
+      "nome": "Decadência",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "2d8+2"
+    },
+    {
+      "id": "ritual_019",
+      "nome": "Definhar",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_020",
+      "nome": "Espirais da Perdição",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_021",
+      "nome": "Nuvem de Cinzas",
+      "tipo": "Morte",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_022",
+      "nome": "Amaldiçoar Arma",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_023",
+      "nome": "Arma Atroz",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_024",
+      "nome": "Armadura de Sangue",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_025",
+      "nome": "Corpo Adaptado",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_026",
+      "nome": "Distorcer Aparência",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_027",
+      "nome": "Fortalecimento Sensorial",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_028",
+      "nome": "Ódio Incontrolável",
+      "tipo": "Sangue",
+      "circulo": 1,
+      "custo": 1,
+      "dano": ""
+    },
+    {
+      "id": "ritual_029",
+      "nome": "Cinerária",
+      "tipo": "Medo",
+      "circulo": 1,
+      "custo": 1,
+      "dano": "10d6"
+    },
+    {
+      "id": "ritual_030",
+      "nome": "Aprimorar Mente",
+      "tipo": "Conhecimento",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_031",
+      "nome": "Detecção de Ameaças",
+      "tipo": "Conhecimento",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_032",
+      "nome": "Esconder dos Olhos",
+      "tipo": "Conhecimento",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_033",
+      "nome": "Invadir Mente",
+      "tipo": "Conhecimento",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "6d6"
+    },
+    {
+      "id": "ritual_034",
+      "nome": "Localização",
+      "tipo": "Conhecimento",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_035",
+      "nome": "Chamas do Caos",
+      "tipo": "Energia",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "4d6"
+    },
+    {
+      "id": "ritual_036",
+      "nome": "Contenção Fantasmagórica",
+      "tipo": "Energia",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "2d6+2"
+    },
+    {
+      "id": "ritual_037",
+      "nome": "Dissonância Acústica",
+      "tipo": "Energia",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_038",
+      "nome": "Sopro do Caos",
+      "tipo": "Energia",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_039",
+      "nome": "Tela de Ruído",
+      "tipo": "Energia",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_040",
+      "nome": "Desacelerar Impacto",
+      "tipo": "Morte",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_041",
+      "nome": "Eco Espiral",
+      "tipo": "Morte",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_042",
+      "nome": "Paradoxo",
+      "tipo": "Morte",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "6d6"
+    },
+    {
+      "id": "ritual_043",
+      "nome": "Miasma Entrópico",
+      "tipo": "Morte",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "4d8"
+    },
+    {
+      "id": "ritual_044",
+      "nome": "Velocidade Mortal",
+      "tipo": "Morte",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_045",
+      "nome": "Aprimorar Físico",
+      "tipo": "Sangue",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_046",
+      "nome": "Descarnar",
+      "tipo": "Sangue",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "6d8"
+    },
+    {
+      "id": "ritual_047",
+      "nome": "Flagelo de Sangue",
+      "tipo": "Sangue",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "10d6"
+    },
+    {
+      "id": "ritual_048",
+      "nome": "Hemofagia",
+      "tipo": "Sangue",
+      "circulo": 2,
+      "custo": 3,
+      "dano": "6d6"
+    },
+    {
+      "id": "ritual_049",
+      "nome": "Transfusão Vital",
+      "tipo": "Sangue",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_050",
+      "nome": "Proteção contra Rituais",
+      "tipo": "Medo",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_051",
+      "nome": "Rejeitar Névoa",
+      "tipo": "Medo",
+      "circulo": 2,
+      "custo": 3,
+      "dano": ""
+    },
+    {
+      "id": "ritual_052",
+      "nome": "Alterar Memória",
+      "tipo": "Conhecimento",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_053",
+      "nome": "Contato Paranormal",
+      "tipo": "Conhecimento",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_054",
+      "nome": "Mergulho Mental",
+      "tipo": "Conhecimento",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_055",
+      "nome": "Vidência",
+      "tipo": "Conhecimento",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_056",
+      "nome": "Convocação Instantânea",
+      "tipo": "Energia",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_057",
+      "nome": "Salto Fantasma",
+      "tipo": "Energia",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_058",
+      "nome": "Transfigurar Água",
+      "tipo": "Energia",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_059",
+      "nome": "Transfigurar Terra",
+      "tipo": "Energia",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_060",
+      "nome": "Âncora Temporal",
+      "tipo": "Morte",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_061",
+      "nome": "Poeira da Podridão",
+      "tipo": "Morte",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_062",
+      "nome": "Tentáculos de Lodo",
+      "tipo": "Morte",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_063",
+      "nome": "Zerar Entropia",
+      "tipo": "Morte",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_064",
+      "nome": "Ferver Sangue",
+      "tipo": "Sangue",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_065",
+      "nome": "Forma Monstruosa",
+      "tipo": "Sangue",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_066",
+      "nome": "Purgatório",
+      "tipo": "Sangue",
+      "circulo": 3,
+      "custo": 6,
+      "dano": "6d6"
+    },
+    {
+      "id": "ritual_067",
+      "nome": "Vomitar Pestes",
+      "tipo": "Sangue",
+      "circulo": 3,
+      "custo": 6,
+      "dano": "4d8"
+    },
+    {
+      "id": "ritual_068",
+      "nome": "Dissipar Ritual",
+      "tipo": "Medo",
+      "circulo": 3,
+      "custo": 6,
+      "dano": ""
+    },
+    {
+      "id": "ritual_069",
+      "nome": "Controle Mental",
+      "tipo": "Conhecimento",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_070",
+      "nome": "Inexistir",
+      "tipo": "Conhecimento",
+      "circulo": 4,
+      "custo": 10,
+      "dano": "10d12+10"
+    },
+    {
+      "id": "ritual_071",
+      "nome": "Possessão",
+      "tipo": "Conhecimento",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_072",
+      "nome": "Alterar Destino",
+      "tipo": "Energia",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_073",
+      "nome": "Deflagração de Energia",
+      "tipo": "Energia",
+      "circulo": 4,
+      "custo": 10,
+      "dano": "3d10x10"
+    },
+    {
+      "id": "ritual_074",
+      "nome": "Teletransporte",
+      "tipo": "Energia",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_075",
+      "nome": "Convocar o Algoz",
+      "tipo": "Morte",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_076",
+      "nome": "Distorção Temporal",
+      "tipo": "Morte",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_077",
+      "nome": "Fim Inevitável",
+      "tipo": "Morte",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_078",
+      "nome": "Capturar o Coração",
+      "tipo": "Sangue",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_079",
+      "nome": "Invólucro de Carne",
+      "tipo": "Sangue",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_080",
+      "nome": "Vínculo de Sangue",
+      "tipo": "Sangue",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_081",
+      "nome": "Canalizar o Medo",
+      "tipo": "Medo",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_082",
+      "nome": "Conhecendo o Medo",
+      "tipo": "Medo",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_083",
+      "nome": "Lâmina do Medo",
+      "tipo": "Medo",
+      "circulo": 4,
+      "custo": 10,
+      "dano": "10d8"
+    },
+    {
+      "id": "ritual_084",
+      "nome": "Medo Tangível",
+      "tipo": "Medo",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    },
+    {
+      "id": "ritual_085",
+      "nome": "Presença do Medo",
+      "tipo": "Medo",
+      "circulo": 4,
+      "custo": 10,
+      "dano": ""
+    }
+  ]
+}

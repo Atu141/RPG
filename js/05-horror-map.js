@@ -47,60 +47,6 @@ function triggerRandomHorror(){
   showAlert(e.titulo,e.texto,e.tipo==='ameaça'?'danger':'warning'); playHorrorSound(e.tipo==='ameaça'?'warning':'tension'); applyHorrorEffect(e.tipo==='ameaça'?'flash':'shake');
   logAction(`Evento de horror: ${e.titulo}.`); saveLocal(); renderMaster(); renderCampaign(); if(selectedPlayer)renderSheet();
 }
-function setPursuitTarget(pid){
-  const p=data.jogadores.find(x=>x.id===pid); if(!p)return; data.campanha.perseguicaoAlvo=p.nome; saveLocal(); renderMaster(); showAlert('ALVO DEFINIDO',`A perseguição está focada em ${p.nome}.`,'danger');
-}
-function setPursuitKiller(id){const k=data.assassinos.find(x=>x.id===id);if(!k)return;data.campanha.perseguicaoAssassino=k.nome;saveLocal();renderMaster();}
-function changePursuitDistance(delta){ensureHorrorState();data.campanha.perseguicaoDistancia=Math.max(0,Math.min(10,data.campanha.perseguicaoDistancia+Number(delta||0)));data.campanha.perseguicaoRodada++;saveLocal();renderMaster();if(selectedPlayer)renderSheet();}
-function openHorrorScreen(p=selectedPlayer){
-  ensureHorrorState(); const o=$('#horrorOverlay'); if(!o)return;
-  const killer=data.assassinos.find(k=>k.nome===data.campanha.perseguicaoAssassino);
-  $('#horrorTitle').textContent=data.campanha.perseguicao==='Perseguição'?'VOCÊ ESTÁ SENDO CAÇADO':'ALGO ESTÁ OBSERVANDO VOCÊ';
-  $('#horrorText').textContent=killer?`${killer.nome} está em perseguição.`:'A ameaça está próxima. Encontre uma saída.';
-  $('#horrorMeta').innerHTML=`<span>ANDAR ${data.campanha.andarAtual}º</span><span>RODADA ${data.campanha.perseguicaoRodada}</span><span>DISTÂNCIA ${data.campanha.perseguicaoDistancia}</span>`;
-  o.classList.add('active'); o.setAttribute('aria-hidden','false'); playHorrorSound('chase'); applyHorrorEffect('shake');
-}
-function closeHorrorScreen(){const o=$('#horrorOverlay');if(o){o.classList.remove('active');o.setAttribute('aria-hidden','true');}}
-function advancePursuit(){
-  const i=PURSUIT_STAGES.indexOf(data.campanha.perseguicao); const next=PURSUIT_STAGES[Math.min(PURSUIT_STAGES.length-1,i+1)]; if(next===data.campanha.perseguicao && next==='Perseguição'){changePursuitDistance(-1);return;} setPursuit(next);
-}
-function retreatPursuit(){const i=PURSUIT_STAGES.indexOf(data.campanha.perseguicao);setPursuit(PURSUIT_STAGES[Math.max(0,i-1)]);}
-function masterHorrorEvent(){triggerRandomHorror();}
-
-// ===== v0.16-v0.19: experiência, exploração e painel do Mestre =====
-function getCurrentFloor(){ return data?.andares?.find(x=>Number(x.id)===Number(data?.campanha?.andarAtual)); }
-function getInvestigatedRooms(floorId){
-  const map=data.campanha.salasInvestigadas||{};
-  return Array.isArray(map[String(floorId)]) ? map[String(floorId)] : [];
-}
-function toggleRoomInvestigated(floorId,room){
-  const key=String(floorId); const list=getInvestigatedRooms(floorId); const i=list.indexOf(room);
-  if(i>=0) list.splice(i,1); else list.push(room);
-  data.campanha.salasInvestigadas=data.campanha.salasInvestigadas||{}; data.campanha.salasInvestigadas[key]=list;
-  logAction(`${room}: ${i>=0?'marcada como não investigada':'investigada'} no ${floorId}º andar.`); saveLocal(); renderMaster(); if(selectedPlayer) renderSheet(); toast(i>=0?'Sala reaberta':'Sala investigada');
-}
-function toggleClue(id){
-  const clue=data.pistas?.find(x=>x.id===id); if(!clue)return;
-  clue.revelada=!clue.revelada; data.campanha.pistasReveladas=Array.isArray(data.campanha.pistasReveladas)?data.campanha.pistasReveladas:[];
-  if(clue.revelada && !data.campanha.pistasReveladas.includes(id)) data.campanha.pistasReveladas.push(id);
-  if(!clue.revelada) data.campanha.pistasReveladas=data.campanha.pistasReveladas.filter(x=>x!==id);
-  logAction(`Pista "${clue.nome}": ${clue.revelada?'revelada aos jogadores':'ocultada'}.`); saveLocal(); renderMaster(); if(selectedPlayer) renderSheet(); toast(clue.revelada?'Pista revelada':'Pista ocultada');
-}
-function setMasterEvent(){
-  const value=prompt('Evento narrativo atual:',data.campanha.eventoAtual||''); if(value===null)return;
-  data.campanha.eventoAtual=String(value).trim()||'Nenhum evento em andamento.'; logAction('Evento narrativo atualizado.'); saveLocal(); renderMaster(); if(selectedPlayer) renderSheet(); toast('Evento atualizado');
-}
-function randomEvent(){triggerRandomHorror();toast('Evento de horror sorteado')}
-function quickResource(pid,resource,delta){
-  const p=data.jogadores.find(x=>x.id===pid); if(!p)return; const max=Number(p[resource+'Max'])||0; p[resource]=Math.max(0,Math.min(max,(Number(p[resource])||0)+delta)); logAction(`${p.nome}: ${resource.toUpperCase()} ${delta>=0?'+':''}${delta} → ${p[resource]}/${max}.`); saveLocal(); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${p.nome}: ${resource.toUpperCase()} ${p[resource]}/${max}`);
-}
-function renderMasterDashboard(){
-  const el=$('#masterDashboard'); if(!el)return; const c=data.campanha, f=getCurrentFloor();
-  const activePlayers=data.jogadores.map(p=>`<div class="dash-player"><b>${esc(p.nome)}</b><span>PV ${p.pv}/${p.pvMax}</span><span>PE ${p.pe}/${p.peMax}</span><span>SAN ${p.san}/${p.sanMax}</span><div><button class="dice-btn" onclick="quickResource('${p.id}','pv',-1)">−PV</button><button class="dice-btn" onclick="quickResource('${p.id}','pv',1)">+PV</button><button class="dice-btn secondary" onclick="quickResource('${p.id}','san',-1)">−SAN</button><button class="dice-btn secondary" onclick="quickResource('${p.id}','san',1)">+SAN</button></div></div>`).join('');
-  const rooms=(f?.salas||[]).map(r=>`<button class="room-chip ${getInvestigatedRooms(f.id).includes(r)?'done':''}" onclick="toggleRoomInvestigated(${f.id},'${String(r).replace(/'/g,"\\'")}')">${getInvestigatedRooms(f.id).includes(r)?'✓ ':''}${esc(r)}</button>`).join('');
-  const clues=(data.pistas||[]).map(p=>`<div class="clue-row"><div><b>${esc(p.nome)}</b><small>${p.andar}º andar • ${esc(p.texto)}</small></div><button class="dice-btn ${p.revelada?'secondary':''}" onclick="toggleClue('${p.id}')">${p.revelada?'OCULTAR':'REVELAR'}</button></div>`).join('')||'<small>Nenhuma pista cadastrada.</small>';
-  el.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Painel rápido</h2><p>${c.andarAtual}º — ${esc(f?.nome||'')} • ${esc(c.perseguicao)}</p></div></div></div><div class="dashboard-grid"><div><h3>RECURSOS</h3><div class="dash-players">${activePlayers}</div></div><div><h3>EXPLORAÇÃO</h3><p class="dash-event"><b>Evento:</b> ${esc(c.eventoAtual||'Nenhum evento em andamento.')}</p><div class="dash-actions"><button class="ghost small" onclick="setMasterEvent()">EDITAR EVENTO</button><button class="ghost small" onclick="randomEvent()">🎲 EVENTO ALEATÓRIO</button></div><p class="dash-label">SALAS DO ${c.andarAtual}º ANDAR</p><div class="room-chips">${rooms||'<small>Sem salas cadastradas.</small>'}</div></div><div><h3>PISTAS</h3><div class="clue-list">${clues}</div></div><div class="pursuit-console"><h3>PERSEGUIÇÃO</h3><div class="pursuit-readout"><b>${esc(c.perseguicao)}</b><span>${esc(c.perseguicaoAssassino||'Sem assassino definido')}</span><span>Alvo: ${esc(c.perseguicaoAlvo||'Nenhum')}</span><span>Distância: ${c.perseguicaoDistancia} • Rodada: ${c.perseguicaoRodada}</span></div><div class="pursuit-actions"><button class="dice-btn" onclick="retreatPursuit()">← RECUAR</button><button class="dice-btn" onclick="advancePursuit()">AVANÇAR →</button><button class="dice-btn" onclick="changePursuitDistance(-1)">− DIST.</button><button class="dice-btn" onclick="changePursuitDistance(1)">+ DIST.</button><button class="dice-btn secondary" onclick="openHorrorScreen(selectedPlayer)">☠ TELA DE HORROR</button></div><div class="pursuit-selects"><select class="control-select" onchange="setPursuitTarget(this.value)"><option value="">Selecionar alvo</option>${data.jogadores.map(p=>`<option value="${p.id}" ${c.perseguicaoAlvo===p.nome?'selected':''}>${esc(p.nome)}</option>`).join('')}</select><select class="control-select" onchange="setPursuitKiller(this.value)"><option value="">Selecionar assassino</option>${data.assassinos.map(k=>`<option value="${k.id}" ${c.perseguicaoAssassino===k.nome?'selected':''}>${esc(k.nome)}</option>`).join('')}</select></div></div></div>`;
-}
 function renderQuickPlayerTools(){
   const p=selectedPlayer; if(!p)return; const existing=$('#playerQuickTools'); if(existing) existing.remove();
   const current=getCurrentFloor(); const revealed=(data.pistas||[]).filter(x=>x.revelada && Number(x.andar)===Number(data.campanha.andarAtual));
@@ -143,14 +89,13 @@ function renderHotelMap(){
 function setMapFloor(floor){
   const n=Number(floor); if(!data.andares.some(a=>Number(a.id)===n))return;
   data.campanha.andarAtual=n; logAction(`Mapa: andar selecionado ${n}º.`); saveLocal();
-  renderCampaign(); renderHotelMap(); renderMasterDashboard();
-  if(window.V030 && typeof V030.render==='function') V030.render();
+  renderCampaign(); renderHotelMap();
   if(selectedPlayer) renderSheet();
   toast(`Mapa: ${n}º andar`);
 }
 function toggleMapRoom(floorId,room){ toggleRoomInvestigated(Number(floorId),room); renderHotelMap(); }
 function moveKillerFromMap(id){ moveKiller(id); renderHotelMap(); }
 
-function renderMaster(){ renderMasterBase(); renderHotelMap(); renderMasterDashboard(); }
+function renderMaster(){ renderMasterBase(); renderHotelMap(); }
 
 // ===== Inicialização e rolagem =====

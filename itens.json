@@ -1,0 +1,105 @@
+{
+  "versao": "Hotel Espelho — catálogo de itens",
+  "itens": [
+    {
+      "nome": "Lanterna",
+      "descricao": "Iluminação portátil.",
+      "quantidade": 1,
+      "tipo": "equipamento",
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Kit Médico",
+      "descricao": "Suprimentos básicos para primeiros socorros.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Cartão-Chave",
+      "descricao": "Cartão eletrônico de acesso a áreas do hotel.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Chave Mestra",
+      "descricao": "Chave antiga capaz de abrir algumas portas internas.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Rádio Comunicador",
+      "descricao": "Permite comunicação de curta distância quando houver sinal.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Fita Isolante",
+      "descricao": "Material útil para improvisos elétricos e reparos.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Pé de Cabra",
+      "descricao": "Ferramenta pesada útil para forçar portas e caixas.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Extintor de Incêndio",
+      "descricao": "Equipamento do hotel para combater pequenos focos de incêndio.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Mapa do Hotel",
+      "descricao": "Mapa físico com a distribuição dos andares e áreas comuns.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    },
+    {
+      "nome": "Câmera Fotográfica",
+      "descricao": "Registra imagens e pode revelar detalhes durante a investigação.",
+      "tipo": "equipamento",
+      "quantidade": 1,
+      "equipado": false,
+      "teste": "",
+      "dano": "",
+      "bonus": ""
+    }
+  ]
+}

@@ -261,5 +261,5 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => show(button.dataset.screen));
   });
   document.addEventListener('click',e=>{if(e.target.id==='closeHorror')closeHorrorScreen();});
-initializeApp();
+// A inicialização é disparada somente no final do index.html, depois que todos os módulos foram carregados.
 });

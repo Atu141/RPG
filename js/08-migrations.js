@@ -1,13 +1,3 @@
-// Painel de pistas: organização narrativa por andar, com destaque no andar atual.
-const __renderMasterDashboardRefined=renderMasterDashboard;
-renderMasterDashboard=function(){
-  __renderMasterDashboardRefined();
-  const el=$('#masterDashboard'); if(!el||!data)return;
-  const c=data.campanha; const grouped=data.pistas.reduce((acc,p)=>{(acc[p.andar]??=[]).push(p);return acc;},{});
-  const clueArea=Object.keys(grouped).sort((a,b)=>Number(a)-Number(b)).map(k=>{const floor=Number(k),f=data.andares.find(a=>Number(a.id)===floor),items=grouped[k];return `<div class="clue-floor ${floor===Number(c.andarAtual)?'current':''}"><div class="clue-floor-head"><b>${floor===0?'Térreo':`${floor}º Andar — ${esc((f?.nome||'').replace(/^\d+º Andar — /,''))}`}</b><span>${items.filter(x=>x.revelada).length}/${items.length}</span></div>${items.map(p=>`<div class="clue-row refined"><div><span class="clue-theme">${esc(p.tema||'Pista')}</span><b>${esc(p.nome)}</b><small>${esc(p.texto)}</small></div><button class="dice-btn ${p.revelada?'secondary':''}" onclick="toggleClue('${p.id}')">${p.revelada?'OCULTAR':'REVELAR'}</button></div>`).join('')}</div>`}).join('');
-  const old=el.querySelector('.clue-list'); if(old) old.outerHTML=`<div class="clue-list organized-clues">${clueArea}</div>`;
-};
-
 // Migração automática: estados salvos anteriores recebem as novas pistas e nomenclaturas sem perder progresso de revelação.
 const __loadDataRefined=loadData;
 loadData=async function(useSaved=true){
@@ -31,4 +21,3 @@ loadData=async function(useSaved=true){
   }
 };
 
-window.createMasterEvent=createMasterEvent; window.setEventFloorRooms=setEventFloorRooms; window.activateSavedEvent=activateSavedEvent; window.deleteSavedEvent=deleteSavedEvent; window.clearMasterEvent=clearMasterEvent; window.openConditionModal=openConditionModal; window.closeConditionModal=closeConditionModal; window.saveConditionModal=saveConditionModal;

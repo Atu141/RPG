@@ -13,6 +13,18 @@ function normalizeItem(item){
   };
 }
 function itemLabel(item){ return item.tipo==='arma' ? 'Arma' : 'Equipamento'; }
+function normalizeWeapon(weapon){
+  return {
+    id:String(weapon?.id||''), nome:String(weapon?.nome||'Arma'), descricao:String(weapon?.grupo||''), quantidade:1, tipo:'arma', equipado:false,
+    teste:String(weapon?.teste||'Pontaria'), dano:String(weapon?.dano||''), bonus:'', categoria:String(weapon?.categoria||''), grupo:String(weapon?.grupo||''),
+    critico:String(weapon?.critico||''), alcance:String(weapon?.alcance||''), tipoDano:String(weapon?.tipoDano||''), espacos:Number(weapon?.espacos)||0, proficiencia:String(weapon?.proficiencia||'')
+  };
+}
+function getWeaponCatalog(){ return Array.isArray(window.WEAPON_CATALOG)?window.WEAPON_CATALOG:[]; }
+function getMasterItemCatalog(){
+  return {items:getItemCatalog(),weapons:getWeaponCatalog()};
+}
+
 function itemCombatReady(item){ return item?.tipo==='arma' && Boolean(item?.equipado) && Boolean(item?.teste) && Boolean(item?.dano); }
 function isUnarmedAttack(attack){
   const category=String(attack?.categoria||attack?.tipo||'').toLowerCase();
@@ -52,14 +64,17 @@ function getItemCatalog(){
   data.itensDisponiveis=[...map.values()];
   return data.itensDisponiveis;
 }
-function addPlayerItem(pid, catalogIndex, quantity){
-  const p=data.jogadores.find(x=>x.id===pid); const catalog=getItemCatalog(); const base=catalog[Number(catalogIndex)];
-  if(!p||!base)return;
+function addPlayerItem(pid, catalogType, catalogIndex, quantity){
+  const p=data.jogadores.find(x=>x.id===pid); if(!p)return;
+  const type=String(catalogType||'item'); const idx=Number(catalogIndex);
+  const source=type==='weapon'?getWeaponCatalog()[idx]:getItemCatalog()[idx];
+  if(!source)return;
+  const base=type==='weapon'?normalizeWeapon(source):normalizeItem(source);
   const qty=Math.max(1,Number(quantity)||1); p.itens=Array.isArray(p.itens)?p.itens:[];
   const existing=p.itens.find(i=>String(i.nome).toLowerCase()===base.nome.toLowerCase());
   if(existing) existing.quantidade=(Number(existing.quantidade)||0)+qty;
   else p.itens.push(normalizeItem({...base,quantidade:qty,equipado:false}));
-  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário.`); saveLocal(); renderMaster();
+  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário${type==='weapon'?' (arma)':''}.`); saveLocal(); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${base.nome} adicionado`);
 }
 function createAndAddPlayerItem(pid){
@@ -128,8 +143,10 @@ function removePlayerItem(pid,itemIndex,quantity){
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${item.nome} removido`);
 }
 function renderInventoryMaster(p){
-  const catalog=getItemCatalog();
-  const options=catalog.length?catalog.map((i,idx)=>`<option value="${idx}">${esc(i.nome)}${i.descricao?` — ${esc(i.descricao)}`:''}</option>`).join(''):'<option value="">Nenhum item salvo</option>';
-  const items=(p.itens||[]).map((i,idx)=>`<div class="master-item-row"><div><b>${esc(i.nome)}</b><small>${itemLabel(i)}${i.equipado?' • Equipado':' • Não equipado'}${i.tipo==='arma'&&i.teste?` • Teste ${esc(i.teste)}`:''}${i.tipo==='arma'&&i.dano?` • Dano ${esc(i.dano)}`:''}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small><em>${esc(i.descricao||'Sem descrição')}</em></div><strong>x${i.quantidade}</strong><button class="dice-btn ${i.equipado?'secondary':''}" data-toggle-equip="${p.id}" data-item-index="${idx}">${i.equipado?'DESEQUIPAR':'EQUIPAR'}</button><button class="dice-btn secondary" data-remove-item="${p.id}" data-item-index="${idx}">REMOVER</button></div>`).join('') || '<small class="empty-inventory">Inventário vazio.</small>';
-  return `<details class="master-inventory"><summary>INVENTÁRIO / ITENS</summary><div class="master-inventory-list">${items}</div><div class="inventory-add"><select class="control-select" data-item-select="${p.id}">${options}</select><input class="control-input inventory-qty" type="number" min="1" value="1" data-item-qty="${p.id}"><button class="dice-btn" data-add-item="${p.id}">ADICIONAR ITEM</button><button class="dice-btn secondary" data-new-item="${p.id}">CRIAR NOVO ITEM</button></div></details>`;
+  const catalog=getMasterItemCatalog();
+  const itemOptions=catalog.items.map((i,idx)=>`<option value="item:${idx}">${esc(i.nome)}${i.descricao?` — ${esc(i.descricao)}`:''}</option>`).join('');
+  const weaponOptions=catalog.weapons.map((w,idx)=>`<option value="weapon:${idx}">${esc(w.nome)} — ${esc(w.categoria)} • ${esc(w.dano)} • ${esc(w.proficiencia)}</option>`).join('');
+  const options=(itemOptions||weaponOptions)?`<option value="">Selecionar equipamento ou arma...</option>${itemOptions?`<optgroup label="ITENS — itens.json">${itemOptions}</optgroup>`:''}${weaponOptions?`<optgroup label="ARMAS — armas.json">${weaponOptions}</optgroup>`:''}`:'<option value="">Catálogos não carregados</option>';
+  const items=(p.itens||[]).map((i,idx)=>`<div class="master-item-row"><div><b>${esc(i.nome)}</b><small>${itemLabel(i)}${i.equipado?' • Equipado':' • Não equipado'}${i.tipo==='arma'&&i.teste?` • Teste ${esc(i.teste)}`:''}${i.tipo==='arma'&&i.dano?` • Dano ${esc(i.dano)}`:''}${i.tipo==='arma'&&i.critico?` • Crítico ${esc(i.critico)}`:''}${i.tipo==='arma'&&i.alcance?` • Alcance ${esc(i.alcance)}`:''}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small><em>${esc(i.descricao||'Sem descrição')}</em></div><strong>x${i.quantidade}</strong><button class="dice-btn ${i.equipado?'secondary':''}" data-toggle-equip="${p.id}" data-item-index="${idx}">${i.equipado?'DESEQUIPAR':'EQUIPAR'}</button><button class="dice-btn secondary" data-remove-item="${p.id}" data-item-index="${idx}">REMOVER</button></div>`).join('') || '<small class="empty-inventory">Inventário vazio.</small>';
+  return `<details class="master-inventory"><summary>INVENTÁRIO / ITENS / ARMAS</summary><div class="master-inventory-list">${items}</div><div class="inventory-add"><select class="control-select" data-item-select="${p.id}">${options}</select><input class="control-input inventory-qty" type="number" min="1" value="1" data-item-qty="${p.id}"><button class="dice-btn" data-add-item="${p.id}">ADICIONAR</button><button class="dice-btn secondary" data-new-item="${p.id}">CRIAR ITEM PERSONALIZADO</button></div><small class="muted">Itens carregados de <b>itens.json</b> e armas carregadas de <b>armas.json</b>. A arma recebe automaticamente teste, dano, crítico, alcance e proficiência do catálogo.</small></details>`;
 }

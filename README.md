@@ -1,3 +1,34 @@
+# V0.71.1 — Combate + Sala da Mesa
+
+Esta versão mantém o foco em uma **one-shot presencial**. O multiplayer não transforma o projeto em um VTT: ele serve para que cada jogador use a própria ficha no celular/computador e acompanhe **PV, PE, SAN, inventário, perícias e evolução** sem precisar manter anotações em papel.
+
+## Novidades
+- Central de combate no painel do Mestre.
+- Seleção de participantes e iniciativa automática.
+- Rodadas e troca de turnos.
+- PV atual/máximo com dano, cura e edição manual.
+- Rolagem de ataque e dano das ameaças.
+- Histórico resumido do combate.
+- Ficha detalhada das ameaças da sessão.
+- Consulta rápida dos monstros e dos quatro assassinos.
+- Rastreador de PV/PE/SAN diretamente na ficha do jogador.
+- Fichas da Mesa via link direto usando PeerJS: o Mestre cria um link e os jogadores entram automaticamente de seus dispositivos, sem digitar código de sala.
+- O Mestre continua sendo a autoridade sobre combate, regras, ameaças e progressão.
+- Jogadores recebem somente o estado da própria ficha; o catálogo de ameaças permanece exclusivo do Mestre.
+
+## Multiplayer presencial
+1. No computador do Mestre, entre em **MESTRE** e use **Criar sala do Mestre**.
+2. Compartilhe o código de 6 caracteres com os jogadores.
+3. Cada jogador abre o mesmo site em seu celular/computador e informa o código.
+4. O jogador escolhe uma ficha existente ou solicita a criação de uma nova ficha.
+5. Alterações na ficha são enviadas ao Mestre e o estado da ficha é sincronizado de volta.
+
+**Requisito:** o modo de fichas por link usa conexão de internet para o canal PeerJS. O modo somente neste dispositivo continua funcionando sem conexão entre jogadores.
+
+**Importante:** a sala é de sessão. Ela não substitui um banco de dados e não foi desenhada para persistência entre sessões. Para a one-shot, isso é intencional.
+
+---
+
 ## V0.40.3 — Profissões / Origens oficiais
 
 - A criação de personagem agora exige uma Profissão/Origem da lista oficial de Ordem Paranormal RPG v1.3.
@@ -417,3 +448,80 @@ A auditoria foi realizada antes da próxima etapa do projeto. Foram verificadas 
 - **Classes v1.3 corrigidas:** Combatente, Especialista e Ocultista agora usam os valores de PV/PE/SAN e proficiências da classe conforme o PDF; a ficha não recebe bônus de atributos fictícios nem armas automáticas. No NEX 5%, respectivamente: Combatente 20+VIG / 2+PRE / 12 SAN; Especialista 16+VIG / 3+PRE / 16 SAN; Ocultista 12+VIG / 4+PRE / 20 SAN.
 - O Ocultista passa a exigir a escolha dos **3 rituais iniciais de 1º círculo** pelo Mestre.
 - O Mestre pode configurar as perícias de classe e alterar o NEX pela central de regras.
+
+## V0.62 — Versão jogável / sessão presencial
+
+Esta versão fecha a base para uso presencial, mantendo o navegador como ferramenta de qualidade de vida.
+
+### Dados externos
+- `itens.json`: catálogo separado de itens/equipamentos da campanha.
+- `rituais.json`: catálogo separado de rituais baseado na lista de rituais da v1.3.
+- `fichas.json`: somente estado inicial da campanha, jogadores, andares, enigmas e antagonistas; não depende dos catálogos para armazenar a lista completa.
+
+### Correções e regras
+- Distribuição automática de atributos corrigida para 9 pontos: Combatente 3/2/1/1/2; Especialista 1/3/3/1/1; Ocultista 1/1/3/3/1.
+- Limite de PE por turno derivado do NEX.
+- Progressão de recursos por classe preservada conforme v1.3.
+- Crítico estruturado para dobrar somente os dados de dano, preservando bônus numéricos.
+- Relação elemental oficial integrada ao motor.
+- Catálogos carregados por `fetch` no início da sessão; o projeto continua exigindo Live Server.
+- Estado local continua em `localStorage` para qualidade de vida durante a sessão.
+
+### Escopo da sessão
+A aplicação é um auxiliar de mesa: a resolução narrativa e as regras completas que não possuem representação automática continuam sob decisão do Mestre. O PDF v1.3 continua sendo a referência para efeitos completos de rituais, poderes, trilhas, armas e condições.
+
+
+## V0.66 — Limpeza da visualização do Mestre
+Removido o Painel rápido legado, que duplicava recursos, exploração, pistas e perseguição já cobertos pelos módulos dedicados. Também foram removidos os controles de navegação duplicados do Perfil do Mestre e ajustados os pontos de inserção dos painéis dependentes.
+
+## V0.70 — Consolidação do Motor de Jogo
+
+A versão V0.70 introduz uma camada consolidada de regras e estado:
+- `GameEngineV070`: API autoritativa para testes, recursos, combate, condições, rituais, NEX e inventário.
+- IDs estáveis para personagens, ameaças e itens.
+- Registro estruturado de eventos do motor para futura sincronização multiplayer.
+- Combate com iniciativa rolada, rodadas, turnos, ações, reações, ataque, crítico, dano e morte.
+- Limite de PE por turno integrado ao gasto de recursos.
+- Progressão de NEX restrita aos valores oficiais e fila de habilidades pendentes.
+- Condições com efeitos mecânicos essenciais e duração.
+- Capacidade de carga e estado de sobrecarga.
+- Compatibilidade com as APIs legadas: `RuleEngine`, `CombatRulesV060`, `CombatPlus` e `ConditionEngine` encaminham suas operações ao motor consolidado.
+- `MotorQA` e painel operacional para regressão/auditoria.
+
+A arquitetura continua local e usa `localStorage`; nenhuma funcionalidade de multiplayer foi ativada nesta versão.
+
+
+## V0.70.4 — Otimização da Central do Mestre
+- Removidos da visualização do mapa funcional os blocos duplicados de Movimentação & Estado e Eventos.
+- O mapa funcional permanece como núcleo da exploração.
+- Movimentação fica centralizada no módulo HotelGame; condições no ConditionEngine; combate no GameEngineV070; cenas/eventos narrativos no CampaignEngine/V039.
+- Removido o modal legado de condições e exports de eventos da camada V0.30.
+- Corrigida a posição inicial de personagens no HotelGame.
+
+## V0.70.5 — Responsividade e organização visual
+- Layout Mestre e Jogador adaptado para desktop, notebook, tablet e celular.
+- Grade da Central do Mestre reorganizada em blocos responsivos.
+- Mapa ocupa melhor a largura disponível e reduz colunas progressivamente em telas menores.
+- Ficha do jogador adapta atributos, recursos, inventário e painéis para telas estreitas.
+- Barra superior, formulários, botões e listas ajustados para evitar overflow horizontal.
+- Mantida toda a lógica da V0.70.4; alteração focada em apresentação e responsividade.
+
+## V0.70.8 / V0.80-prep
+- `ameacas.json` separa o catálogo das ameaças das instâncias mutáveis da sessão.
+- `ThreatEngine` e `ThreatUI` permitem adicionar ameaças, controlar PV e condições.
+- `SessionSyncV080` prepara IDs de sessão/dispositivo, revisão monotônica e `BroadcastChannel` opcional; não sincroniza automaticamente nem exige servidor.
+- `SessionUI` exibe revisão e histórico recente do motor.
+- `QAV080` verifica catálogo, instâncias, IDs e estado de sincronização.
+
+## V0.70.9 — Catálogo completo de ameaças
+O arquivo `ameacas.json` foi ampliado para contemplar as criaturas com fichas prontas do Capítulo 7 do Ordem Paranormal RPG v1.3, mantendo separadas as instâncias mutáveis da sessão. As entradas `m1`, `m2` e `m3` foram preservadas para compatibilidade com a campanha O Hotel Espelho, assim como os quatro assassinos customizados. O Gerenciador de Ameaças ganhou busca rápida no catálogo.
+
+
+## V0.71.1 — Link direto para jogadores
+- O Mestre cria um link único depois de iniciar a conexão PeerJS.
+- O jogador abre o link e conecta automaticamente, sem código de sala.
+- O jogador pode criar sua própria ficha pelo formulário normal; a nova ficha é enviada ao Mestre automaticamente.
+- O jogador pode acompanhar PV, PE, SAN, inventário e evolução no próprio dispositivo.
+- O Mestre continua sendo a autoridade sobre regras, classes, ameaças e informações secretas.
+- A conexão precisa que o endereço do site seja acessível pelos jogadores (preferencialmente HTTPS/publicado).
+- Se o projeto estiver aberto somente em localhost, o link não será acessível a celulares externos; publique o site em GitHub Pages, hospedagem estática equivalente ou abra o Live Server em uma rede acessível.

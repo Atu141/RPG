@@ -1,30 +1,23 @@
 /* V0.56 — Grimório de Rituais. Catálogo baseado na Lista de Rituais do livro Ordem Paranormal RPG v1.3 (p. 122-123). Apenas nome, elemento/tipo e círculo; regras completas permanecem no livro. */
-const RITUAL_CATALOG = [
-  // 1º círculo
-  ['Amaldiçoar Arma','Conhecimento',1],['Compreensão Paranormal','Conhecimento',1],['Enfeitiçar','Conhecimento',1],['Perturbação','Conhecimento',1],['Ouvir os Sussurros','Conhecimento',1],['Tecer Ilusão','Conhecimento',1],['Terceiro Olho','Conhecimento',1],
-  ['Amaldiçoar Arma','Energia',1],['Amaldiçoar Tecnologia','Energia',1],['Coincidência Forçada','Energia',1],['Eletrocussão','Energia',1],['Embaralhar','Energia',1],['Luz','Energia',1],['Polarização Caótica','Energia',1],
-  ['Amaldiçoar Arma','Morte',1],['Cicatrização','Morte',1],['Consumir Manancial','Morte',1],['Decadência','Morte',1],['Definhar','Morte',1],['Espirais da Perdição','Morte',1],['Nuvem de Cinzas','Morte',1],
-  ['Amaldiçoar Arma','Sangue',1],['Arma Atroz','Sangue',1],['Armadura de Sangue','Sangue',1],['Corpo Adaptado','Sangue',1],['Distorcer Aparência','Sangue',1],['Fortalecimento Sensorial','Sangue',1],['Ódio Incontrolável','Sangue',1],
-  ['Cinerária','Medo',1],
-  // 2º círculo
-  ['Aprimorar Mente','Conhecimento',2],['Detecção de Ameaças','Conhecimento',2],['Esconder dos Olhos','Conhecimento',2],['Invadir Mente','Conhecimento',2],['Localização','Conhecimento',2],
-  ['Chamas do Caos','Energia',2],['Contenção Fantasmagórica','Energia',2],['Dissonância Acústica','Energia',2],['Sopro do Caos','Energia',2],['Tela de Ruído','Energia',2],
-  ['Desacelerar Impacto','Morte',2],['Eco Espiral','Morte',2],['Paradoxo','Morte',2],['Miasma Entrópico','Morte',2],['Velocidade Mortal','Morte',2],
-  ['Aprimorar Físico','Sangue',2],['Descarnar','Sangue',2],['Flagelo de Sangue','Sangue',2],['Hemofagia','Sangue',2],['Transfusão Vital','Sangue',2],
-  ['Proteção contra Rituais','Medo',2],['Rejeitar Névoa','Medo',2],
-  // 3º círculo
-  ['Alterar Memória','Conhecimento',3],['Contato Paranormal','Conhecimento',3],['Mergulho Mental','Conhecimento',3],['Vidência','Conhecimento',3],
-  ['Convocação Instantânea','Energia',3],['Salto Fantasma','Energia',3],['Transfigurar Água','Energia',3],['Transfigurar Terra','Energia',3],
-  ['Âncora Temporal','Morte',3],['Poeira da Podridão','Morte',3],['Tentáculos de Lodo','Morte',3],['Zerar Entropia','Morte',3],
-  ['Ferver Sangue','Sangue',3],['Forma Monstruosa','Sangue',3],['Purgatório','Sangue',3],['Vomitar Pestes','Sangue',3],
-  ['Dissipar Ritual','Medo',3],
-  // 4º círculo
-  ['Controle Mental','Conhecimento',4],['Inexistir','Conhecimento',4],['Possessão','Conhecimento',4],
-  ['Alterar Destino','Energia',4],['Deflagração de Energia','Energia',4],['Teletransporte','Energia',4],
-  ['Convocar o Algoz','Morte',4],['Distorção Temporal','Morte',4],['Fim Inevitável','Morte',4],
-  ['Capturar o Coração','Sangue',4],['Invólucro de Carne','Sangue',4],['Vínculo de Sangue','Sangue',4],
-  ['Canalizar o Medo','Medo',4],['Conhecendo o Medo','Medo',4],['Lâmina do Medo','Medo',4],['Medo Tangível','Medo',4],['Presença do Medo','Medo',4]
-].map(([nome,tipo,circulo],i)=>({id:`ritual_${String(i+1).padStart(3,'0')}`,nome,tipo,circulo,custo:{1:1,2:3,3:6,4:10}[circulo]||1,dano:''}));
+let RITUAL_CATALOG = [];
+let RITUAL_CATALOG_READY = false;
+async function loadRitualCatalog(){
+  try{
+    const response=await fetch('rituais.json?ts='+Date.now(),{cache:'no-store'});
+    if(!response.ok) throw new Error('HTTP '+response.status);
+    const payload=await response.json();
+    const list=Array.isArray(payload)?payload:payload.rituais;
+    if(!Array.isArray(list)||!list.length) throw new Error('Catálogo vazio');
+    RITUAL_CATALOG=list.map((r,i)=>({id:r.id||`ritual_${String(i+1).padStart(3,'0')}`,nome:String(r.nome||''),tipo:String(r.tipo||''),circulo:Number(r.circulo)||1,custo:Number(r.custo)||({1:1,2:3,3:6,4:10}[Number(r.circulo)]||1),dano:String(r.dano||'')})).filter(r=>r.nome&&r.tipo&&[1,2,3,4].includes(r.circulo));
+    RITUAL_CATALOG_READY=true;
+    return true;
+  }catch(error){
+    console.error('Erro ao carregar rituais.json:',error);
+    toast('Não foi possível carregar rituais.json.');
+    RITUAL_CATALOG=[]; RITUAL_CATALOG_READY=false;
+    return false;
+  }
+}
 
 const RITUAL_DAMAGE = {
   'cinerária|medo|1':'10d6', 'chamas do caos|energia|2':'4d6', 'cicatrização|morte|1':'3d8+3',
@@ -37,7 +30,7 @@ const RITUAL_DAMAGE = {
 };
 
 function ritualKey(nome,tipo,circulo){ return `${String(nome).trim().toLowerCase()}|${String(tipo).trim().toLowerCase()}|${Number(circulo)}`; }
-RITUAL_CATALOG.forEach(r=>{ r.custo={1:1,2:3,3:6,4:10}[r.circulo]||1; r.dano=RITUAL_DAMAGE[ritualKey(r.nome,r.tipo,r.circulo)]||''; });
+
 function ensureRitualState(player){
   if(!player) return;
   if(!Array.isArray(player.rituais)) player.rituais=[];
@@ -46,7 +39,11 @@ function ensureRitualState(player){
 function ritualCatalogOptions(player){
   ensureRitualState(player);
   const known=new Set(player.rituais.map(r=>ritualKey(r.nome,r.tipo,r.circulo)));
-  return RITUAL_CATALOG.filter(r=>!known.has(ritualKey(r.nome,r.tipo,r.circulo))).map(r=>`<option value="${r.id}">${esc(r.nome)} — ${esc(r.tipo)} • ${r.circulo}º círculo</option>`).join('');
+  const available=RITUAL_CATALOG.filter(r=>!known.has(ritualKey(r.nome,r.tipo,r.circulo)));
+  return [1,2,3,4].map(c=>{
+    const list=available.filter(r=>Number(r.circulo)===c);
+    return list.length?`<optgroup label="${c}º CÍRCULO">${list.map(r=>`<option value="${r.id}">${esc(r.nome)} — ${esc(r.tipo)} • ${r.custo} PE</option>`).join('')}</optgroup>`:'';
+  }).join('');
 }
 function addRitualToPlayer(pid, ritualId){
   const p=data.jogadores.find(x=>x.id===pid), r=RITUAL_CATALOG.find(x=>x.id===ritualId); if(!p||!r||p.classe!=='Ocultista') return;

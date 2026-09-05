@@ -1,0 +1,1489 @@
+{
+  "versao": "1.1",
+  "descricao": "Catálogo completo das criaturas com fichas prontas do Capítulo 7 de Ordem Paranormal RPG v1.3, separado das instâncias mutáveis da sessão. Inclui entradas de compatibilidade e ameaças customizadas desta campanha.",
+  "fonte": "Ordem Paranormal RPG v1.3 — 3ª edição, dezembro de 2024",
+  "escopo": [
+    "Criaturas de Sangue",
+    "Criaturas de Morte",
+    "Criaturas de Conhecimento",
+    "Criaturas de Energia",
+    "Criatura de Medo (Degolificada)",
+    "Compatibilidade da campanha O Hotel Espelho",
+    "Ameaças customizadas da campanha"
+  ],
+  "ameacas": [
+    {
+      "id": "existido",
+      "catalogId": "existido",
+      "nome": "Existido",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 20,
+      "pvBase": 36,
+      "pv": 36,
+      "pvMax": 36,
+      "defesa": 13,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "1d20+5",
+          "dano": "1d4+1 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "vulto",
+      "catalogId": "vulto",
+      "nome": "Vulto",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 40,
+      "pvBase": 60,
+      "pv": 60,
+      "pvMax": 60,
+      "defesa": 19,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "4d20+10",
+          "dano": "2d6 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "parasita_de_culpa",
+      "catalogId": "parasita_de_culpa",
+      "nome": "Parasita de Culpa",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 60,
+      "pvBase": 90,
+      "pv": 90,
+      "pvMax": 90,
+      "defesa": 15,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "1d20",
+          "dano": "1d4 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "lembrado",
+      "catalogId": "lembrado",
+      "nome": "Lembrado",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 100,
+      "pvBase": 180,
+      "pv": 180,
+      "pvMax": 180,
+      "defesa": 22,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "2d20+5",
+          "dano": "2d4+7 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "rastejador_sombrio",
+      "catalogId": "rastejador_sombrio",
+      "nome": "Rastejador Sombrio",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 180,
+      "pvBase": 330,
+      "pv": 330,
+      "pvMax": 330,
+      "defesa": 41,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Toque da Dor",
+          "teste": "4d20+20",
+          "dano": "4d8+5 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "espreitador",
+      "catalogId": "espreitador",
+      "nome": "Espreitador",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 220,
+      "pvBase": 500,
+      "pv": 500,
+      "pvMax": 500,
+      "defesa": 34,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "2d20+10",
+          "dano": "1d6+2 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "ocioso",
+      "catalogId": "ocioso",
+      "nome": "Ocioso",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 260,
+      "pvBase": 390,
+      "pv": 390,
+      "pvMax": 390,
+      "defesa": 37,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Retaliação",
+          "teste": "5d20+30",
+          "dano": "4d10+20 impacto (não letal)"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "bicho_papao",
+      "catalogId": "bicho_papao",
+      "nome": "Bicho-Papão",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 300,
+      "pvBase": 750,
+      "pv": 750,
+      "pvMax": 750,
+      "defesa": 41,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras Atormentadoras",
+          "teste": "5d20+35",
+          "dano": "4d10+10 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "estrangeiro",
+      "catalogId": "estrangeiro",
+      "nome": "Estrangeiro",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 340,
+      "pvBase": 750,
+      "pv": 750,
+      "pvMax": 750,
+      "defesa": 50,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Toque Sutil",
+          "teste": "5d20+35",
+          "dano": "4d8+10 Conhecimento"
+        },
+        {
+          "nome": "Rajada Psíquica",
+          "teste": "5d20+35",
+          "dano": "4d10+20 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "silhueta",
+      "catalogId": "silhueta",
+      "nome": "Silhueta",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 360,
+      "pvBase": 500,
+      "pv": 500,
+      "pvMax": 500,
+      "defesa": 55,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "5d20+35",
+          "dano": "6d12+30 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "anjo",
+      "catalogId": "anjo",
+      "nome": "Anjo",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 380,
+      "pvBase": 1111,
+      "pv": 1111,
+      "pvMax": 1111,
+      "defesa": 57,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Asas do Conhecimento",
+          "teste": "5d20+40",
+          "dano": "4d10+40 Conhecimento"
+        },
+        {
+          "nome": "Olhares do Saber",
+          "teste": "4d20+40",
+          "dano": "6d8+20 Conhecimento"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "mascara_do_desespero",
+      "catalogId": "mascara_do_desespero",
+      "nome": "Máscara do Desespero",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Conhecimento",
+      "vd": 400,
+      "pvBase": 1200,
+      "pv": 1200,
+      "pvMax": 1200,
+      "defesa": 55,
+      "andar": null,
+      "ataques": [],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "anarquico",
+      "catalogId": "anarquico",
+      "nome": "Anárquico",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 20,
+      "pvBase": 30,
+      "pv": 30,
+      "pvMax": 30,
+      "defesa": 21,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada Errática",
+          "teste": "2d20+5",
+          "dano": "2d12 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "perturbado_de_energia",
+      "catalogId": "perturbado_de_energia",
+      "nome": "Perturbado de Energia",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 40,
+      "pvBase": 60,
+      "pv": 60,
+      "pvMax": 60,
+      "defesa": 19,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "4d20+10",
+          "dano": "2d12 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "ciborgue",
+      "catalogId": "ciborgue",
+      "nome": "Ciborgue",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 80,
+      "pvBase": 160,
+      "pv": 160,
+      "pvMax": 160,
+      "defesa": 25,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Braço Laminado",
+          "teste": "3d20+10, crítico 18",
+          "dano": "1d12+10 corte"
+        },
+        {
+          "nome": "Canhão",
+          "teste": "3d20+10",
+          "dano": "4d12+5 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "anarquico_descontrolado",
+      "catalogId": "anarquico_descontrolado",
+      "nome": "Anárquico Descontrolado",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 120,
+      "pvBase": 120,
+      "pv": 120,
+      "pvMax": 120,
+      "defesa": 28,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada Energética",
+          "teste": "4d20+15",
+          "dano": "4d12 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "sukkalgir",
+      "catalogId": "sukkalgir",
+      "nome": "Sukkalgir",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 160,
+      "pvBase": 220,
+      "pv": 220,
+      "pvMax": 220,
+      "defesa": 34,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "3d20+15",
+          "dano": "2d12 mental"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "viajante",
+      "catalogId": "viajante",
+      "nome": "Viajante",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 200,
+      "pvBase": 360,
+      "pv": 360,
+      "pvMax": 360,
+      "defesa": 34,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "4d20+15",
+          "dano": "2d12+10 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "anomiatico",
+      "catalogId": "anomiatico",
+      "nome": "Anomiático",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 240,
+      "pvBase": 600,
+      "pv": 600,
+      "pvMax": 600,
+      "defesa": 41,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Desintegradora",
+          "teste": "5d20+30",
+          "dano": "4d12+20 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "infecticidio",
+      "catalogId": "infecticidio",
+      "nome": "Infecticídio",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 280,
+      "pvBase": 600,
+      "pv": 600,
+      "pvMax": 600,
+      "defesa": 25,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancadas Infectadas",
+          "teste": "5d20+30",
+          "dano": "4d12+20 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "telopsia",
+      "catalogId": "telopsia",
+      "nome": "Telopsia",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 340,
+      "pvBase": 560,
+      "pv": 560,
+      "pvMax": 560,
+      "defesa": 48,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Toque Desintegrador",
+          "teste": "4d20+35",
+          "dano": "6d12+30 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "tempestuoso",
+      "catalogId": "tempestuoso",
+      "nome": "Tempestuoso",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 360,
+      "pvBase": 950,
+      "pv": 950,
+      "pvMax": 950,
+      "defesa": 56,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras Radioativas",
+          "teste": "5d20+40",
+          "dano": "4d20+20 Energia"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "anfitriao",
+      "catalogId": "anfitriao",
+      "nome": "Anfitrião",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Energia",
+      "vd": 413,
+      "pvBase": 1413,
+      "pv": 1413,
+      "pvMax": 1413,
+      "defesa": 59,
+      "andar": null,
+      "ataques": [],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "degolificada",
+      "catalogId": "degolificada",
+      "nome": "Degolificada",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Medo",
+      "vd": 320,
+      "pvBase": 850,
+      "pv": 850,
+      "pvMax": 850,
+      "defesa": 45,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Pancada",
+          "teste": "5d20+35",
+          "dano": "8d8+20 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "esqueleto_de_lodo",
+      "catalogId": "esqueleto_de_lodo",
+      "nome": "Esqueleto de Lodo",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 20,
+      "pvBase": 40,
+      "pv": 40,
+      "pvMax": 40,
+      "defesa": 14,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "2d20+5",
+          "dano": "2d6+2 corte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "succ",
+      "catalogId": "succ",
+      "nome": "Succ",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 40,
+      "pvBase": 65,
+      "pv": 65,
+      "pvMax": 65,
+      "defesa": 20,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "4d20+10",
+          "dano": "2d8+2 perfuração"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "aracnasita",
+      "catalogId": "aracnasita",
+      "nome": "Aracnasita",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 80,
+      "pvBase": 140,
+      "pv": 140,
+      "pvMax": 140,
+      "defesa": 23,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "2d20+15",
+          "dano": "2d10+10 perfuração"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "enraizado",
+      "catalogId": "enraizado",
+      "nome": "Enraizado",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 120,
+      "pvBase": 140,
+      "pv": 140,
+      "pvMax": 140,
+      "defesa": 28,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Punho Espinhento",
+          "teste": "3d20+15",
+          "dano": "2d8+8 impacto mais 2d12 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "escutado",
+      "catalogId": "escutado",
+      "nome": "Escutado",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 160,
+      "pvBase": 290,
+      "pv": 290,
+      "pvMax": 290,
+      "defesa": 29,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "3d20+20",
+          "dano": "3d6+10 perfuração"
+        },
+        {
+          "nome": "Cabeça Arremessada",
+          "teste": "4d20+15",
+          "dano": "1d10+10 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "carnical_preto",
+      "catalogId": "carnical_preto",
+      "nome": "Carniçal Preto",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 200,
+      "pvBase": 400,
+      "pv": 400,
+      "pvMax": 400,
+      "defesa": 38,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garra da Morte",
+          "teste": "4d20+25",
+          "dano": "4d10+20 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "mumia_xipofaga",
+      "catalogId": "mumia_xipofaga",
+      "nome": "Múmia Xipófaga",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 240,
+      "pvBase": 400,
+      "pv": 400,
+      "pvMax": 400,
+      "defesa": 35,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garra Enfaixada",
+          "teste": "4d20+30",
+          "dano": "4d8+30 corte"
+        },
+        {
+          "nome": "Vomitar Lodo",
+          "teste": "5d20+25",
+          "dano": "3d6+30 Morte mais 3d8 mental"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "marionete",
+      "catalogId": "marionete",
+      "nome": "Marionete",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 280,
+      "pvBase": 700,
+      "pv": 700,
+      "pvMax": 700,
+      "defesa": 40,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Foice Óssea",
+          "teste": "5d20+30",
+          "dano": "10d8+10 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "nidere",
+      "catalogId": "nidere",
+      "nome": "Nidere",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 320,
+      "pvBase": 0,
+      "pv": 0,
+      "pvMax": 0,
+      "defesa": 50,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida Invertida",
+          "teste": "5d20+35",
+          "dano": "4d12+40 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "sempiternal",
+      "catalogId": "sempiternal",
+      "nome": "Sempiternal",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 360,
+      "pvBase": 990,
+      "pv": 990,
+      "pvMax": 990,
+      "defesa": 53,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Dedos Alongados",
+          "teste": "5d20+40",
+          "dano": "4d10 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "ceifador_espiral",
+      "catalogId": "ceifador_espiral",
+      "nome": "Ceifador Espiral",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 380,
+      "pvBase": 999,
+      "pv": 999,
+      "pvMax": 999,
+      "defesa": 58,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Foice da Morte",
+          "teste": "5d20+40",
+          "dano": "5d10+20 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "deus_da_morte",
+      "catalogId": "deus_da_morte",
+      "nome": "O Deus da Morte",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Morte",
+      "vd": 400,
+      "pvBase": 2000,
+      "pv": 2000,
+      "pvMax": 2000,
+      "defesa": 60,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Toque da Morte",
+          "teste": "6d20+45",
+          "dano": "5d10+50 Morte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "zumbi_de_sangue",
+      "catalogId": "zumbi_de_sangue",
+      "nome": "Zumbi de Sangue",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 20,
+      "pvBase": 45,
+      "pv": 45,
+      "pvMax": 45,
+      "defesa": 17,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "2d20+5",
+          "dano": "1d6+5 corte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "aberracao_de_carne",
+      "catalogId": "aberracao_de_carne",
+      "nome": "Aberração de Carne",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 40,
+      "pvBase": 70,
+      "pv": 70,
+      "pvMax": 70,
+      "defesa": 19,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "3d20+10",
+          "dano": "2d6+6 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "dama_de_sangue",
+      "catalogId": "dama_de_sangue",
+      "nome": "Dama de Sangue",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 60,
+      "pvBase": 105,
+      "pv": 105,
+      "pvMax": 105,
+      "defesa": 20,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Tentáculo",
+          "teste": "3d20+10",
+          "dano": "2d6+5 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "zumbi_de_sangue_bestial",
+      "catalogId": "zumbi_de_sangue_bestial",
+      "nome": "Zumbi de Sangue Bestial",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 100,
+      "pvBase": 200,
+      "pv": 200,
+      "pvMax": 200,
+      "defesa": 23,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida de Sangue",
+          "teste": "3d20+15",
+          "dano": "2d10+5 perfuração"
+        },
+        {
+          "nome": "Garras de Sangue",
+          "teste": "3d20+15",
+          "dano": "2d6+5 corte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "mulher_afogada",
+      "catalogId": "mulher_afogada",
+      "nome": "Mulher Afogada",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 140,
+      "pvBase": 240,
+      "pv": 240,
+      "pvMax": 240,
+      "defesa": 28,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "3d20+15",
+          "dano": "4d8+8 perfuração"
+        },
+        {
+          "nome": "Garras",
+          "teste": "3d20+15",
+          "dano": "4d6+6 corte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "enpap_x",
+      "catalogId": "enpap_x",
+      "nome": "Enpap-X",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 180,
+      "pvBase": 360,
+      "pv": 360,
+      "pvMax": 360,
+      "defesa": 36,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Socão",
+          "teste": "4d20+20",
+          "dano": "2d10+10 impacto"
+        },
+        {
+          "nome": "Correntes",
+          "teste": "2d20+15",
+          "dano": "2d8+10 impacto"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "tita_de_sangue",
+      "catalogId": "tita_de_sangue",
+      "nome": "Titã de Sangue",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 220,
+      "pvBase": 550,
+      "pv": 550,
+      "pvMax": 550,
+      "defesa": 35,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "5d20+25",
+          "dano": "4d12+10 perfuração"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "minotauro",
+      "catalogId": "minotauro",
+      "nome": "Minotauro",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 280,
+      "pvBase": 750,
+      "pv": 750,
+      "pvMax": 750,
+      "defesa": 44,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Chifres",
+          "teste": "5d20+30",
+          "dano": "6d12+20 perfuração"
+        },
+        {
+          "nome": "Machado",
+          "teste": "5d20+32",
+          "dano": "4d12+20 corte"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "carente",
+      "catalogId": "carente",
+      "nome": "Carente",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 300,
+      "pvBase": 700,
+      "pv": 700,
+      "pvMax": 700,
+      "defesa": 40,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras de Sangue",
+          "teste": "4d20+35",
+          "dano": "2d8+20 Sangue"
+        },
+        {
+          "nome": "Ferrão de Sangue",
+          "teste": "4d20+35",
+          "dano": "2d12+20 Sangue"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "kerberos",
+      "catalogId": "kerberos",
+      "nome": "Kerberos",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 340,
+      "pvBase": 1150,
+      "pv": 1150,
+      "pvMax": 1150,
+      "defesa": 46,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "5d20+40",
+          "dano": "4d12+30 Sangue"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "aniquilacao",
+      "catalogId": "aniquilacao",
+      "nome": "Aniquilação",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 380,
+      "pvBase": 1200,
+      "pv": 1200,
+      "pvMax": 1200,
+      "defesa": 58,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Tentáculos Espinhentos",
+          "teste": "5d20+40",
+          "dano": "2d12+30 Sangue"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "o_diabo",
+      "catalogId": "o_diabo",
+      "nome": "O Diabo",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 400,
+      "pvBase": 1666,
+      "pv": 1666,
+      "pvMax": 1666,
+      "defesa": 66,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Arma Sangrenta",
+          "teste": "6d20+45, crítico x3",
+          "dano": "2d10+50 Sangue"
+        },
+        {
+          "nome": "Chifre do Diabo",
+          "teste": "6d20+45, crítico x3",
+          "dano": "2d8+50 Sangue"
+        }
+      ],
+      "fonte": "Capítulo 7 — Ameaças, v1.3",
+      "tipoAmeaca": "criatura_paranormal"
+    },
+    {
+      "id": "m1",
+      "catalogId": "m1",
+      "nome": "Zumbi de Sangue #1",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 20,
+      "pvBase": 45,
+      "pv": 45,
+      "pvMax": 45,
+      "defesa": 17,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "2d20+5",
+          "dano": "1d6+5 corte"
+        }
+      ],
+      "tipoAmeaca": "compatibilidade_campanha"
+    },
+    {
+      "id": "m2",
+      "catalogId": "m2",
+      "nome": "Zumbi de Sangue #2",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Sangue",
+      "vd": 20,
+      "pvBase": 45,
+      "pv": 45,
+      "pvMax": 45,
+      "defesa": 17,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "2d20+5",
+          "dano": "1d6+5 corte"
+        }
+      ],
+      "tipoAmeaca": "compatibilidade_campanha"
+    },
+    {
+      "id": "m3",
+      "catalogId": "m3",
+      "nome": "Cão Sem-Rosto",
+      "tipo": "criatura",
+      "categoria": "criatura",
+      "elemento": "Medo",
+      "vd": null,
+      "pvBase": 18,
+      "pv": 18,
+      "pvMax": 18,
+      "defesa": 12,
+      "andar": null,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "1d20+4",
+          "dano": "1d8+2"
+        }
+      ],
+      "tipoAmeaca": "custom_campanha"
+    },
+    {
+      "id": "k1",
+      "nome": "O Açougueiro",
+      "elemento": "Sangue",
+      "inspiracao": "O Mascarado do Machete — inspirado na força brutal e implacável dos slashers clássicos.",
+      "criatura": "Zumbi de Sangue ou Maligno de Sangue",
+      "localDestaque": "Cozinha / Restauração",
+      "andar": 4,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 80,
+      "defesa": 16,
+      "descricao": "Ex-segurança do hotel tomado pela fúria incontrolável e pela obsessão por dor e carne. Silencioso, pesado e brutal, prefere encurralar suas vítimas em espaços estreitos.",
+      "fraquezas": [
+        "Luz intensa",
+        "Ambientes estreitos",
+        "Distrair com ruído"
+      ],
+      "ataques": [
+        {
+          "nome": "Golpe do Cutelo",
+          "teste": "1d20+8",
+          "dano": "2d10+6"
+        },
+        {
+          "nome": "Investida Brutal",
+          "teste": "1d20+6",
+          "dano": "3d6+4"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k1",
+      "tipo": "criatura",
+      "categoria": "assassino",
+      "pvBase": 80,
+      "comportamento": {
+        "patrulha": true,
+        "persegue": true,
+        "podeAparecer": true,
+        "andaresPermitidos": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "tipoAmeaca": "custom_campanha",
+      "vd": null,
+      "pvMax": 80
+    },
+    {
+      "id": "k2",
+      "nome": "O Algoz Fúnebre",
+      "elemento": "Morte",
+      "inspiracao": "O Espectro dos Sonhos — uma adaptação temática de terror onírico.",
+      "criatura": "Lodo Espiral ou Zumbi de Morte",
+      "localDestaque": "Porão / Lavanderia / Corredores escuros",
+      "andar": 4,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 70,
+      "defesa": 15,
+      "descricao": "Carregador de malas/recepcionista cuja percepção do tempo foi distorcida pelo lodo e pelo desespero. Sua presença está ligada à decomposição, à exaustão e à sensação de tempo perdido.",
+      "fraquezas": [
+        "Luz contínua",
+        "Interromper efeitos temporais",
+        "Evitar áreas contaminadas por lodo"
+      ],
+      "ataques": [
+        {
+          "nome": "Toque da Decomposição",
+          "teste": "1d20+7",
+          "dano": "2d8+5"
+        },
+        {
+          "nome": "Espiral do Tempo",
+          "teste": "1d20+9",
+          "dano": "2d6+SAN"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k2",
+      "tipo": "criatura",
+      "categoria": "assassino",
+      "pvBase": 70,
+      "comportamento": {
+        "patrulha": true,
+        "persegue": true,
+        "podeAparecer": true,
+        "andaresPermitidos": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "tipoAmeaca": "custom_campanha",
+      "vd": null,
+      "pvMax": 70
+    },
+    {
+      "id": "k3",
+      "nome": "O Juiz Sem Rosto",
+      "elemento": "Conhecimento",
+      "inspiracao": "O Ator Mascarado — inspirado em jogos mentais e chamadas ameaçadoras de slashers.",
+      "criatura": "Existido ou Alheio",
+      "localDestaque": "Escritórios executivos / Biblioteca",
+      "andar": 3,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 75,
+      "defesa": 16,
+      "descricao": "Gerente do hotel obcecado por segredos, regras e controle mental. Usa telefones internos, câmeras e ilusões para expor segredos dos personagens antes de atacar.",
+      "fraquezas": [
+        "Trabalho em equipe",
+        "Câmeras e espelhos",
+        "Exposição sonora"
+      ],
+      "ataques": [
+        {
+          "nome": "Sentença Precisa",
+          "teste": "1d20+8",
+          "dano": "2d8+4"
+        },
+        {
+          "nome": "Interrogatório",
+          "teste": "1d20+6",
+          "dano": "1d10+3"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k3",
+      "tipo": "criatura",
+      "categoria": "assassino",
+      "pvBase": 75,
+      "comportamento": {
+        "patrulha": true,
+        "persegue": true,
+        "podeAparecer": true,
+        "andaresPermitidos": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "tipoAmeaca": "custom_campanha",
+      "vd": null,
+      "pvMax": 75
+    },
+    {
+      "id": "k4",
+      "nome": "O Incendiário / Caótico",
+      "elemento": "Energia",
+      "inspiracao": "A Sombra Imortal — presença implacável que surge em meio a apagões e falhas elétricas.",
+      "criatura": "Perturbado de Energia ou Aberração Elétrica",
+      "localDestaque": "Sala de Máquinas / Gerador / Áreas técnicas",
+      "andar": 2,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 85,
+      "defesa": 17,
+      "descricao": "Hóspede excêntrico ou técnico de manutenção dominado pela entropia e pelo descontrole elétrico. É imprevisível e parece surgir sempre que a iluminação falha.",
+      "fraquezas": [
+        "Água",
+        "Extintores",
+        "Ambientes sem oxigênio"
+      ],
+      "ataques": [
+        {
+          "nome": "Machado Incandescente",
+          "teste": "1d20+9",
+          "dano": "2d12+5"
+        },
+        {
+          "nome": "Explosão de Energia",
+          "teste": "1d20+7",
+          "dano": "3d8+2"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k4",
+      "tipo": "criatura",
+      "categoria": "assassino",
+      "pvBase": 85,
+      "comportamento": {
+        "patrulha": true,
+        "persegue": true,
+        "podeAparecer": true,
+        "andaresPermitidos": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "tipoAmeaca": "custom_campanha",
+      "vd": null,
+      "pvMax": 85
+    }
+  ]
+}

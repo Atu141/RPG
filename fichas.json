@@ -524,7 +524,8 @@
           "teste": "1d20+2",
           "dano": "1d6+1"
         }
-      ]
+      ],
+      "catalogId": "m1"
     },
     {
       "id": "m2",
@@ -540,7 +541,8 @@
           "teste": "1d20+2",
           "dano": "1d6+1"
         }
-      ]
+      ],
+      "catalogId": "m2"
     },
     {
       "id": "m3",
@@ -556,7 +558,8 @@
           "teste": "1d20+4",
           "dano": "1d8+2"
         }
-      ]
+      ],
+      "catalogId": "m3"
     }
   ],
   "assassinos": [
@@ -601,7 +604,8 @@
         8,
         9
       ],
-      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar."
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k1"
     },
     {
       "id": "k2",
@@ -644,7 +648,8 @@
         8,
         9
       ],
-      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar."
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k2"
     },
     {
       "id": "k3",
@@ -687,7 +692,8 @@
         8,
         9
       ],
-      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar."
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k3"
     },
     {
       "id": "k4",
@@ -730,7 +736,8 @@
         8,
         9
       ],
-      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar."
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k4"
     }
   ],
   "enigmas": [
