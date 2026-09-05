@@ -84,122 +84,45 @@
     if(msg.type==='player-request-create'){const base=typeof buildNewPlayer==='function'?buildNewPlayer(String(msg.name||'Jogador'),String(msg.origem||'Atleta')):null;if(!base)return;applyOriginProfile?.(base);data.jogadores.push(base);persist();MP.owners.set(conn.peer,base.id);const target=conn;send(target,{type:'created',...playerSnapshot(base.id),ownerId:base.id});broadcastRoster();renderMaster();renderPlayerCards();}
   }
   function broadcastRoster(){broadcast({type:'roster',players:clone(data.jogadores||[]),room:MP.roomCode});}
-  function buildPlayerLink(){
-    if(!MP.hostPeerId)return '';
-    const url=new URL(window.location.href);
-    url.search=''; url.hash='';
-    url.searchParams.set('mesa',MP.hostPeerId);
-    return url.toString();
-  }
-  function copyPlayerLink(){
-    const link=buildPlayerLink();
-    if(!link)return toast('Primeiro clique em CRIAR LINK DOS JOGADORES.');
-    if(navigator.clipboard?.writeText){navigator.clipboard.writeText(link).then(()=>toast('Link dos jogadores copiado.')).catch(()=>window.prompt('Copie o link dos jogadores:',link));}
-    else window.prompt('Copie o link dos jogadores:',link);
-  }
-  function claimPlayer(id){
-    const conn=MP.connections.values().next().value;
-    if(!conn)return toast('A conexão com o Mestre ainda não está pronta.');
-    MP.ownerId=id; send(conn,{type:'claim',playerId:id});
-  }
-  function requestCreate(){
-    if(MP.role!=='player'||!MP.connected)return toast('Aguarde a conexão automática com o Mestre.');
-    if(typeof openCreateSheetModal==='function'){
-      openCreateSheetModal();
-      const title=document.querySelector('#createSheetModal h2');
-      const note=document.querySelector('#createSheetModal .create-sheet-note small');
-      if(title)title.textContent='Criar minha ficha';
-      if(note)note.textContent='A ficha será criada neste dispositivo e enviada automaticamente ao Mestre. PV, PE, SAN e demais recursos ficarão sincronizados durante a sessão.';
-      const modal=$id('createSheetModal'); if(modal)modal.dataset.multiplayerCreate='true';
-    }
-  }
-  function sendOwnState(){
-    if(MP.role!=='player'||MP.applying||!MP.connected||!MP.ownerId)return;
-    const conn=MP.connections.values().next().value;
-    const p=data.jogadores.find(x=>x.id===MP.ownerId);
-    if(conn&&p)send(conn,{type:'player-upsert',player:clone(p)});
-  }
-  function renderPlayerChooser(players){
-    const host=$id('mpPlayerChooser');if(!host)return;
-    host.innerHTML=`<div class="v071-chooser"><b>Sua ficha</b><small>Escolha uma ficha existente ou crie a sua. Depois disso, suas alterações ficam sincronizadas com o Mestre.</small><div>${players.map(p=>`<button class="v071-player-choice" onclick="MultiplayerV071.claim('${h(p.id)}')"><span>${h(p.nome)}</span><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></button>`).join('')||'<small class="muted">Nenhuma ficha disponível.</small>'}</div><button class="ghost small" onclick="MultiplayerV071.requestCreate()">＋ CRIAR MINHA FICHA</button></div>`;
-  }
+  function inviteUrl(){const base=window.location.href.split('#')[0].split('?')[0];return `${base}?convite=${encodeURIComponent(MP.hostPeerId||`hotel-espelho-${String(MP.roomCode||'').toLowerCase()}`)}`;}
+  async function copyInvite(){const url=inviteUrl();try{await navigator.clipboard.writeText(url);toast('Link de convite copiado.');}catch(e){window.prompt('Copie o link de convite:',url);}return url;}
+  function setupPeerHost(){if(!window.Peer)return toast('Multiplayer requer internet para o canal de conexão.');MP.role='host';MP.roomCode=shortCode();const id=`hotel-espelho-${MP.roomCode.toLowerCase()}`;MP.peer=new Peer(id);MP.peer.on('open',()=>{MP.connected=true;MP.hostPeerId=id;renderMPUI();toast('Mesa pronta. Gere o link de convite.');});MP.peer.on('connection',conn=>{MP.connections.set(conn.peer,conn);conn.on('open',()=>send(conn,{type:'hello',room:MP.roomCode,players:clone(data.jogadores||[])}));conn.on('data',msg=>hostReceive(conn,msg));conn.on('close',()=>{MP.connections.delete(conn.peer);MP.owners.delete(conn.peer);});});MP.peer.on('error',e=>{console.warn(e);toast('Falha no canal multiplayer. Tente criar a sala novamente.');});renderMPUI();}
+  function connectPlayer(code){if(!window.Peer)return toast('Multiplayer requer internet para o canal de conexão.');const raw=String(code||'').trim();const clean=raw.replace(/^hotel-espelho-/i,'').toUpperCase();if(clean.length<4)return toast('Convite inválido.');MP.role='player';MP.roomCode=clean;MP.peer=new Peer();MP.peer.on('open',()=>{const conn=MP.peer.connect(`hotel-espelho-${clean.toLowerCase()}`,{reliable:true});MP.hostPeerId=conn.peer;conn.on('open',()=>{MP.connected=true;MP.connections.set(conn.peer,conn);send(conn,{type:'hello'});renderMPUI();toast('Conectado à mesa.');});conn.on('data',msg=>{if(msg.type==='welcome'){MP.ownerId=null;renderPlayerChooser(msg.players||[]);}if(msg.type==='roster'&&!MP.ownerId){renderPlayerChooser(msg.players||[]);}if(msg.type==='player-state'||msg.type==='created')applyPlayerSnapshot(msg);});conn.on('close',()=>{MP.connected=false;renderMPUI();toast('Conexão com o Mestre encerrada.');});});MP.peer.on('error',e=>{console.warn(e);toast('Não foi possível entrar na sala. Verifique o código e a conexão.');});renderMPUI();}
+  function claimPlayer(id){const conn=MP.connections.values().next().value;if(!conn)return;MP.ownerId=id;send(conn,{type:'claim',playerId:id});}
+  function requestCreate(){const name=prompt('Nome do personagem:');if(!name)return;const origem=prompt('Profissão / Origem (ex.: Atleta):','Atleta');if(!ORIGIN_PROFILES[origem])return toast('Origem inválida. Use uma das origens oficiais da criação de personagem.');const conn=MP.connections.values().next().value;if(!conn)return;send(conn,{type:'player-request-create',name,origem});}
+  function sendOwnState(){if(MP.role!=='player'||MP.applying||!MP.connected||!MP.ownerId)return;const conn=MP.connections.values().next().value;const p=data.jogadores.find(x=>x.id===MP.ownerId);if(conn&&p)send(conn,{type:'player-upsert',player:clone(p)});}
+  function renderPlayerChooser(players){const host=$id('mpPlayerChooser');if(!host)return;host.innerHTML=`<div class="v071-chooser"><b>Escolha sua ficha</b><div>${players.map(p=>`<button class="v071-player-choice" onclick="MultiplayerV071.claim('${h(p.id)}')"><span>${h(p.nome)}</span><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></button>`).join('')||'<small class="muted">Nenhuma ficha disponível.</small>'}</div><button class="ghost small" onclick="MultiplayerV071.requestCreate()">＋ CRIAR MINHA FICHA</button></div>`;}
   function renderMPUI(){
-    const host=$id('v071MultiplayerPanel');if(!host)return;
-    const state=MP.role==='host'?`MESTRE • ${MP.connected?'ONLINE':'ABRINDO'}`:MP.role==='player'?`JOGADOR • ${MP.connected?'ONLINE':'CONECTANDO'}`:'OFFLINE';
-    const link=buildPlayerLink();
-    const hostArea=MP.role==='host'
-      ?`<div><b>Link dos jogadores</b><input class="control-input" readonly value="${h(link||'Gerando link...')}" onclick="this.select()"><small>Envie este link diretamente pelo WhatsApp, Discord ou onde preferir. O jogador não precisa digitar código nem entrar em uma sala manualmente.</small><div class="v071-link-actions"><button class="primary" onclick="MultiplayerV071.copyLink()">⧉ COPIAR LINK</button><button class="ghost small" onclick="MultiplayerV071.newLink()">↻ NOVO LINK</button></div></div><div><b>Jogadores conectados</b><strong class="v071-connected-count">${MP.connections.size}</strong><small>As fichas ficam sincronizadas enquanto o Mestre estiver com a mesa aberta.</small><button class="ghost small" onclick="MultiplayerV071.stop()">ENCERRAR MESA</button></div>`
-      :`<div><b>Modo jogador</b><small>O link enviado pelo Mestre conecta automaticamente este dispositivo. Não é necessário informar código de sala.</small>${MP.role==='player'?`<button class="ghost" onclick="MultiplayerV071.local()">USAR SOMENTE NESTE DISPOSITIVO</button>`:''}</div>`;
-    host.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Fichas da Mesa</h2><p>Compartilhamento por link • sem código de sala • sem anotações em papel.</p></div></div><span class="sync-badge">${h(state)}</span></div><div class="v071-mp-grid">${hostArea}</div>`;
-    const ps=$id('v071PlayerStatus'); if(ps) ps.textContent=MP.role==='player'?(MP.connected?'Conectado ao Mestre. Escolha ou crie sua ficha.':'Conectando ao Mestre...'):'Nenhum link de mesa ativo neste dispositivo.';
-    if(MP.role==='player'&&MP.connected&&!MP.ownerId)renderPlayerChooser(data.jogadores||[]);
+    const host=$id('v071MultiplayerPanel');if(!host)return;const state=MP.role==='host'?`MESTRE • ${MP.connected?'ONLINE':'ABRINDO'}`:MP.role==='player'?`JOGADOR • ${MP.connected?'ONLINE':'CONECTANDO'}`:'OFFLINE';
+    const hostArea=MP.role==='host'?`<div><b>Link de convite</b><div class="v071-invite-url">${h(inviteUrl())}</div><small>Envie este link. O jogador abre e entra automaticamente, sem digitar código.</small><div class="v071-actions"><button class="primary" onclick="MultiplayerV071.copyInvite()">🔗 COPIAR LINK</button><button class="ghost small" onclick="MultiplayerV071.stop()">ENCERRAR MESA</button></div></div><div><b>Jogadores conectados</b><strong class="v071-connected-count">${MP.connections.size}</strong><small>O Mestre deve manter esta página aberta durante a sessão para sincronizar as fichas.</small></div>`:`<div><b>Modo jogador</b><small>O link de convite abre esta página e conecta automaticamente à mesa. Não é necessário informar código.</small><button class="primary" onclick="MultiplayerV071.host()">＋ CRIAR MESA (MESTRE)</button></div><div><button class="ghost" onclick="MultiplayerV071.local()">USAR FICHA SEM SINCRONIZAÇÃO</button></div>`;
+    host.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Sala da Mesa</h2><p>Fichas digitais sincronizadas para ninguém precisar anotar PV, PE ou SAN no papel.</p></div></div><span class="sync-badge">${h(state)}</span></div><div class="v071-mp-grid">${hostArea}</div>`;
+    if(MP.role==='player'&&MP.connected)renderPlayerChooser(data.jogadores||[]);
   }
   function renderPlayerTracker(){
     const host=$id('v071PlayerTracker');if(!host||!data||!selectedPlayer)return;
-    const p=selectedPlayer; const status=MP.role==='player'?(MP.connected?'Ficha sincronizada com o Mestre':'Conexão interrompida'):MP.role==='host'?'Controlado pelo Mestre':'Somente neste dispositivo';
+    const p=selectedPlayer; const status=MP.role==='player'?(MP.connected?'Conectado à mesa':'Desconectado'):MP.role==='host'?'Controlado pelo Mestre':'Modo local';
     host.innerHTML=`<div class="panel-title"><div><span class="icon">♥</span><div><h2>Recursos da ficha</h2><p>${h(status)} • mantenha PV, PE e SAN atualizados sem papel.</p></div></div></div><div class="v071-resource-editor">${[['pv','PV'],['pe','PE'],['san','SAN']].map(([k,l])=>`<label>${l}<div><input type="number" min="0" max="${Number(p[k+'Max'])||999}" value="${Number(p[k])||0}" onchange="MultiplayerV071.resource('${h(p.id)}','${k}',this.value)"><span>/ ${Number(p[k+'Max'])||0}</span></div></label>`).join('')}</div>`;
   }
+  function resource(pid,key,value){const p=data.jogadores.find(x=>x.id===pid);if(!p)return;const max=Number(p[key+'Max'])||0;p[key]=Math.max(0,Math.min(max,Number(value)||0));persist();selectedPlayer=p;renderSheet();}
   function mountMP(){
-    if(!$id('v071MultiplayerPanel')){const p=document.createElement('section');p.id='v071MultiplayerPanel';p.className='panel v071-multiplayer-panel';$id('masterScreen')?.prepend(p);}
-    if(!$id('v071PlayerMP')){const p=document.createElement('section');p.id='v071PlayerMP';p.className='panel v071-player-mp';$id('playerHome')?.prepend(p);}
+    const master=$id('masterScreen');
+    const system=$id('masterSystemTools')||master;
+    if(master&&!$id('v071MultiplayerPanel')){const p=document.createElement('section');p.id='v071MultiplayerPanel';p.className='panel v071-multiplayer-panel';system?.appendChild(p);}
+    if(!$id('v071PlayerMP')&&$id('playerHome')){const p=document.createElement('section');p.id='v071PlayerMP';p.className='panel v071-player-mp';$id('playerHome').prepend(p);}
     const ph=$id('v071PlayerMP');
-    if(ph)ph.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Ficha do jogador</h2><p>Se você recebeu um link do Mestre, a conexão é automática. Sem códigos de sala.</p></div></div></div><div id="v071PlayerStatus" class="muted">${MP.role==='player'?(MP.connected?'Conectado ao Mestre.':'Conectando ao Mestre...'):'Nenhum link de mesa ativo neste dispositivo.'}</div><div id="mpPlayerChooser"></div>`;
+    if(ph)ph.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Ficha do Jogador</h2><p>Seu link de convite já identifica a mesa. Você não precisa digitar código.</p></div></div></div><div id="v071PlayerStatus" class="muted">${new URLSearchParams(location.search).has('convite')?'Conectando automaticamente à mesa…':'Modo ficha local. Use o link enviado pelo Mestre para sincronizar.'}</div><div id="mpPlayerChooser"></div>`;
     renderMPUI();
+    const invite=new URLSearchParams(location.search).get('convite');
+    if(invite&&MP.role==='offline'&&!MP.connected){setTimeout(()=>connectPlayer(invite),250);}
   }
-  function local(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.ownerId=null;renderMPUI();toast('Modo somente neste dispositivo.');}
-  function stop(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.roomCode=null;MP.hostPeerId=null;MP.ownerId=null;renderMPUI();toast('Mesa encerrada.');}
-  function setupPeerHost(){
-    if(!window.Peer)return toast('Multiplayer requer internet para a conexão entre os dispositivos.');
-    if(MP.peer)return renderMPUI();
-    MP.role='host'; MP.roomCode=null;
-    const id=`hotel-espelho-${shortCode().toLowerCase()}`;
-    MP.peer=new Peer(id);
-    MP.peer.on('open',()=>{MP.connected=true;MP.hostPeerId=id;renderMPUI();toast('Link dos jogadores criado.');});
-    MP.peer.on('connection',conn=>{MP.connections.set(conn.peer,conn);conn.on('open',()=>send(conn,{type:'hello',players:clone(data.jogadores||[])}));conn.on('data',msg=>hostReceive(conn,msg));conn.on('close',()=>{MP.connections.delete(conn.peer);MP.owners.delete(conn.peer);renderMPUI();});});
-    MP.peer.on('error',e=>{console.warn(e);MP.connected=false;renderMPUI();toast('Falha ao criar a conexão. Gere um novo link.');});
-    renderMPUI();
-  }
-  function newLink(){
-    if(MP.peer){try{MP.peer.destroy()}catch(e){}}
-    MP.peer=null;MP.connected=false;MP.hostPeerId=null;setupPeerHost();
-  }
-  function connectPlayer(hostId){
-    if(!window.Peer)return toast('Este modo requer internet para conectar ao Mestre.');
-    const clean=String(hostId||'').trim();
-    if(!clean)return toast('Link de mesa inválido.');
-    if(MP.connected&&MP.hostPeerId===clean)return;
-    if(MP.peer){try{MP.peer.destroy()}catch(e){}}
-    MP.role='player';MP.hostPeerId=clean;MP.peer=new Peer();renderMPUI();
-    MP.peer.on('open',()=>{
-      const conn=MP.peer.connect(clean,{reliable:true});MP.connections.set(clean,conn);
-      conn.on('open',()=>{MP.connected=true;send(conn,{type:'hello'});renderMPUI();toast('Ficha conectada ao Mestre.');});
-      conn.on('data',msg=>{if(msg.type==='welcome'){renderPlayerChooser(msg.players||[]);}if(msg.type==='roster'&&!MP.ownerId){renderPlayerChooser(msg.players||[]);}if(msg.type==='player-state'||msg.type==='created')applyPlayerSnapshot(msg);});
-      conn.on('close',()=>{MP.connected=false;renderMPUI();toast('Conexão com o Mestre encerrada.');});
-    });
-    MP.peer.on('error',e=>{console.warn(e);MP.connected=false;renderMPUI();toast('Não foi possível conectar ao Mestre. Abra novamente o link quando a mesa estiver online.');});
-  }
-  function autoConnectFromLink(){
-    try{const host=new URLSearchParams(window.location.search).get('mesa');if(host)connectPlayer(host);}catch(e){console.warn(e)}
-  }
-  const oldCreatePlayerSheet=window.createPlayerSheet;
-  if(typeof oldCreatePlayerSheet==='function'&&!oldCreatePlayerSheet.__v071link){
-    const wrappedCreate=function(){
-      const before=new Set((data.jogadores||[]).map(x=>String(x.id)));
-      const r=oldCreatePlayerSheet.apply(this,arguments);
-      if(MP.role==='player'&&MP.connected){
-        const created=(data.jogadores||[]).find(x=>!before.has(String(x.id)));
-        if(created){MP.ownerId=created.id;setTimeout(()=>sendOwnState(),0);toast('Sua ficha foi enviada ao Mestre.');}
-      }
-      return r;
-    };
-    wrappedCreate.__v071link=true;window.createPlayerSheet=wrappedCreate;
-  }
+  function local(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.ownerId=null;renderMPUI();toast('Modo local ativo.');}
+  function stop(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.roomCode=null;MP.ownerId=null;renderMPUI();toast('Sala encerrada.');}
   const oldSave=window.saveLocal;
   if(typeof oldSave==='function'&&!oldSave.__v071mp){const wrapped=function(){const r=oldSave.apply(this,arguments);if(!MP.applying)setTimeout(()=>{sendOwnState();hostBroadcastPlayerStates();},0);return r};wrapped.__v071mp=true;window.saveLocal=wrapped;}
   const oldRenderMaster=window.renderMaster;window.renderMaster=function(){if(typeof oldRenderMaster==='function')oldRenderMaster.apply(this,arguments);if(document.getElementById('v071CombatPanel'))renderCombatPanel();renderThreatButtons();renderMPUI();};
   const oldRenderSheet=window.renderSheet;window.renderSheet=function(){if(typeof oldRenderSheet==='function')oldRenderSheet.apply(this,arguments);renderPlayerTracker();};
   const oldRenderCards=window.renderPlayerCards;window.renderPlayerCards=function(){if(typeof oldRenderCards==='function')oldRenderCards.apply(this,arguments);if(MP.role==='player'&&MP.ownerId){const cards=$id('playerCards');if(cards)cards.innerHTML=data.jogadores.filter(p=>p.id===MP.ownerId).map(p=>`<button class="player-card" data-id="${h(p.id)}"><div class="avatar">${h(p.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</div><div><b>${h(p.nome)}</b><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></div><span>→</span></button>`).join('');cards?.querySelector('.player-card')?.addEventListener('click',()=>openSheet(MP.ownerId));}};
-  const boot=()=>{if(!data)return setTimeout(boot,100);mountMP();mount();autoConnectFromLink();};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+  const boot=()=>{if(!data)return setTimeout(boot,100);mountMP();mount();};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.CombatV071={start,startFromUI,stop,next,prev,setHP,damage,heal,detail,rollAttack:(id,i)=>rollAttack(id,i),rollDamage:(id,i)=>rollDamageFor(id,i)};
-  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,claim:claimPlayer,requestCreate,resource,local,stop,copyLink:copyPlayerLink,newLink,status:()=>({role:MP.role,hostPeerId:MP.hostPeerId,connected:MP.connected,players:MP.connections.size})};
+  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,resource,local,stop,status:()=>({role:MP.role,room:MP.roomCode,connected:MP.connected,players:MP.connections.size})};
 })();
