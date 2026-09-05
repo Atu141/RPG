@@ -1,0 +1,1063 @@
+{
+  "campanha": {
+    "nome": "O Hotel Espelho",
+    "sistema": "Ordem Paranormal RPG",
+    "local": "Hotel Espelho",
+    "elemento": "Múltiplos elementos do Paranormal",
+    "nex": "5%",
+    "ameaca": "4 assassinos paranormais + criaturas correspondentes",
+    "descricao": "Os quatro personagens se conhecem há algum tempo e acabaram de participar juntos de um grande evento de Taekwondo na cidade. Depois do evento, hospedam-se no mesmo hotel para descansar. Ao anoitecer, o Hotel Espelho começa a revelar sinais de algo inexplicável. Nenhum dos personagens teve contato anterior com o Paranormal ou com a Ordo Realitas. O objetivo é sair vivos do hotel.",
+    "andarAtual": 5,
+    "objetivoAtual": "Explorar o 5º andar, investigar os primeiros sinais e descobrir qual rota de fuga será possível: descer ao Hall no térreo ou subir até o Terraço.",
+    "perseguicao": "Normal",
+    "chavesEncontradas": [],
+    "escolhaClasseLiberada": false,
+    "introducao": "Após o grande evento de Taekwondo na cidade, vocês chegam ao Hotel Espelho para descansar. Durante o dia, o hotel parece perfeitamente normal: funcionários prestativos, hóspedes tranquilos e um ambiente confortável. Conforme a noite se aproxima, pequenos detalhes começam a não fazer sentido.",
+    "pistasReveladas": [],
+    "salasInvestigadas": {},
+    "eventoAtual": "Nenhum evento em andamento.",
+    "tipo": "One-Shot — Investigação, Sobrevivência e Terror",
+    "atos": [
+      {
+        "numero": 1,
+        "nome": "O Pós-Evento & O Descanso",
+        "descricao": "Introdução dos personagens, chegada ao hotel, interações normais com funcionários e primeiros sinais sutis de anormalidade ao anoitecer."
+      },
+      {
+        "numero": 2,
+        "nome": "O Despertar do Pesadelo",
+        "descricao": "O grande evento paranormal atinge o hotel. A energia falha, a comunicação cai, o prédio é isolado e os quatro assassinos e suas criaturas começam a surgir."
+      },
+      {
+        "numero": 3,
+        "nome": "A Corrida pela Sobrevivência",
+        "descricao": "Os personagens precisam escolher entre descer até o Hall de Entrada ou subir até o Terraço em busca de resgate."
+      }
+    ],
+    "saidasSeguras": [
+      {
+        "nome": "Hall de Entrada",
+        "andar": 0,
+        "local": "Térreo — Hall de Entrada",
+        "descricao": "Saída principal do hotel. É alcançada descendo do 5º andar pelos andares 4, 3, 2 e 1, chegando finalmente ao térreo.",
+        "rota": "5º → 4º → 3º → 2º → 1º → Térreo"
+      },
+      {
+        "nome": "Terraço",
+        "andar": 9,
+        "local": "Terraço — acima do 9º andar",
+        "descricao": "Rota de resgate/evacuação. É alcançada subindo do 5º andar pelos andares 6, 7, 8 e 9.",
+        "rota": "5º → 6º → 7º → 8º → 9º → Terraço"
+      }
+    ],
+    "dinamicaHotel": {
+      "duranteDia": "O hotel funciona normalmente: atendimento impecável, hóspedes tranquilos, funcionários prestativos e ambiente aconchegante.",
+      "transicao": "Conforme o sol se põe, a Névoa/Membrana do local enfraquece drasticamente. Barulhos estranhos ecoam nas tubulações, sombras se distorcem, luzes piscam e o clima fica opressivo.",
+      "grandeNoite": "Um evento paranormal de grande escala atinge o hotel, isolando o prédio do mundo exterior. Portas secundárias e janelas dos quartos se fecham misteriosamente ou passam a dar para o nada."
+    },
+    "caminhosSaida": [
+      {
+        "id": "hall",
+        "nome": "Rota do Hall",
+        "andares": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "destino": "Térreo — Hall de Entrada",
+        "descricao": "Descer pelos andares 4, 3, 2 e 1 até alcançar o Hall de Entrada no térreo."
+      },
+      {
+        "id": "terraco",
+        "nome": "Rota do Terraço",
+        "andares": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "destino": "Terraço — acima do 9º andar",
+        "descricao": "Subir pelos andares 6, 7, 8 e 9 até alcançar o acesso ao Terraço."
+      }
+    ],
+    "rotasSaida": {
+      "hall": {
+        "nome": "Rota do Hall",
+        "andares": [
+          4,
+          3,
+          2,
+          1
+        ],
+        "destino": "Hall de Entrada — 1º andar",
+        "tipo": "Saída principal"
+      },
+      "terraco": {
+        "nome": "Rota do Terraço",
+        "andares": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "destino": "Terraço — acima do 9º andar",
+        "tipo": "Resgate / evacuação"
+      }
+    },
+    "andarInicial": 5,
+    "andarMinimo": 1,
+    "andarMaximo": 9,
+    "observacaoMapa": "O hotel possui 9 andares acima do térreo. O 5º andar é o ponto inicial. Os andares 1–4 formam a rota inferior até o Hall de Entrada no térreo; os andares 6–9 formam a rota superior até o Terraço. Cada andar possui de 8 a 10 quartos, além de pelo menos um ambiente diferencial. Os quatro assassinos não possuem andar fixo e podem ser posicionados pelo Mestre entre os andares 1–9.",
+    "rotasEnigmas": {
+      "chavesCompartilhadas": true,
+      "descricao": "As Chaves 1 a 4 são enigmas universais. O Mestre pode aplicá-los em qualquer andar das rotas do Hall ou do Terraço, sem alterar a progressão.",
+      "andarInicial": 5,
+      "andarBloqueadoAssassinos": 5
+    }
+  },
+  "andares": [
+    {
+      "id": 1,
+      "nome": "1º Andar — Hospedagem",
+      "elemento": "Múltiplos",
+      "descricao": "Andar próximo à saída. Os quartos parecem normais, mas o silêncio aumenta conforme a Grande Noite avança.",
+      "salas": [
+        "Quarto 101",
+        "Quarto 102",
+        "Quarto 103",
+        "Quarto 104",
+        "Quarto 105",
+        "Quarto 106",
+        "Quarto 107",
+        "Quarto 108",
+        "Sala de Serviço",
+        "Escadaria para o Térreo"
+      ],
+      "diferencial": "Sala de Serviço",
+      "quantidadeQuartos": 8,
+      "chave": "Chave do 1º Andar"
+    },
+    {
+      "id": 2,
+      "nome": "2º Andar — Segurança",
+      "elemento": "Conhecimento",
+      "descricao": "Andar de controle e monitoramento. Registros, câmeras e comunicações podem revelar o que aconteceu.",
+      "salas": [
+        "Quarto 201",
+        "Quarto 202",
+        "Quarto 203",
+        "Quarto 204",
+        "Quarto 205",
+        "Quarto 206",
+        "Quarto 207",
+        "Quarto 208",
+        "Quarto 209",
+        "Sala de Segurança",
+        "Escadaria Central"
+      ],
+      "diferencial": "Sala de Segurança",
+      "quantidadeQuartos": 9,
+      "chave": "Chave do 2º Andar"
+    },
+    {
+      "id": 3,
+      "nome": "3º Andar — Biblioteca",
+      "elemento": "Conhecimento",
+      "descricao": "Um andar silencioso, com livros, documentos antigos e corredores de espelhos.",
+      "salas": [
+        "Quarto 301",
+        "Quarto 302",
+        "Quarto 303",
+        "Quarto 304",
+        "Quarto 305",
+        "Quarto 306",
+        "Quarto 307",
+        "Quarto 308",
+        "Biblioteca",
+        "Escadaria Central"
+      ],
+      "diferencial": "Biblioteca",
+      "quantidadeQuartos": 8,
+      "chave": "Chave do 3º Andar"
+    },
+    {
+      "id": 4,
+      "nome": "4º Andar — Restauração",
+      "elemento": "Sangue",
+      "descricao": "Área de alimentação e serviço do hotel. A cozinha industrial é um dos grandes pontos de interesse.",
+      "salas": [
+        "Quarto 401",
+        "Quarto 402",
+        "Quarto 403",
+        "Quarto 404",
+        "Quarto 405",
+        "Quarto 406",
+        "Quarto 407",
+        "Quarto 408",
+        "Quarto 409",
+        "Quarto 410",
+        "Cozinha Industrial",
+        "Escadaria Central"
+      ],
+      "diferencial": "Cozinha Industrial",
+      "quantidadeQuartos": 10,
+      "chave": "Chave do 4º Andar"
+    },
+    {
+      "id": 5,
+      "nome": "5º Andar — Quartos de Hóspedes",
+      "elemento": "Múltiplos",
+      "descricao": "Andar inicial dos personagens. Durante o dia parece normal; ao anoitecer, os primeiros sinais de anormalidade surgem aqui.",
+      "salas": [
+        "Quarto 501",
+        "Quarto 502",
+        "Quarto 503",
+        "Quarto 504",
+        "Quarto 505",
+        "Quarto 506",
+        "Quarto 507",
+        "Quarto 508",
+        "Quarto 509",
+        "Sala de Jogos",
+        "Elevadores",
+        "Escadaria Central"
+      ],
+      "diferencial": "Sala de Jogos",
+      "quantidadeQuartos": 9,
+      "chave": "Chave do 5º Andar"
+    },
+    {
+      "id": 6,
+      "nome": "6º Andar — Hospedagem",
+      "elemento": "Morte",
+      "descricao": "Primeiro nível da rota de fuga superior. A disposição dos quartos e o silêncio tornam a exploração desconfortável.",
+      "salas": [
+        "Quarto 601",
+        "Quarto 602",
+        "Quarto 603",
+        "Quarto 604",
+        "Quarto 605",
+        "Quarto 606",
+        "Quarto 607",
+        "Quarto 608",
+        "Sala de Descanso",
+        "Elevadores",
+        "Escadaria Central"
+      ],
+      "diferencial": "Sala de Descanso",
+      "quantidadeQuartos": 8,
+      "chave": "Chave do 6º Andar"
+    },
+    {
+      "id": 7,
+      "nome": "7º Andar — Eventos",
+      "elemento": "Energia",
+      "descricao": "Andar voltado a eventos e reuniões. Equipamentos podem funcionar sozinhos após a Grande Noite.",
+      "salas": [
+        "Quarto 701",
+        "Quarto 702",
+        "Quarto 703",
+        "Quarto 704",
+        "Quarto 705",
+        "Quarto 706",
+        "Quarto 707",
+        "Quarto 708",
+        "Quarto 709",
+        "Salão de Eventos",
+        "Elevadores",
+        "Escadaria Central"
+      ],
+      "diferencial": "Salão de Eventos",
+      "quantidadeQuartos": 9,
+      "chave": "Chave do 7º Andar"
+    },
+    {
+      "id": 8,
+      "nome": "8º Andar — Áreas Técnicas",
+      "elemento": "Energia",
+      "descricao": "O sistema elétrico do hotel passa por este andar. Falhas de energia e ruídos metálicos são constantes.",
+      "salas": [
+        "Quarto 801",
+        "Quarto 802",
+        "Quarto 803",
+        "Quarto 804",
+        "Quarto 805",
+        "Quarto 806",
+        "Quarto 807",
+        "Quarto 808",
+        "Gerador Principal",
+        "Elevadores",
+        "Escadaria Central"
+      ],
+      "diferencial": "Gerador Principal",
+      "quantidadeQuartos": 8,
+      "chave": "Chave do 8º Andar"
+    },
+    {
+      "id": 9,
+      "nome": "9º Andar — Cobertura",
+      "elemento": "Múltiplos",
+      "descricao": "Último andar do hotel. É o trecho final antes do acesso ao Terraço e à possível evacuação.",
+      "salas": [
+        "Quarto 901",
+        "Quarto 902",
+        "Quarto 903",
+        "Quarto 904",
+        "Quarto 905",
+        "Quarto 906",
+        "Quarto 907",
+        "Quarto 908",
+        "Acesso ao Terraço",
+        "Elevadores",
+        "Escadaria Central"
+      ],
+      "diferencial": "Acesso ao Terraço",
+      "quantidadeQuartos": 8,
+      "chave": "Chave do Terraço"
+    }
+  ],
+  "jogadores": [
+    {
+      "id": "p1",
+      "nome": "Arthur Reis",
+      "classe": null,
+      "nex": "5%",
+      "pv": 16,
+      "pvMax": 16,
+      "pe": 10,
+      "peMax": 10,
+      "san": 18,
+      "sanMax": 18,
+      "atributos": {
+        "FOR": 1,
+        "AGI": 1,
+        "INT": 1,
+        "PRE": 1,
+        "VIG": 1
+      },
+      "defesa": 11,
+      "itens": [
+        {
+          "nome": "Lanterna",
+          "descricao": "Iluminação portátil.",
+          "quantidade": 1,
+          "tipo": "equipamento",
+          "equipado": false,
+          "teste": "",
+          "dano": "",
+          "bonus": ""
+        }
+      ],
+      "pericias": [
+        {
+          "nome": "Acrobacia",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Adestramento",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Artes",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Atletismo",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Atualidades",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Ciências",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Crime",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Diplomacia",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Enganação",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Fortitude",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Furtividade",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Iniciativa",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Intimidação",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Intuição",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Investigação",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Luta",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Medicina",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Ocultismo",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Percepção",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Pilotagem",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Pontaria",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Profissão",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Reflexos",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Religião",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Sobrevivência",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Tática",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Tecnologia",
+          "teste": "AUTO",
+          "treinada": false
+        },
+        {
+          "nome": "Vontade",
+          "teste": "AUTO",
+          "treinada": false
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Soco",
+          "teste": "1d20+1",
+          "dano": "1d3+1",
+          "categoria": "corpo-a-corpo"
+        },
+        {
+          "nome": "Improvisado",
+          "teste": "1d20+1",
+          "dano": "1d4",
+          "categoria": "corpo-a-corpo"
+        }
+      ]
+    }
+  ],
+  "monstros": [
+    {
+      "id": "m1",
+      "nome": "Zumbi de Sangue #1",
+      "tipo": "Básico • Sangue",
+      "pv": 10,
+      "pvMax": 10,
+      "defesa": 10,
+      "andar": 5,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "1d20+2",
+          "dano": "1d6+1"
+        }
+      ],
+      "catalogId": "m1"
+    },
+    {
+      "id": "m2",
+      "nome": "Zumbi de Sangue #2",
+      "tipo": "Básico • Sangue",
+      "pv": 10,
+      "pvMax": 10,
+      "defesa": 10,
+      "andar": 5,
+      "ataques": [
+        {
+          "nome": "Garras",
+          "teste": "1d20+2",
+          "dano": "1d6+1"
+        }
+      ],
+      "catalogId": "m2"
+    },
+    {
+      "id": "m3",
+      "nome": "Cão Sem-Rosto",
+      "tipo": "Básico • Medo",
+      "pv": 18,
+      "pvMax": 18,
+      "defesa": 12,
+      "andar": 2,
+      "ataques": [
+        {
+          "nome": "Mordida",
+          "teste": "1d20+4",
+          "dano": "1d8+2"
+        }
+      ],
+      "catalogId": "m3"
+    }
+  ],
+  "assassinos": [
+    {
+      "id": "k1",
+      "nome": "O Açougueiro",
+      "elemento": "Sangue",
+      "inspiracao": "O Mascarado do Machete — inspirado na força brutal e implacável dos slashers clássicos.",
+      "criatura": "Zumbi de Sangue ou Maligno de Sangue",
+      "localDestaque": "Cozinha / Restauração",
+      "andar": 4,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 80,
+      "defesa": 16,
+      "descricao": "Ex-segurança do hotel tomado pela fúria incontrolável e pela obsessão por dor e carne. Silencioso, pesado e brutal, prefere encurralar suas vítimas em espaços estreitos.",
+      "fraquezas": [
+        "Luz intensa",
+        "Ambientes estreitos",
+        "Distrair com ruído"
+      ],
+      "ataques": [
+        {
+          "nome": "Golpe do Cutelo",
+          "teste": "1d20+8",
+          "dano": "2d10+6"
+        },
+        {
+          "nome": "Investida Brutal",
+          "teste": "1d20+6",
+          "dano": "3d6+4"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k1"
+    },
+    {
+      "id": "k2",
+      "nome": "O Algoz Fúnebre",
+      "elemento": "Morte",
+      "inspiracao": "O Espectro dos Sonhos — uma adaptação temática de terror onírico.",
+      "criatura": "Lodo Espiral ou Zumbi de Morte",
+      "localDestaque": "Porão / Lavanderia / Corredores escuros",
+      "andar": 4,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 70,
+      "defesa": 15,
+      "descricao": "Carregador de malas/recepcionista cuja percepção do tempo foi distorcida pelo lodo e pelo desespero. Sua presença está ligada à decomposição, à exaustão e à sensação de tempo perdido.",
+      "fraquezas": [
+        "Luz contínua",
+        "Interromper efeitos temporais",
+        "Evitar áreas contaminadas por lodo"
+      ],
+      "ataques": [
+        {
+          "nome": "Toque da Decomposição",
+          "teste": "1d20+7",
+          "dano": "2d8+5"
+        },
+        {
+          "nome": "Espiral do Tempo",
+          "teste": "1d20+9",
+          "dano": "2d6+SAN"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k2"
+    },
+    {
+      "id": "k3",
+      "nome": "O Juiz Sem Rosto",
+      "elemento": "Conhecimento",
+      "inspiracao": "O Ator Mascarado — inspirado em jogos mentais e chamadas ameaçadoras de slashers.",
+      "criatura": "Existido ou Alheio",
+      "localDestaque": "Escritórios executivos / Biblioteca",
+      "andar": 3,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 75,
+      "defesa": 16,
+      "descricao": "Gerente do hotel obcecado por segredos, regras e controle mental. Usa telefones internos, câmeras e ilusões para expor segredos dos personagens antes de atacar.",
+      "fraquezas": [
+        "Trabalho em equipe",
+        "Câmeras e espelhos",
+        "Exposição sonora"
+      ],
+      "ataques": [
+        {
+          "nome": "Sentença Precisa",
+          "teste": "1d20+8",
+          "dano": "2d8+4"
+        },
+        {
+          "nome": "Interrogatório",
+          "teste": "1d20+6",
+          "dano": "1d10+3"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k3"
+    },
+    {
+      "id": "k4",
+      "nome": "O Incendiário / Caótico",
+      "elemento": "Energia",
+      "inspiracao": "A Sombra Imortal — presença implacável que surge em meio a apagões e falhas elétricas.",
+      "criatura": "Perturbado de Energia ou Aberração Elétrica",
+      "localDestaque": "Sala de Máquinas / Gerador / Áreas técnicas",
+      "andar": 2,
+      "sala": "Oculto",
+      "estado": "Oculto",
+      "ativo": false,
+      "pv": 85,
+      "defesa": 17,
+      "descricao": "Hóspede excêntrico ou técnico de manutenção dominado pela entropia e pelo descontrole elétrico. É imprevisível e parece surgir sempre que a iluminação falha.",
+      "fraquezas": [
+        "Água",
+        "Extintores",
+        "Ambientes sem oxigênio"
+      ],
+      "ataques": [
+        {
+          "nome": "Machado Incandescente",
+          "teste": "1d20+9",
+          "dano": "2d12+5"
+        },
+        {
+          "nome": "Explosão de Energia",
+          "teste": "1d20+7",
+          "dano": "3d8+2"
+        }
+      ],
+      "andarPermitido": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "restricaoMovimento": "Pode atuar em qualquer andar de 1 a 9, exceto o 5º andar.",
+      "catalogId": "k4"
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "e5",
+      "andar": null,
+      "nome": "O Registro dos Hóspedes",
+      "descricao": "Na mesa há quatro fichas: 302 = 18:40, 305 = 19:25, 308 = 18:55 e 301 = 20:10. Um bilhete ordena os registros do horário mais antigo ao mais recente e pede o último algarismo de cada quarto.",
+      "pista": "Ordene os horários: 18:40, 18:55, 19:25, 20:10. Depois use os últimos algarismos dos quartos nessa ordem.",
+      "solucao": "2851",
+      "resposta": "2851",
+      "recompensa": "Chave 1 — acesso à progressão da rota.",
+      "local": "Pista compartilhada — pode ser introduzida em qualquer rota; o 5º andar é o ponto inicial.",
+      "rotas": [
+        "Hall",
+        "Terraço"
+      ],
+      "uso": "Enigma compartilhado entre as duas rotas de fuga.",
+      "resolvido": false,
+      "chave": 1,
+      "tipo": "Chave 1",
+      "tentativas": 0
+    },
+    {
+      "id": "e4",
+      "andar": null,
+      "nome": "A Cozinha Trancada",
+      "descricao": "A porta apresenta quatro símbolos: fogo, água, ar e sangue. Uma receita encontrada no hotel traz quatro ações: aquecer, ferver, ventilar e temperar. Pressione os símbolos na ordem das ações.",
+      "pista": "Aquecer corresponde a fogo; ferver a água; ventilar ao ar; temperar ao sangue.",
+      "solucao": "FOGO AGUA AR SANGUE",
+      "resposta": "FOGO AGUA AR SANGUE",
+      "recompensa": "Chave 2 — acesso à progressão da rota.",
+      "local": "Pista compartilhada — a manifestação pode ser deslocada pelo Mestre para a rota escolhida.",
+      "rotas": [
+        "Hall",
+        "Terraço"
+      ],
+      "uso": "Enigma compartilhado entre as duas rotas de fuga.",
+      "resolvido": false,
+      "chave": 2,
+      "tipo": "Chave 2",
+      "tentativas": 0
+    },
+    {
+      "id": "e3",
+      "andar": null,
+      "nome": "O Corredor dos Espelhos",
+      "descricao": "Três espelhos são numerados da esquerda para a direita. Ao fechar os olhos, apenas o reflexo do espelho 2 fecha os olhos junto com o personagem. Esse é o reflexo verdadeiro.",
+      "pista": "O reflexo verdadeiro deve repetir todos os movimentos, inclusive fechar os olhos.",
+      "solucao": "ESPELHO 2",
+      "resposta": "ESPELHO 2",
+      "recompensa": "Chave 3 — acesso à progressão da rota.",
+      "local": "Pista compartilhada — pode ser apresentada no 5º andar ou em outro ponto definido pelo Mestre.",
+      "rotas": [
+        "Hall",
+        "Terraço"
+      ],
+      "uso": "Enigma compartilhado entre as duas rotas de fuga.",
+      "resolvido": false,
+      "chave": 3,
+      "tipo": "Chave 3",
+      "tentativas": 0
+    },
+    {
+      "id": "e2",
+      "andar": null,
+      "nome": "A Sala de Segurança",
+      "descricao": "O log de acessos mostra 21:10 — Recepção; 21:25 — Quarto 204; 21:40 — Sem identificação; 21:55 — Recepção. O painel pede o horário do único acesso impossível.",
+      "pista": "Procure a entrada sem pessoa ou local identificável.",
+      "solucao": "21:40",
+      "resposta": "2140",
+      "recompensa": "Chave 4 — acesso à saída.",
+      "local": "Pista compartilhada — pode ser introduzida em qualquer rota.",
+      "rotas": [
+        "Hall",
+        "Terraço"
+      ],
+      "uso": "Enigma compartilhado entre as duas rotas de fuga.",
+      "resolvido": false,
+      "chave": 4,
+      "tipo": "Chave 4",
+      "tentativas": 0
+    },
+    {
+      "id": "e1",
+      "andar": 0,
+      "nome": "A Porta Principal",
+      "descricao": "A fechadura possui quatro símbolos. Depois de obter as quatro chaves, pressione os símbolos na ordem em que os quatro elementos despertaram na campanha: Sangue, Morte, Conhecimento e Energia.",
+      "pista": "A sequência acompanha a ordem narrativa dos quatro assassinos.",
+      "solucao": "SANGUE MORTE CONHECIMENTO ENERGIA",
+      "resposta": "SMCE",
+      "resolvido": false,
+      "recompensa": "Saída pelo Hall",
+      "local": "Térreo — Hall de Entrada",
+      "rotas": [
+        "Hall"
+      ],
+      "uso": "Enigma final da rota do Hall."
+    },
+    {
+      "id": "et",
+      "andar": 9,
+      "nome": "Acesso ao Terraço",
+      "descricao": "O painel do elevador de serviço mostra quatro símbolos e a mensagem: “Suba seguindo o caminho inverso do despertar.” Pressione os símbolos na ordem inversa: Energia, Conhecimento, Morte e Sangue.",
+      "pista": "Inverta a sequência usada na Porta Principal.",
+      "solucao": "ENERGIA CONHECIMENTO MORTE SANGUE",
+      "resposta": "EKMS",
+      "resolvido": false,
+      "recompensa": "Saída pelo Terraço",
+      "local": "9º Andar — Acesso ao Terraço",
+      "rotas": [
+        "Terraço"
+      ],
+      "uso": "Enigma final da rota do Terraço."
+    }
+  ],
+  "atividades": [
+    {
+      "id": 1,
+      "nome": "Chegar ao Hotel Espelho e descansar",
+      "status": "Concluída"
+    },
+    {
+      "id": 2,
+      "nome": "Investigar os primeiros sinais de anormalidade",
+      "status": "Em andamento"
+    },
+    {
+      "id": 3,
+      "nome": "Sobreviver ao colapso Paranormal",
+      "status": "Bloqueada"
+    },
+    {
+      "id": 4,
+      "nome": "Escolher uma rota de fuga: Hall ou Terraço",
+      "status": "Bloqueada",
+      "descricao": "Escolher uma rota de fuga: descer ao Hall (1º–4º) ou subir ao Terraço (6º–9º)."
+    },
+    {
+      "id": 5,
+      "nome": "Escapar do Hotel Espelho",
+      "status": "Bloqueada"
+    }
+  ],
+  "logs": [],
+  "_storySchemaVersion": 1,
+  "_classSchemaVersion": 1,
+  "pistas": [
+    {
+      "id": "p1-1",
+      "andar": 1,
+      "tema": "Saída",
+      "nome": "Livro de manutenção da saída",
+      "texto": "O livro registra travas internas instaladas na porta principal. A última anotação informa que o mecanismo foi acionado sem ordem da administração.",
+      "revelada": false
+    },
+    {
+      "id": "p1-2",
+      "andar": 1,
+      "tema": "Saída",
+      "nome": "Ruído atrás da porta",
+      "texto": "Próximo à escadaria, alguém ouve batidas do outro lado da porta principal. Quando ela é observada, o som para imediatamente.",
+      "revelada": false
+    },
+    {
+      "id": "p2-1",
+      "andar": 2,
+      "tema": "Segurança",
+      "nome": "Câmeras do turno da noite",
+      "texto": "As gravações mostram um funcionário de segurança entrando na área de serviço e não registram sua saída.",
+      "revelada": false
+    },
+    {
+      "id": "p2-2",
+      "andar": 2,
+      "tema": "Segurança",
+      "nome": "Registro de acesso alterado",
+      "texto": "O sistema indica que uma credencial de segurança foi usada várias vezes depois do horário em que o funcionário deveria ter deixado o hotel.",
+      "revelada": false
+    },
+    {
+      "id": "p3-1",
+      "andar": 3,
+      "tema": "Biblioteca",
+      "nome": "Regulamento dos hóspedes",
+      "texto": "Um manual antigo contém regras absurdas sobre o que pode ser dito, lembrado ou questionado dentro do hotel.",
+      "revelada": false
+    },
+    {
+      "id": "p3-2",
+      "andar": 3,
+      "tema": "Biblioteca",
+      "nome": "Espelho desencontrado",
+      "texto": "Um espelho reflete uma porta diferente daquela que existe no corredor. O reflexo parece mostrar um caminho que não deveria estar ali.",
+      "revelada": false
+    },
+    {
+      "id": "p4-1",
+      "andar": 4,
+      "tema": "Restauração",
+      "nome": "Marcas na cozinha",
+      "texto": "Marcas profundas atravessam o piso da cozinha industrial, terminando diante de uma área onde instrumentos de corte eram guardados.",
+      "revelada": false
+    },
+    {
+      "id": "p4-2",
+      "andar": 4,
+      "tema": "Restauração",
+      "nome": "Escala de funcionários",
+      "texto": "A escala identifica um antigo segurança ligado à cozinha e registra uma sequência de plantões interrompida de forma repentina.",
+      "revelada": false
+    },
+    {
+      "id": "p5-1",
+      "andar": 5,
+      "tema": "Hospedagem",
+      "nome": "Registro de hospedagem",
+      "texto": "Os quatro personagens aparecem registrados juntos no 5º andar, embora ninguém se lembre de ter feito o check-in dessa forma.",
+      "revelada": false
+    },
+    {
+      "id": "p5-2",
+      "andar": 5,
+      "tema": "Hospedagem",
+      "nome": "Relógios fora de sincronia",
+      "texto": "Os relógios dos quartos indicam horários diferentes. Nenhum deles coincide com o relógio da recepção.",
+      "revelada": false
+    },
+    {
+      "id": "p5-3",
+      "andar": 5,
+      "tema": "Hospedagem",
+      "nome": "Aviso de emergência",
+      "texto": "Um aviso de serviço menciona duas rotas de evacuação: o Hall no térreo e o Terraço. O acesso às duas aparece como indisponível.",
+      "revelada": false
+    },
+    {
+      "id": "p6-1",
+      "andar": 6,
+      "tema": "Hospedagem",
+      "nome": "Carrinho de bagagens abandonado",
+      "texto": "Um carrinho de hotel permanece parado no corredor. A etiqueta de uma mala registra um horário que ainda não aconteceu.",
+      "revelada": false
+    },
+    {
+      "id": "p6-2",
+      "andar": 6,
+      "tema": "Hospedagem",
+      "nome": "Telefone sem origem",
+      "texto": "Um telefone toca em um quarto vazio. Ao atender, a voz do outro lado pergunta quanto tempo falta para o próximo turno.",
+      "revelada": false
+    },
+    {
+      "id": "p7-1",
+      "andar": 7,
+      "tema": "Eventos",
+      "nome": "Fotografia do salão",
+      "texto": "Uma fotografia de um evento antigo mostra funcionários e hóspedes em posições idênticas às que ocupam agora, apesar de a foto ser muito anterior.",
+      "revelada": false
+    },
+    {
+      "id": "p7-2",
+      "andar": 7,
+      "tema": "Eventos",
+      "nome": "Microfone ligado",
+      "texto": "O sistema de som anuncia números de quartos e pede que os hóspedes permaneçam onde estão, como se estivesse seguindo um protocolo de contenção.",
+      "revelada": false
+    },
+    {
+      "id": "p8-1",
+      "andar": 8,
+      "tema": "Áreas Técnicas",
+      "nome": "Relatório do gerador",
+      "texto": "O gerador registra picos de energia sem causa elétrica aparente. Os horários coincidem com as primeiras falhas de iluminação do hotel.",
+      "revelada": false
+    },
+    {
+      "id": "p8-2",
+      "andar": 8,
+      "tema": "Áreas Técnicas",
+      "nome": "Painel queimado",
+      "texto": "Um painel apresenta sinais de descarga e calor intenso. A instalação parece ter sido afetada por algo mais caótico do que uma simples sobrecarga.",
+      "revelada": false
+    },
+    {
+      "id": "p9-1",
+      "andar": 9,
+      "tema": "Cobertura",
+      "nome": "Manual de evacuação",
+      "texto": "O manual confirma que o Terraço é o ponto de resgate, mas exige que o acesso seja liberado pelo sistema de emergência.",
+      "revelada": false
+    },
+    {
+      "id": "p9-2",
+      "andar": 9,
+      "tema": "Cobertura",
+      "nome": "Luzes além do prédio",
+      "texto": "Pela janela da cobertura, as luzes da cidade parecem muito distantes. Alguns pontos se movem como se estivessem no céu.",
+      "revelada": false
+    }
+  ],
+  "_explorationSchemaVersion": 1,
+  "_releaseVersion": "v0.40.4",
+  "_campaignSchemaVersion": 2,
+  "_floorSchemaVersion": 2,
+  "terreo": {
+    "id": 0,
+    "nome": "Térreo — Hall de Entrada",
+    "elemento": "Múltiplos",
+    "descricao": "Ponto de saída principal do hotel. O Hall fica no térreo, abaixo do 1º andar.",
+    "ambientes": [
+      "Hall de Entrada",
+      "Recepção",
+      "Saguão Principal",
+      "Sala de Espera",
+      "Porta Principal",
+      "Guarita/Segurança Externa"
+    ],
+    "rotaSaida": "Saída principal"
+  },
+  "_clueSchemaVersion": 2,
+  "_rosterSchemaVersion": 1
+}

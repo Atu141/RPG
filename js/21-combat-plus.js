@@ -1,0 +1,10 @@
+/* V0.48 — Combate completo: iniciativa, ações, dano, condições e histórico. */
+const CombatPlus=(()=>{
+  function ensure(){const c=CombatEngine.ensure();c.historico=Array.isArray(c.historico)?c.historico:[];c.condicoes=c.condicoes||{};return c;}
+  function participants(){return ensure().iniciativa.map(x=>CombatEngine.find(x.id)).filter(Boolean);}
+  function rollAttack(attackerId,targetId,formula,damageFormula){const c=ensure();if(!c.ativo)return toast('Inicie o combate.');const a=CombatEngine.find(attackerId),t=CombatEngine.find(targetId);if(!a||!t)return toast('Participante inválido.');const roll=rollFormula(formula),damage=rollFormula(damageFormula);if(t.pv!==undefined)t.pv=Math.max(0,t.pv-damage.total);const entry={id:'cb-'+Date.now(),tipo:'ataque',atacante:a.nome,alvo:t.nome,teste:roll.total,dano:damage.total,at:Date.now()};c.historico.unshift(entry);c.log.unshift({text:`${a.nome} atacou ${t.nome}: ${roll.total} / ${damage.total} dano.`,at:Date.now()});c.log=c.log.slice(0,100);saveLocal();renderMaster();if(selectedPlayer)renderSheet();toast(`${a.nome}: ${damage.total} dano`);return entry;}
+  function rollFormula(formula){const m=String(formula||'1d20').replace(/\s/g,'').match(/^([0-9]+)d([0-9]+)([+-][0-9]+)?$/i);if(!m)return{total:0,rolls:[]};const n=Number(m[1]),s=Number(m[2]),mod=Number(m[3]||0);const rolls=Array.from({length:n},()=>Math.floor(Math.random()*s)+1);return{rolls,total:rolls.reduce((a,b)=>a+b,0)+mod};}
+  function setCondition(id,name,active=true){const c=ensure();c.condicoes[id]=Array.isArray(c.condicoes[id])?c.condicoes[id]:[];if(active&&!c.condicoes[id].includes(name))c.condicoes[id].push(name);if(!active)c.condicoes[id]=c.condicoes[id].filter(x=>x!==name);const target=CombatEngine.find(id);if(target){target.condicoes=c.condicoes[id];}saveLocal();renderMaster();}
+  function reset(){const c=ensure();c.ativo=false;c.rodada=1;c.turnoId=null;c.iniciativa=[];c.participantes=[];c.log=[];c.historico=[];c.condicoes={};saveLocal();renderMaster();}
+  return {ensure,participants,rollAttack,rollFormula,setCondition,reset};
+})();
