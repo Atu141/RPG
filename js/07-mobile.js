@@ -1,3 +1,6 @@
+/* Hotel Espelho RPG — módulo consolidado. */
+
+/* --- 54-v072-mobile.js --- */
 /* V0.72 — experiência mobile para Mestre e Jogadores. */
 (function(){
   'use strict';
@@ -26,3 +29,4 @@
   if(typeof oldInit==='function'&&!oldInit.__v072mobile){window.initializeApp=function(){const r=oldInit.apply(this,arguments);setTimeout(boot,250);return r;};window.initializeApp.__v072mobile=true;}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,300));else setTimeout(boot,300);
 })();
+

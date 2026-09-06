@@ -72,6 +72,27 @@
   </div>
 </div>
 <div id="customCharacterModal" class="modal custom-character-modal" aria-hidden="true"><div class="custom-character-box panel"><button class="close" id="closeCharacterCustomization">×</button><p class="eyebrow">PERSONAGEM</p><h2>Personalizar personagem</h2><p class="muted">Defina a identidade e o passado do seu personagem. <b>PV, PE, SAN, Defesa, atributos, perícias, NEX, classe e ataques não podem ser alterados aqui.</b></p><input id="customCharacterPlayer" type="hidden"><div class="custom-form-grid"><label>Nome<input id="customCharacterName" class="control-input" type="text" maxlength="50" placeholder="Nome do personagem"></label><label>Idade<input id="customCharacterAge" class="control-input" type="text" maxlength="30" placeholder="Ex.: 24 anos"></label><label>Profissão / Origem<input id="customCharacterProfession" class="control-input" type="text" maxlength="60" readonly></label><label class="custom-full">Aparência<textarea id="customCharacterAppearance" class="control-input" maxlength="500" rows="3" placeholder="Descreva características físicas, roupas, marcas, postura..."></textarea></label><label>Personalidade<textarea id="customCharacterPersonality" class="control-input" maxlength="500" rows="4" placeholder="Como o personagem age, pensa e reage sob pressão?"></textarea></label><label>Histórico<textarea id="customCharacterHistory" class="control-input" maxlength="800" rows="4" placeholder="Conte brevemente quem era o personagem antes de chegar ao Hotel Espelho."></textarea></label></div><div class="custom-character-note"><b>Regra da campanha</b><small>A identidade pode ser personalizada livremente. A Profissão / Origem é definida pela lista oficial e seus benefícios mecânicos são aplicados automaticamente. Qualquer mudança mecânica continua sob controle das regras e do Mestre.</small></div><div id="customCharacterError" class="error"></div><div class="custom-character-actions"><button id="cancelCharacterCustomization" class="ghost">CANCELAR</button><button id="saveCharacterCustomization" class="primary">SALVAR PERSONAGEM</button></div></div></div>
+<div id="readyItemModal" class="modal item-modal">
+<div class="item-form ready-item-form panel">
+  <button class="close" id="closeReadyItemModal">×</button>
+  <p class="eyebrow">CATÁLOGO DO MESTRE</p>
+  <h2>Itens prontos</h2>
+  <p class="muted">Selecione um item de <b>itens.json</b> ou uma arma de <b>armas.json</b> para adicionar diretamente ao inventário de <b id="readyItemModalPlayerName"></b>.</p>
+  <input id="readyItemModalPlayer" type="hidden">
+  <div class="ready-item-toolbar">
+    <input id="readyItemSearch" class="control-input" type="search" placeholder="Pesquisar item ou arma..." autocomplete="off">
+    <select id="readyItemCategory" class="control-select">
+      <option value="all">Todos</option>
+      <option value="item">Itens — itens.json</option>
+      <option value="weapon">Armas — armas.json</option>
+    </select>
+  </div>
+  <div id="readyItemList" class="ready-item-list"></div>
+  <div class="item-form-actions">
+    <button id="cancelReadyItem" class="ghost">FECHAR</button>
+  </div>
+</div>
+</div>
 <div id="itemModal" class="modal item-modal"><div class="item-form panel"><button class="close" id="closeItemModal">×</button><p class="eyebrow">NOVO ITEM</p><h2>Criar item</h2><p class="muted">Adicionar diretamente ao inventário de <b id="itemModalPlayerName"></b>.</p><input id="itemModalPlayer" type="hidden"><label>Nome do item<input id="newItemName" class="control-input" type="text" maxlength="80" placeholder="Ex.: Pistola"></label><label>Descrição<input id="newItemDescription" class="control-input" type="text" maxlength="180" placeholder="Ex.: Arma de fogo compacta"></label><label>Tipo<select id="newItemType" class="control-select"><option value="equipamento">Equipamento</option><option value="arma">Arma</option></select></label><label class="item-check"><input id="newItemEquipped" type="checkbox"> Equipar imediatamente</label><div id="weaponFields" class="weapon-fields"><div class="form-two"><label>Teste de ataque<input id="newItemTest" class="control-input" type="text" maxlength="30" placeholder="Ex.: 1d20+3" inputmode="text"></label><label>Dado de dano<input id="newItemDamage" class="control-input" type="text" maxlength="30" placeholder="Ex.: 1d12" inputmode="text"></label></div><label>Bônus adicional <span class="muted">(opcional)</span><input id="newItemBonus" class="control-input" type="text" maxlength="30" placeholder="Ex.: +2 ou +2 dano"></label><small class="form-help">Para armas, informe pelo menos o teste e o dano. O bônus é apenas informativo e pode ser usado quando necessário.</small></div><label>Quantidade<input id="newItemQuantity" class="control-input" type="number" min="1" max="999" value="1" inputmode="numeric"></label><div class="item-form-actions"><button id="cancelNewItem" class="ghost">CANCELAR</button><button id="saveNewItem" class="primary">CRIAR E ADICIONAR</button></div></div></div>
 </div>
 <div id="diceModal" class="modal"><div class="dice-box panel"><button class="close" id="closeDice">×</button><p class="eyebrow">ROLAGEM</p><h2 id="diceTitle">Ataque</h2><div id="diceFormula" class="formula"></div><div id="diceDTWrap" class="dt-roll" style="display:none"><span>DT</span><input id="diceDT" type="number" min="1" max="50" disabled></div><div id="diceResult" class="dice-result">—</div><div id="diceOutcome" class="dice-outcome"></div><div id="diceBreakdown" class="breakdown"></div><button id="rollAgain" class="primary">ROLAR NOVAMENTE</button></div></div>
@@ -79,57 +100,12 @@
 <div id="horrorOverlay" class="horror-overlay" aria-hidden="true"><div class="horror-vignette"></div><div class="horror-content"><div class="horror-icon">☠</div><p class="eyebrow">PERSEGUIÇÃO</p><h1 id="horrorTitle">VOCÊ ESTÁ SENDO CAÇADO</h1><p id="horrorText">Corra. Não olhe para trás.</p><div id="horrorMeta" class="horror-meta"></div><button id="closeHorror" class="primary">VOLTAR À FICHA</button></div></div>
 <div id="toast" class="toast"></div>
 <script src="js/01-core.js"></script>
-<script src="js/02-players.js"></script>
-<script src="js/03-inventory.js"></script>
-<script src="js/04-master-campaign.js"></script>
-<script src="js/05-horror-map.js"></script>
-<script src="js/06-data-dice.js"></script>
-<script src="js/07-v030.js"></script>
-<script src="js/08-migrations.js"></script>
-<script src="js/09-v039.js"></script>
-<script src="js/10-campaign-engine.js"></script>
-<script src="js/11-investigation.js"></script>
-<script src="js/12-puzzles.js"></script>
-<script src="js/13-combat-engine.js"></script>
-<script src="js/14-campaign-save.js"></script>
-<script src="js/15-campaign-ui.js"></script>
-<script src="js/16-integrity.js"></script>
-<script src="js/17-state-machine.js"></script>
-<script src="js/18-investigation-plus.js"></script>
-<script src="js/20-killer-ai.js"></script>
-<script src="js/21-combat-plus.js"></script>
-<script src="js/22-campaign-state-save.js"></script>
-<script src="js/23-qa.js"></script>
-<script src="js/24-evolution-ui.js"></script>
-<script src="js/25-master-ux.js"></script>
-<script src="js/26-sheet-integration.js"></script>
-<script src="js/27-hotel-game.js"></script>
-<script src="js/28-investigation-final.js"></script>
-<script src="js/29-endings.js"></script>
-<script src="js/30-qa-final.js"></script>
-<script src="js/31-rituals.js"></script>
-<script src="js/32-rules-engine.js"></script>
-<script src="js/33-conditions.js"></script>
-<script src="js/34-investigation-v061.js"></script>
-<script src="js/35-combat-v060.js"></script>
-<script src="js/36-v061-ui.js"></script>
-<script src="js/37-final-rules.js"></script>
-<script src="js/38-class-skills-ui.js"></script><script src="js/39-master-profile.js"></script>
-<script src="js/40-motor-v070.js"></script>
-<script src="js/41-motor-v070-ui.js"></script>
-<script src="js/42-qa-v070.js"></script>
-<script src="js/43-fix-exploration-v0703.js"></script>
-<script src="js/44-master-panels-layout-v0706.js"></script>
-<script src="js/45-threats-v0708.js"></script>
-<script src="js/46-threats-ui-v0708.js"></script>
-<script src="js/47-session-sync-v080.js"></script>
-<script src="js/48-session-tools-ui-v080.js"></script>
-<script src="js/49-qa-v080.js"></script>
-<script src="js/50-master-layout-v0710.js"></script>
-<script src="js/52-master-assassins-fix-v0713.js"></script>
+<script src="js/02-rules.js"></script>
+<script src="js/03-threats.js"></script>
+<script src="js/04-network.js"></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-<script src="js/53-v071-combat-multiplayer.js"></script>
-<script src="js/54-v072-mobile.js"></script>
-  <script src="js/56-v082-master-sheet-viewer.js"></script>
-<script>window.addEventListener('DOMContentLoaded', () => initializeApp());</script>
+<script src="js/05-master-tools.js"></script>
+<script src="js/06-master-console.js"></script>
+<script src="js/07-mobile.js"></script>
+<script>window.addEventListener('DOMContentLoaded', () => initializeApp(), {once:true});</script>
 </body></html>

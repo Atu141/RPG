@@ -1,7 +1,0 @@
-(function(){
- function check(name,fn){try{const v=fn();return {name,ok:v!==false,detail:String(v===true?'OK':v??'OK')}}catch(e){return {name,ok:false,detail:e.message||String(e)}}}
- function run(){if(!data)return [];const out=[];out.push(check('Catálogo de ameaças',()=>Array.isArray(window.THREAT_CATALOG)&&window.THREAT_CATALOG.length>0));out.push(check('IDs de catálogo',()=> (window.THREAT_CATALOG||[]).every(x=>x.catalogId||x.id)));out.push(check('Instâncias identificáveis',()=> (data.monstros||[]).every(x=>x.id&&x.catalogId)));out.push(check('Assassinos catalogados',()=> (data.assassinos||[]).every(x=>x.id&&x.catalogId)));out.push(check('Estado de sincronização',()=>!!data.campanha?.syncV080?.sessionId));out.push(check('Revisão de sessão',()=>Number(data.campanha?.syncV080?.revisao)>=0));const a=typeof GameEngineV070!=='undefined'?GameEngineV070.audit():{ok:true};out.push(check('Motor V0.70',()=>a.ok));return out}
- function report(){const results=run();return {ok:results.every(x=>x.ok),results,failed:results.filter(x=>!x.ok)}}
- window.QAV080={run,report};
- const previous=window.runFinalAudit;window.runFinalAudit=function(){const base=typeof previous==='function'?previous():{ok:true};const r=QAV080.report();return {...base,ok:base.ok&&r.ok,qaV080:r.results,ameacas:Array.isArray(window.THREAT_CATALOG)?window.THREAT_CATALOG.length:0,sync:SessionSyncV080?.status?.()||null};};
-})();
