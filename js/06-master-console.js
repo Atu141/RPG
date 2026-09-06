@@ -663,20 +663,35 @@
   // Substitui a regra de disponibilidade por uma regra individual, sem alterar as regras de escolha.
   const oldClassChoiceOpen=window.classChoiceOpen;
   window.classChoiceOpen=function(pid){
-    if(Number(campaign().andarAtual)!==5)return false;
-    if(pid!=null)return isReleased(pid);
-    return Boolean(campaign().escolhaClasseLiberada);
+    const c=campaign();
+    if(Number(c.andarAtual)!==5)return false;
+    if(pid!=null){
+      // A liberação individual é a regra oficial. A flag antiga só é usada
+      // como compatibilidade para sessões criadas antes da V0.98.8.
+      if(Array.isArray(c.escolhaClasseLiberadaPara)) return isReleased(pid);
+      return Boolean(c.escolhaClasseLiberada);
+    }
+    return Boolean(c.escolhaClasseLiberada);
   };
+  // ÚNICO ponto de entrada da escolha de classe pelo jogador.
+  // CLASS_PROFILES é uma const de escopo global do script 01-core.js, portanto
+  // não deve ser acessada como window.CLASS_PROFILES.
   window.chooseClass=function(pid,classe){
-    const allowed=Object.keys(window.CLASS_PROFILES||{});
+    const allowed=Object.keys(typeof CLASS_PROFILES!=='undefined' ? CLASS_PROFILES : {});
     const p=(data.jogadores||[]).find(x=>String(x.id)===String(pid));
-    if(!p || !window.classChoiceOpen(pid) || p.classe || !allowed.includes(classe))return;
-    if(typeof applyClassProfile!=='function')return toast('Motor de classes não carregado.');
+    if(!p){toast('Ficha do jogador não encontrada.');return;}
+    if(!window.classChoiceOpen(pid)){toast('A escolha de classe ainda não foi liberada pelo Mestre para esta ficha.');return;}
+    if(p.classe){toast(`${p.nome} já possui a classe ${p.classe}.`);return;}
+    if(!allowed.includes(classe)){toast('Classe inválida ou catálogo de classes não carregado.');return;}
+    if(typeof applyClassProfile!=='function'){toast('Motor de classes não carregado.');return;}
     applyClassProfile(p,classe);
     p.classeEscolhidaEm='5º andar — O Despertar';
     logAction(`${p.nome} descobriu e escolheu a classe ${classe}.`);
     saveLocal(); renderPlayerCards(); renderMaster(); renderSheet();
-    setTimeout(()=>{if(typeof openClassSkillPicker==='function')openClassSkillPicker(pid,classe);},120);
+    setTimeout(()=>{
+      if(typeof window.openClassSkillPicker==='function') window.openClassSkillPicker(pid,classe);
+      else toast('Seletor de perícias da classe não foi carregado.');
+    },120);
   };
 
   // Ao sair do 5º andar, nenhuma liberação individual permanece ativa.

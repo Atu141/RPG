@@ -679,16 +679,8 @@ const ConditionEngine=(()=>{
     m.classList.add('show');m.setAttribute('aria-hidden','false');
   }
 
-  // Substitui o prompt anterior por uma seleção visual sem alterar as regras de validação.
-  window.chooseClass=function(pid,classe){
-    const allowed=Object.keys(CLASS_PROFILES||{}),p=data?.jogadores?.find(x=>x.id===pid);
-    if(!p||!classChoiceOpen()||p.classe||!allowed.includes(classe))return;
-    applyClassProfile(p,classe);
-    p.classeEscolhidaEm='5º andar — O Despertar';
-    logAction(`${p.nome} descobriu a classe ${classe} e iniciou a escolha visual de perícias.`);
-    saveLocal();renderPlayerCards();renderMaster();renderSheet();
-    openPicker(pid,classe);
-  };
+  // API pública do seletor visual. A escolha da classe é comandada por 06-master-console.js,
+  // que mantém a regra de liberação individual do Mestre em um único ponto.
   window.openClassSkillPicker=openPicker;
   window.closeClassSkillPicker=closePicker;
 })();

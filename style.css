@@ -814,3 +814,96 @@ body[data-horror-level="pursuit"] .v073-live i{background:#a33b45;box-shadow:0 0
   .ready-item-add .ready-item-qty{flex:0 0 82px}
   .ready-item-add .dice-btn{flex:1;min-height:42px}
 }
+
+
+/* V1.0.1 — Ficha do jogador: leitura mobile e navegação rápida */
+.player-mobile-nav{display:none}
+.player-secondary-info{display:grid;gap:12px;margin-bottom:16px}
+.player-secondary-info>.panel{margin:0}
+#playerSummary{scroll-margin-top:82px}
+#playerCombat,#playerWeapons,#playerInventory,#playerSkills,#playerCampaign,.rituals-player-panel{scroll-margin-top:82px}
+
+@media(max-width:700px){
+  .player-header-mobile{margin-bottom:10px}
+  .player-header-mobile .player-badge{align-self:flex-start}
+  .player-mobile-nav{
+    display:flex;position:sticky;top:68px;z-index:20;gap:6px;overflow-x:auto;
+    padding:7px;margin:0 -2px 10px;background:rgba(10,11,14,.96);
+    border:1px solid rgba(255,255,255,.08);border-radius:12px;backdrop-filter:blur(10px);
+    scrollbar-width:none;
+  }
+  .player-mobile-nav::-webkit-scrollbar{display:none}
+  .player-mobile-nav button{
+    flex:0 0 auto;min-height:38px;padding:8px 12px;border:1px solid rgba(255,255,255,.10);
+    border-radius:9px;background:rgba(255,255,255,.035);color:inherit;font:700 10px/1.2 Inter,sans-serif;
+    text-transform:uppercase;letter-spacing:.04em;cursor:pointer;white-space:nowrap;
+  }
+  .player-mobile-nav button:active{transform:translateY(1px)}
+  .player-secondary-info{gap:8px;margin-bottom:10px}
+  .player-secondary-info .story-notice{padding:11px 12px}
+  .player-secondary-info .story-notice b{font-size:11px;line-height:1.45}
+  .player-secondary-info .identity-panel,
+  .player-secondary-info .origin-effect-panel,
+  .player-secondary-info .class-effect-panel{border-radius:10px}
+  .player-secondary-info .identity-head{padding:12px}
+  .player-secondary-info .identity-grid{padding:0 12px 12px;gap:8px}
+  .player-secondary-info .identity-head h2{font-size:15px}
+  .player-secondary-info .class-effect-panel,
+  .player-secondary-info .origin-effect-panel{padding:12px}
+  .player-secondary-info .class-effect-panel h2,
+  .player-secondary-info .origin-effect-panel h2{font-size:16px}
+  .player-secondary-info .class-effect-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+  .player-secondary-info .class-effect-grid span{padding:7px 4px;font-size:9px}
+  .player-secondary-info .class-effect-grid b{font-size:14px}
+  .player-layout{gap:10px}
+  .player-layout>.panel{border-radius:11px}
+  #playerSummary{order:1}
+  #playerInventory{order:2}
+  #playerCombat{order:3}
+  #playerWeapons{order:4}
+  .rituals-player-panel{order:5}
+  #playerSkills{order:6}
+  #playerCampaign{order:7}
+  .character-top{padding:12px}
+  .character-top .avatar{width:42px;height:42px;font-size:16px}
+  .character-top h2{margin:0;font-size:17px}
+  .stats{margin:0 8px}
+  .stat{min-height:58px;display:flex;align-items:baseline;justify-content:center;gap:2px}
+  .stat span{font-size:9px!important;font-weight:800}
+  .stat strong{font-size:21px}
+  .stat small{font-size:9px!important}
+  .bar{margin:0 8px 8px}
+  .attributes{margin:0 8px 10px}
+  .attribute-card{min-height:64px;padding:9px 5px;border-radius:9px}
+  .attribute-card b{font-size:18px}
+  .attribute-card small{font-size:8px}
+  .panel-title{min-height:48px}
+  .panel-title h2{font-size:14px}
+  .panel-title p{font-size:10px}
+  .item{grid-template-columns:30px minmax(0,1fr) auto;align-items:center;padding:10px}
+  .item-icon{width:28px;height:28px}
+  .item>strong{font-size:12px!important}
+  .attack{grid-template-columns:minmax(0,1fr);padding:10px}
+  .attack>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .attack .dice-btn{width:100%;min-height:42px}
+  .combat-row{padding:10px}
+  .skill-row{grid-template-columns:minmax(0,1fr);gap:7px;padding:10px}
+  .skill-row .dice-btn{width:100%;min-height:40px}
+  .skill-row b{font-size:12px!important}
+  .skill-row small{display:block;font-size:10px!important;line-height:1.4}
+  .campaign-info{gap:7px}
+  .campaign-info>div{padding:9px 10px;border-radius:8px}
+}
+
+@media(max-width:420px){
+  .screen{padding-left:8px;padding-right:8px}
+  .player-mobile-nav{top:66px;margin-left:0;margin-right:0}
+  .player-header-mobile h1{font-size:26px}
+  .player-mobile-nav button{padding:8px 10px;font-size:9px}
+  .player-secondary-info{display:none}
+  .player-layout{margin-top:0}
+  #playerSummary{margin-top:0}
+  .attributes{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .attributes .attribute-card{min-height:62px}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}

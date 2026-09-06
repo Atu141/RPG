@@ -1,23 +1,26 @@
-# Arquivo Paranormal — Hotel Espelho
+# Hotel Espelho RPG — V1.0.2
 
-## Estrutura consolidada
+## Correção do rolador da ficha do jogador
 
-A versão de distribuição foi reorganizada para eliminar o carregamento de módulos históricos, QA, auditorias e patches de interface que já não são necessários na execução normal.
+- Perícias agora geram fórmulas compatíveis com o rolador: `1d20 + atributo + treinamento`.
+- Armas do catálogo que possuem `teste: Luta` ou `teste: Pontaria` agora resolvem automaticamente a perícia correspondente do jogador.
+- Armas adicionadas pelo Mestre passam a funcionar nos botões **ATACAR** e **DANO** da ficha do jogador.
+- Fórmulas de dano com alternativas (`1d4/1d6`, por exemplo) usam a primeira expressão como padrão para evitar o erro de fórmula inválida.
+- Mantida a Central do Mestre e suas funcionalidades existentes.
 
-### Arquivos principais
-- `index.html` — interface.
-- `style.css` — estilos.
-- `fichas.json`, `itens.json`, `armas.json`, `rituais.json`, `ameacas.json` — catálogos/dados.
-- `js/01-core.js` — estado, jogadores, inventário, dados, mapa-base e migrações.
-- `js/02-rules.js` — campanha, regras, recursos, classes, rituais e motor de jogo.
-- `js/03-threats.js` — exploração, ameaças e interface de ameaças.
-- `js/04-network.js` — sincronização e multiplayer.
-- `js/05-master-tools.js` — mapa, combate e ficha do Mestre.
-- `js/06-master-console.js` — Central do Mestre e controles por ficha.
-- `js/07-mobile.js` — adaptação mobile.
+## Arquivos principais
 
-## Central do Mestre
-Cada ficha possui os controles essenciais: **LIBERAR/BLOQUEAR CLASSE**, **ADICIONAR ITEM** e **EXCLUIR FICHA**. O menu de adicionar item possui **Itens prontos** (catálogos JSON) e **Criar item** (personalizado).
-
-## Execução
-Abra por servidor HTTP/Live Server ou publique no GitHub Pages. O PeerJS é carregado pelo `index.html`.
+- `index.html` — interface
+- `style.css` — estilos responsivos
+- `js/01-core.js` — ficha, rolagens e inventário
+- `js/02-rules.js` — regras e rituais
+- `js/03-threats.js` — ameaças
+- `js/04-network.js` — sincronização
+- `js/05-master-tools.js` — ferramentas do Mestre
+- `js/06-master-console.js` — Central do Mestre
+- `js/07-mobile.js` — ajustes mobile
+- `itens.json` — catálogo de itens
+- `armas.json` — catálogo de armas
+- `rituais.json` — catálogo de rituais
+- `ameacas.json` — catálogo de ameaças
+- `fichas.json` — dados base das fichas

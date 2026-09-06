@@ -206,11 +206,27 @@ const SKILL_CATALOG=[
   ['Sobrevivência','INT/PRE',false],['Tática','INT',true],['Tecnologia','INT',true],['Vontade','PRE',false]
 ];
 function skillFormula(player,skill){
-  if(skill.teste && skill.teste!=='AUTO') return skill.teste;
-  const attrs=player.atributos||{}; const value=skill.atributo==='INT/PRE'?Math.max(Number(attrs.INT)||0,Number(attrs.PRE)||0):(Number(attrs[skill.atributo])||0);
-  const grau=skill.grau||(skill.treinada?'treinado':'nao_treinada'); const treino=grau==='expert'?15:grau==='veterano'?10:skill.treinada?5:0; const bonus=treino+originSkillBonus(player,skill);
-  const count=value>0?value:2; const mod=bonus?`${bonus>0?'+':''}${bonus}`:'';
-  return `${count}d20${mod}${value>0?' (melhor)':' (pior)'}`;
+  // Perícias usam 1d20 + atributo + grau de treinamento.
+  // Versões antigas geravam fórmulas como 2d20 (melhor), que o rolador não aceita.
+  if(skill?.teste && skill.teste!=='AUTO' && /^\d+d\d+(?:[+-]\d+)?$/i.test(String(skill.teste).replace(/\s/g,''))) return String(skill.teste).replace(/\s/g,'');
+  const attrs=player?.atributos||{};
+  const value=skill?.atributo==='INT/PRE'
+    ? Math.max(Number(attrs.INT)||0,Number(attrs.PRE)||0)
+    : (Number(attrs[skill?.atributo])||0);
+  const grau=skill?.grau||(skill?.treinada?'treinado':'nao_treinada');
+  const treino=grau==='expert'?15:grau==='veterano'?10:grau==='treinado'||skill?.treinada?5:0;
+  const bonus=Number(value)+Number(treino)+Number(originSkillBonus(player,skill)||0);
+  return `1d20${bonus>=0?'+':''}${bonus}`;
+}
+function resolveAttackTestFormula(player,attack){
+  const raw=String(attack?.teste||'').trim();
+  if(/^\d+d\d+(?:[+-]\d+)?$/i.test(raw.replace(/\s/g,''))) return raw.replace(/\s/g,'');
+  const skill=(player?.pericias||[]).find(s=>String(s?.nome||'').trim().toLowerCase()===raw.toLowerCase());
+  if(skill) return skillFormula(player,skill);
+  // Compatibilidade com armas cadastradas como Luta/Pontaria ou nomes de perícia.
+  const normalized=raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const fallback=(player?.pericias||[]).find(s=>String(s?.nome||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()===normalized);
+  return fallback?skillFormula(player,fallback):'';
 }
 function isMaster(){ return sessionStorage.getItem('master-auth')==='1'; }
 function getSkillDT(){
@@ -353,11 +369,18 @@ function createPlayerSheet(){
 }
 
 function openSheet(id){selectedPlayer=data.jogadores.find(p=>p.id===id); show('playerSheet'); renderSheet();}
-function classChoiceOpen(){ return Boolean(data?.campanha?.escolhaClasseLiberada) && Number(data?.campanha?.andarAtual)===5; }
+function classChoiceOpen(pid){
+  const c=data?.campanha||{};
+  if(Number(c.andarAtual)!==5) return false;
+  if(pid!=null && Array.isArray(c.escolhaClasseLiberadaPara)){
+    return c.escolhaClasseLiberadaPara.map(String).includes(String(pid));
+  }
+  return Boolean(c.escolhaClasseLiberada);
+}
 function chooseClass(pid, classe){
   const allowed=Object.keys(CLASS_PROFILES);
   const p=data.jogadores.find(x=>x.id===pid);
-  if(!p || !classChoiceOpen() || p.classe || !allowed.includes(classe)) return;
+  if(!p || !classChoiceOpen(pid) || p.classe || !allowed.includes(classe)) return;
   applyClassProfile(p,classe);
   p.classeEscolhidaEm='5º andar — O Despertar';
   logAction(`${p.nome} descobriu e escolheu a classe ${classe}.`);
@@ -387,24 +410,33 @@ function renderSheetBase(){
   const classTrained=(p.treinadasClasse||[]).join(', ')||'Configurar pelo Mestre';
   const classEffectBlock=classProfile?`<div class="panel class-effect-panel"><p class="eyebrow">CLASSE • REGRAS V1.3</p><h2>${esc(p.classe)}</h2><p class="muted">${esc(classProfile.descricao)}</p><div class="class-effect-grid"><span>PV Máx. <b>${classDerived.pvMax}</b></span><span>PE Máx. <b>${classDerived.peMax}</b></span><span>SAN Máx. <b>${classDerived.sanMax}</b></span><span>Defesa <b>${classDerived.defesa}</b></span></div><div class="class-attribute-build"><b>Distribuição automática de atributos</b><p>FOR <strong>${p.atributos.FOR}</strong> · AGI <strong>${p.atributos.AGI}</strong> · INT <strong>${p.atributos.INT}</strong> · PRE <strong>${p.atributos.PRE}</strong> · VIG <strong>${p.atributos.VIG}</strong></p><small>${esc(getClassAttributeBuild(p.classe)?.prioridade||'Configuração recomendada para a classe')}</small></div><div class="class-rules-detail"><b>Habilidade no NEX ${esc(p.nex)}</b><p>${esc(classProfile.habilidadeNEX5)}</p><b>Perícias da classe</b><p>${esc(classProfile.escolhaPericias?.length?classProfile.escolhaPericias.join(' / ')+' + '+classSummary.required+' à escolha':' '+classSummary.required+' à escolha')}</p><small>Selecionadas: ${esc(classTrained)}</small><b>Proficiências</b><p>${esc((classProfile.proficiencias||[]).join(', '))}</p><details><summary>Progressão da classe</summary><div class="class-progression">${(classProfile.progressao||[]).map(x=>`<span><b>${esc(x[0])}</b>${esc(x[1])}</span>`).join('')}</div></details></div></div>`:'';
   const originProfile=getOriginProfile(p); const originBlock=originProfile?`<div class="panel origin-effect-panel"><p class="eyebrow">PROFISSÃO / ORIGEM</p><h2>${esc(p.origem||p.profissao)}</h2><p class="muted">Perícias treinadas: ${esc(originProfile.treinadas.length?originProfile.treinadas.join(' e '):'definidas pelo Mestre')}</p><div class="origin-power"><b>${esc(originProfile.poder)}</b><span>${esc(originProfile.descricao)}</span></div>${originProfile.bonus?.defesa?`<small>Defesa: +${originProfile.bonus.defesa}</small>`:''}${originProfile.bonus?.sanPor5NEX?`<small>Sanidade: +${Math.floor((parseInt(String(p.nex||'5'),10)||5)/5)*originProfile.bonus.sanPor5NEX} no NEX atual</small>`:''}</div>`:'';
-  const classChoiceBlock=(!p.classe && classChoiceOpen()) ? `<div class="panel class-choice-panel"><p class="eyebrow">MOMENTO DE DECISÃO</p><h2>Escolha sua classe</h2><p class="muted">Vocês acordaram sem qualquer contato anterior com o paranormal. Depois de investigar o 5º andar, chegou o momento de decidir como seu personagem enfrentará o que está acontecendo.</p><div class="class-choice-grid"><button class="class-choice" data-class-choice="${p.id}" data-class="Combatente"><b>Combatente</b><small>Foco em combate, resistência e confronto físico.</small></button><button class="class-choice" data-class-choice="${p.id}" data-class="Especialista"><b>Especialista</b><small>Foco em investigação, perícias e soluções práticas.</small></button><button class="class-choice" data-class-choice="${p.id}" data-class="Ocultista"><b>Ocultista</b><small>Foco em compreender e lidar com fenômenos inexplicáveis.</small></button></div></div>` : '';
+  const classChoiceBlock=(!p.classe && classChoiceOpen(p.id)) ? `<div class="panel class-choice-panel"><p class="eyebrow">MOMENTO DE DECISÃO</p><h2>Escolha sua classe</h2><p class="muted">Vocês acordaram sem qualquer contato anterior com o paranormal. Depois de investigar o 5º andar, chegou o momento de decidir como seu personagem enfrentará o que está acontecendo.</p><div class="class-choice-grid"><button class="class-choice" data-class-choice="${p.id}" data-class="Combatente"><b>Combatente</b><small>Foco em combate, resistência e confronto físico.</small></button><button class="class-choice" data-class-choice="${p.id}" data-class="Especialista"><b>Especialista</b><small>Foco em investigação, perícias e soluções práticas.</small></button><button class="class-choice" data-class-choice="${p.id}" data-class="Ocultista"><b>Ocultista</b><small>Foco em compreender e lidar com fenômenos inexplicáveis.</small></button></div></div>` : '';
   const storyNotice=`<div class="panel story-notice"><p class="eyebrow">O DESPERTAR</p><b>${p.classe?'Você ainda se lembra de como tudo começou: vocês acordaram no 5º andar, sem experiência anterior com o paranormal.':'Vocês acordaram no 5º andar, sem qualquer contato anterior com o paranormal. Investiguem o local antes de decidir quem vocês serão nesta situação.'}</b></div>`;
   const identityBlock=`<div class="panel identity-panel"><div class="identity-head"><div><p class="eyebrow">IDENTIDADE</p><h2>Quem é ${esc(p.nome)}?</h2><p class="muted">Personalize apenas a história e a identidade. Os valores mecânicos da campanha permanecem protegidos.</p></div><button class="ghost" data-customize-character="${p.id}">✎ EDITAR PERSONAGEM</button></div><div class="identity-grid"><div><span>IDADE</span><b>${esc(p.idade||'Não definida')}</b></div><div><span>PROFISSÃO / ORIGEM</span><b>${esc(p.origem||p.profissao||'Não definida')}</b></div><div class="identity-wide"><span>APARÊNCIA</span><p>${esc(p.aparencia||'Não definida')}</p></div><div><span>PERSONALIDADE</span><p>${esc(p.personalidade||'Não definida')}</p></div><div><span>HISTÓRICO</span><p>${esc(p.historico||'Não definido')}</p></div></div></div>`;
-  $('#sheetContent').innerHTML=`<div class="player-header"><div><p class="eyebrow">FICHA DO AGENTE</p><h1>${esc(p.nome)}</h1><p class="muted">${esc(className)} • NEX ${esc(p.nex)} • ${esc(data.campanha.nome)}</p></div><div class="player-badge">AGENTE</div></div>${storyNotice}${identityBlock}${originBlock}${classChoiceBlock}${classEffectBlock}<div class="player-layout">
-  <div class="panel character-panel"><div class="character-top"><div class="avatar">${esc(p.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</div><div><h2>${esc(p.nome)}</h2><p>${esc(className)}</p></div><div class="nex"><span>NEX</span><b>${esc(p.nex)}</b></div></div><div class="stats"><div class="stat"><span>PV</span><strong>${p.pv}</strong><small> / ${p.pvMax}</small></div><div class="stat"><span>PE</span><strong>${p.pe}</strong><small> / ${p.peMax}</small></div><div class="stat"><span>SAN</span><strong>${p.san}</strong><small> / ${p.sanMax}</small></div></div><div class="bar"><i style="width:${Math.max(0,p.pv/p.pvMax*100)}%"></i></div><div class="attributes">${Object.entries(p.atributos).map(([k,v])=>`<button class="attribute-card" data-attribute-player="${p.id}" data-attribute="${k}"><span>${k}</span><b>${v}</b><small>TESTAR</small></button>`).join('')}</div></div>
-  <div class="panel items-panel"><div class="panel-title"><div><span class="icon">▤</span><div><h2>Inventário</h2><p>Itens da ficha</p></div></div></div>${p.itens.map((i,idx)=>`<div class="item"><span class="item-icon">${i.tipo==='arma'?'⚔':'▣'}</span><div><b>${esc(i.nome)} ${i.equipado?'<small class="equipped-tag">EQUIPADO</small>':''}</b><small>${itemLabel(i)}${i.tipo==='arma'&&i.teste?` • Teste ${esc(i.teste)}`:''}${i.tipo==='arma'&&i.dano?` • Dano ${esc(i.dano)}`:''}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small><small>${esc(i.descricao)}</small></div><strong>${i.quantidade}</strong></div>`).join('')}</div>
-  <div class="panel combat-panel"><div class="panel-title"><div><span class="icon">⚔</span><div><h2>Combate corpo a corpo</h2><p>Ataques sem armas</p></div></div></div><div class="combat-row"><span>Defesa</span><b>${p.defesa}</b></div>${unarmedAttacks(p).map(({a,i})=>`<div class="attack"><div><b>${esc(a.nome)}</b><small>Teste ${esc(a.teste)} • Dano ${esc(originAttackDamageFormula(p,a))}</small></div><div><button class="dice-btn" data-roll="attack" data-player="${p.id}" data-index="${i}">ATACAR</button><button class="dice-btn secondary" data-roll="damage" data-player="${p.id}" data-index="${i}">DANO</button></div></div>`).join('') || '<small class="empty-inventory">Nenhum ataque corpo a corpo sem arma cadastrado.</small>'}</div>
-  <div class="panel weapon-panel"><div class="panel-title"><div><span class="icon">⚔</span><div><h2>Armas equipadas</h2><p>Armas e outras formas de combate equipadas/cadastradas</p></div></div></div>${otherCombatAttacks(p).map(({a,i})=>`<div class="attack"><div><b>${esc(a.nome)}</b><small>Teste ${esc(a.teste)} • Dano ${esc(originAttackDamageFormula(p,a))}</small></div><div><button class="dice-btn" data-roll="attack" data-player="${p.id}" data-index="${i}">ATACAR</button><button class="dice-btn secondary" data-roll="damage" data-player="${p.id}" data-index="${i}">DANO</button></div></div>`).join('')}${p.itens.filter(i=>itemCombatReady(i)).map((i)=>{const realIndex=p.itens.indexOf(i);return `<div class="attack"><div><b>${esc(i.nome)}</b><small>Teste ${esc(itemFormula(i,'attack'))} • Dano ${esc(itemFormula(i,'damage'))}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small></div><div><button class="dice-btn" data-item-roll="attack" data-player="${p.id}" data-item-index="${realIndex}">ATACAR</button><button class="dice-btn secondary" data-item-roll="damage" data-player="${p.id}" data-item-index="${realIndex}">DANO</button></div></div>`}).join('') || (otherCombatAttacks(p).length?'':'<small class="empty-inventory">Nenhuma arma ou outro ataque cadastrado/equipado.</small>')}</div>
+  $('#sheetContent').innerHTML=`<div class="player-header player-header-mobile"><div><p class="eyebrow">FICHA DO AGENTE</p><h1>${esc(p.nome)}</h1><p class="muted">${esc(className)} • NEX ${esc(p.nex)} • ${esc(data.campanha.nome)}</p></div><div class="player-badge">AGENTE</div></div><nav class="player-mobile-nav" aria-label="Atalhos da ficha"><button type="button" data-player-jump="summary">Resumo</button><button type="button" data-player-jump="combat">Combate</button><button type="button" data-player-jump="inventory">Itens</button><button type="button" data-player-jump="skills">Perícias</button><button type="button" data-player-jump="rituals">Rituais</button></nav><div class="player-secondary-info">${storyNotice}${identityBlock}${originBlock}${classChoiceBlock}${classEffectBlock}</div><div class="player-layout">
+  <div id="playerSummary" class="panel character-panel"><div class="character-top"><div class="avatar">${esc(p.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</div><div><h2>${esc(p.nome)}</h2><p>${esc(className)}</p></div><div class="nex"><span>NEX</span><b>${esc(p.nex)}</b></div></div><div class="stats"><div class="stat"><span>PV</span><strong>${p.pv}</strong><small> / ${p.pvMax}</small></div><div class="stat"><span>PE</span><strong>${p.pe}</strong><small> / ${p.peMax}</small></div><div class="stat"><span>SAN</span><strong>${p.san}</strong><small> / ${p.sanMax}</small></div></div><div class="bar"><i style="width:${Math.max(0,p.pv/p.pvMax*100)}%"></i></div><div class="attributes">${Object.entries(p.atributos).map(([k,v])=>`<button class="attribute-card" data-attribute-player="${p.id}" data-attribute="${k}"><span>${k}</span><b>${v}</b><small>TESTAR</small></button>`).join('')}</div></div>
+  <div id="playerInventory" class="panel items-panel"><div class="panel-title"><div><span class="icon">▤</span><div><h2>Inventário</h2><p>Itens da ficha</p></div></div></div>${p.itens.map((i,idx)=>`<div class="item"><span class="item-icon">${i.tipo==='arma'?'⚔':'▣'}</span><div><b>${esc(i.nome)} ${i.equipado?'<small class="equipped-tag">EQUIPADO</small>':''}</b><small>${itemLabel(i)}${i.tipo==='arma'&&i.teste?` • Teste ${esc(i.teste)}`:''}${i.tipo==='arma'&&i.dano?` • Dano ${esc(i.dano)}`:''}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small><small>${esc(i.descricao)}</small></div><strong>${i.quantidade}</strong></div>`).join('')}</div>
+  <div id="playerCombat" class="panel combat-panel"><div class="panel-title"><div><span class="icon">⚔</span><div><h2>Combate corpo a corpo</h2><p>Ataques sem armas</p></div></div></div><div class="combat-row"><span>Defesa</span><b>${p.defesa}</b></div>${unarmedAttacks(p).map(({a,i})=>`<div class="attack"><div><b>${esc(a.nome)}</b><small>Teste ${esc(resolveAttackTestFormula(p,a)||a.teste||'—')} • Dano ${esc(originAttackDamageFormula(p,a))}</small></div><div><button class="dice-btn" data-roll="attack" data-player="${p.id}" data-index="${i}">ATACAR</button><button class="dice-btn secondary" data-roll="damage" data-player="${p.id}" data-index="${i}">DANO</button></div></div>`).join('') || '<small class="empty-inventory">Nenhum ataque corpo a corpo sem arma cadastrado.</small>'}</div>
+  <div id="playerWeapons" class="panel weapon-panel"><div class="panel-title"><div><span class="icon">⚔</span><div><h2>Armas equipadas</h2><p>Armas e outras formas de combate equipadas/cadastradas</p></div></div></div>${otherCombatAttacks(p).map(({a,i})=>`<div class="attack"><div><b>${esc(a.nome)}</b><small>Teste ${esc(resolveAttackTestFormula(p,a)||a.teste||'—')} • Dano ${esc(originAttackDamageFormula(p,a))}</small></div><div><button class="dice-btn" data-roll="attack" data-player="${p.id}" data-index="${i}">ATACAR</button><button class="dice-btn secondary" data-roll="damage" data-player="${p.id}" data-index="${i}">DANO</button></div></div>`).join('')}${p.itens.filter(i=>itemCombatReady(i)).map((i)=>{const realIndex=p.itens.indexOf(i);return `<div class="attack"><div><b>${esc(i.nome)}</b><small>Teste ${esc(itemFormula(i,'attack',p))} • Dano ${esc(itemFormula(i,'damage',p))}${i.bonus?` • Bônus ${esc(i.bonus)}`:''}</small></div><div><button class="dice-btn" data-item-roll="attack" data-player="${p.id}" data-item-index="${realIndex}">ATACAR</button><button class="dice-btn secondary" data-item-roll="damage" data-player="${p.id}" data-item-index="${realIndex}">DANO</button></div></div>`}).join('') || (otherCombatAttacks(p).length?'':'<small class="empty-inventory">Nenhuma arma ou outro ataque cadastrado/equipado.</small>')}</div>
   ${ritualPlayerBlock(p)}
-  <div class="panel abilities-panel"><div class="panel-title"><div><span class="icon">✧</span><div><h2>Perícias</h2><p>Testes disponíveis</p></div></div></div><div class="skill-list">${pericias.map((x,i)=>`<div class="skill-row"><div><b>${esc(skillLabel(x))}</b><small>${esc(x.atributoLabel||x.atributo||'Perícia')} • ${x.treinada?'Treinada (+5)':'Não treinada'} • Teste ${esc(skillFormula(p,x))}</small></div>${x.requerTreinamento&&!x.treinada?'<button class="dice-btn secondary" disabled title="Esta perícia exige treinamento.">NÃO TREINADA</button>':'<button class="dice-btn secondary" data-skill-player="'+p.id+'" data-skill-index="'+i+'">TESTAR</button>'}</div>`).join('')}</div></div>
-  <div class="panel campaign-player"><div class="panel-title"><div><span class="icon">◈</span><div><h2>Campanha</h2><p>Informações públicas da sessão</p></div></div></div><div class="campaign-info"><div><span>ANDAR</span><b>${data.campanha.andarAtual}º</b></div><div><span>OBJETIVO</span><b>${esc(data.campanha.objetivoAtual)}</b></div><div><span>PERSEGUIÇÃO</span><b>${esc(data.campanha.perseguicao)}</b></div><div><span>DT DE PERÍCIAS</span><b>${getSkillDT()}</b></div><div><span>CHAVES ENCONTRADAS</span><b>${data.campanha.chavesEncontradas.filter(x=>Number(x)>=1&&Number(x)<=4).length}/4</b></div></div></div>
+  <div id="playerSkills" class="panel abilities-panel"><div class="panel-title"><div><span class="icon">✧</span><div><h2>Perícias</h2><p>Testes disponíveis</p></div></div></div><div class="skill-list">${pericias.map((x,i)=>`<div class="skill-row"><div><b>${esc(skillLabel(x))}</b><small>${esc(x.atributoLabel||x.atributo||'Perícia')} • ${x.treinada?'Treinada (+5)':'Não treinada'} • Teste ${esc(skillFormula(p,x))}</small></div>${x.requerTreinamento&&!x.treinada?'<button class="dice-btn secondary" disabled title="Esta perícia exige treinamento.">NÃO TREINADA</button>':'<button class="dice-btn secondary" data-skill-player="'+p.id+'" data-skill-index="'+i+'">TESTAR</button>'}</div>`).join('')}</div></div>
+  <div id="playerCampaign" class="panel campaign-player"><div class="panel-title"><div><span class="icon">◈</span><div><h2>Campanha</h2><p>Informações públicas da sessão</p></div></div></div><div class="campaign-info"><div><span>ANDAR</span><b>${data.campanha.andarAtual}º</b></div><div><span>OBJETIVO</span><b>${esc(data.campanha.objetivoAtual)}</b></div><div><span>PERSEGUIÇÃO</span><b>${esc(data.campanha.perseguicao)}</b></div><div><span>DT DE PERÍCIAS</span><b>${getSkillDT()}</b></div><div><span>CHAVES ENCONTRADAS</span><b>${data.campanha.chavesEncontradas.filter(x=>Number(x)>=1&&Number(x)<=4).length}/4</b></div></div></div>
   </div>`;
   document.querySelectorAll('.dice-btn[data-roll]').forEach(b=>b.onclick=()=>openDice(b.dataset.roll,b.dataset.player,+b.dataset.index));
   document.querySelectorAll('[data-skill-player]').forEach(b=>b.onclick=()=>openSkillDice(b.dataset.skillPlayer,+b.dataset.skillIndex));
   document.querySelectorAll('[data-attribute-player]').forEach(b=>b.onclick=()=>openAttributeDice(b.dataset.attributePlayer,b.dataset.attribute));
-  document.querySelectorAll('[data-class-choice]').forEach(b=>b.onclick=()=>chooseClass(b.dataset.classChoice,b.dataset.class));
+  document.querySelectorAll('[data-class-choice]').forEach(b=>b.onclick=()=>{
+    const handler=window.chooseClass;
+    if(typeof handler==='function') handler(b.dataset.classChoice,b.dataset.class);
+  });
   document.querySelectorAll('[data-item-roll]').forEach(b=>b.onclick=()=>openItemDice(b.dataset.player,+b.dataset.itemIndex,b.dataset.itemRoll));
   document.querySelectorAll('[data-customize-character]').forEach(b=>b.onclick=()=>openCharacterCustomization(b.dataset.customizeCharacter));
+  document.querySelectorAll('[data-player-jump]').forEach(b=>b.onclick=()=>{
+    const key=b.dataset.playerJump;
+    const target={summary:'#playerSummary',combat:'#playerCombat',inventory:'#playerInventory',skills:'#playerSkills',rituals:'.rituals-player-panel'}[key];
+    const el=target?document.querySelector(target):null;
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
 }
 
 
@@ -446,10 +478,14 @@ function isUnarmedAttack(attack){
 }
 function unarmedAttacks(player){ return (player?.ataques||[]).map((a,i)=>({a,i})).filter(x=>isUnarmedAttack(x.a)); }
 function otherCombatAttacks(player){ return (player?.ataques||[]).map((a,i)=>({a,i})).filter(x=>!isUnarmedAttack(x.a)); }
-function itemFormula(item,type){
-  const base=String(type==='attack'?item?.teste:item?.dano||'').replace(/\s/g,'');
+function itemFormula(item,type,player){
+  const raw=String(type==='attack'?item?.teste:item?.dano||'').trim();
+  if(!raw) return '';
+  if(type==='attack') return resolveAttackTestFormula(player,item) || raw;
+  // Catálogo pode trazer dano alternativo, como 1d4/1d6. Para o rolador,
+  // usa a primeira expressão cadastrada até que o usuário escolha uma variante.
+  const base=raw.split('/')[0].replace(/\s/g,'');
   const bonus=Number(String(item?.bonus||'').replace(',','.'));
-  if(!base) return '';
   if(!Number.isFinite(bonus) || bonus===0) return base;
   const m=base.match(/^([0-9]+)d([0-9]+)([+-][0-9]+)?$/i);
   if(!m) return base;
@@ -459,7 +495,7 @@ function itemFormula(item,type){
 function openItemDice(pid,index,type){
   const player=data.jogadores.find(x=>x.id===pid); const item=player?.itens?.[index];
   if(!item || item.tipo!=='arma') return toast('Arma não encontrada');
-  const formula=itemFormula(item,type);
+  const formula=itemFormula(item,type,player);
   if(!formula) return toast(type==='attack'?'Esta arma não possui teste cadastrado.':'Esta arma não possui dano cadastrado.');
   diceState={type:type==='attack'?'item-attack':'item-damage',formula,title:`${item.nome} — ${type==='attack'?'Teste de ataque':'Dano'}`};
   $('#diceTitle').textContent=diceState.title;
@@ -1138,7 +1174,7 @@ function openDice(type,pid,index){
   diceState = {
     type,
     pid,
-    formula: type === 'attack' ? attack.teste : originAttackDamageFormula(player,attack),
+    formula: type === 'attack' ? resolveAttackTestFormula(player,attack) : originAttackDamageFormula(player,attack),
     title: type === 'attack' ? `${attack.nome} — Ataque` : `${attack.nome} — Dano`
   };
   $('#diceTitle').textContent = diceState.title;
