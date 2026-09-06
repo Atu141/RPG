@@ -573,7 +573,10 @@
     // Mantém a flag antiga apenas como compatibilidade; a decisão efetiva agora é por ficha.
     c.escolhaClasseLiberada=c.escolhaClasseLiberadaPara.length>0;
     logAction(`${p.nome}: escolha de classe ${value?'liberada':'bloqueada'} pelo Mestre.`);
-    saveLocal(); renderMaster();
+    saveLocal();
+    if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(p.id);
+    if(window.MultiplayerV071?.sync) window.MultiplayerV071.sync();
+    renderMaster();
     if(selectedPlayer?.id===p.id) renderSheet();
     toast(value?`Classe liberada para ${p.nome}`:`Classe bloqueada para ${p.nome}`);
   }
