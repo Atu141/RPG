@@ -116,7 +116,22 @@
       broadcastRoster();
       return;
     }
-    if(msg.type==='player-upsert'&&msg.player){const incoming=msg.player;const existing=data.jogadores.find(x=>x.id===incoming.id);if(existing)Object.assign(existing,clone(incoming));else data.jogadores.push(clone(incoming));logCombat(`${incoming.nome}: ficha sincronizada.`);persist();send(conn,{type:'player-state',...playerSnapshot(incoming.id)});broadcastRoster();renderMaster();renderPlayerCards();return;}
+    if(msg.type==='player-upsert'&&msg.player){
+      const incoming=msg.player;
+      const existing=data.jogadores.find(x=>x.id===incoming.id);
+      if(existing)Object.assign(existing,clone(incoming));else data.jogadores.push(clone(incoming));
+      // O primeiro envio de uma ficha criada no celular também estabelece
+      // a propriedade da conexão. A partir daqui as atualizações dessa
+      // ficha podem ser roteadas automaticamente para o mesmo jogador.
+      MP.owners.set(conn.peer,incoming.id);
+      logCombat(`${incoming.nome}: ficha sincronizada.`);
+      persist();
+      send(conn,{type:'player-state',...playerSnapshot(incoming.id),ownerId:incoming.id});
+      broadcastRoster();
+      renderMaster();
+      renderPlayerCards();
+      return;
+    }
     if(msg.type==='player-request-create'){const base=typeof buildNewPlayer==='function'?buildNewPlayer(String(msg.name||'Jogador'),String(msg.origem||'Atleta')):null;if(!base)return;applyOriginProfile?.(base);data.jogadores.push(base);persist();MP.owners.set(conn.peer,base.id);const target=conn;send(target,{type:'created',...playerSnapshot(base.id),ownerId:base.id});broadcastRoster();renderMaster();renderPlayerCards();}
   }
   function broadcastRoster(){broadcast({type:'roster',players:clone(data.jogadores||[]),room:MP.roomCode});}
@@ -128,6 +143,15 @@
   function claimPlayer(id){const conn=MP.connections.values().next().value;if(!conn)return;MP.ownerId=id;send(conn,{type:'claim',playerId:id});}
   function requestCreate(){const name=prompt('Nome do personagem:');if(!name)return;const origem=prompt('Profissão / Origem (ex.: Atleta):','Atleta');if(!ORIGIN_PROFILES[origem])return toast('Origem inválida. Use uma das origens oficiais da criação de personagem.');const conn=MP.connections.values().next().value;if(!conn)return;send(conn,{type:'player-request-create',name,origem});}
   function sendOwnState(){if(MP.role!=='player'||MP.applying||!MP.connected||!MP.ownerId)return;const conn=MP.connections.values().next().value;const p=data.jogadores.find(x=>x.id===MP.ownerId);if(conn&&p)send(conn,{type:'player-upsert',player:clone(p)});}
+  function publishCreatedPlayer(player){
+    if(MP.role!=='player'||!MP.connected||!player)return false;
+    const conn=MP.connections.values().next().value;
+    if(!conn)return false;
+    MP.ownerId=player.id;
+    send(conn,{type:'player-upsert',player:clone(player),created:true});
+    renderMPUI();
+    return true;
+  }
   function renderPlayerChooser(players){const host=$id('mpPlayerChooser');if(!host)return;host.innerHTML=`<div class="v071-chooser"><b>Escolha sua ficha</b><div>${players.map(p=>`<button class="v071-player-choice" onclick="MultiplayerV071.claim('${h(p.id)}')"><span>${h(p.nome)}</span><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></button>`).join('')||'<small class="muted">Nenhuma ficha disponível.</small>'}</div><button class="ghost small" onclick="MultiplayerV071.requestCreate()">＋ CRIAR MINHA FICHA</button></div>`;}
   function renderMPUI(){
     const host=$id('v071MultiplayerPanel');if(!host)return;const state=MP.role==='host'?`MESTRE • ${MP.connected?'ONLINE':'ABRINDO'}`:MP.role==='player'?`JOGADOR • ${MP.connected?'ONLINE':'CONECTANDO'}`:'OFFLINE';
@@ -161,7 +185,7 @@
   const oldRenderCards=window.renderPlayerCards;window.renderPlayerCards=function(){if(typeof oldRenderCards==='function')oldRenderCards.apply(this,arguments);if(MP.role==='player'&&MP.ownerId){const cards=$id('playerCards');if(cards)cards.innerHTML=data.jogadores.filter(p=>p.id===MP.ownerId).map(p=>`<button class="player-card" data-id="${h(p.id)}"><div class="avatar">${h(p.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</div><div><b>${h(p.nome)}</b><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></div><span>→</span></button>`).join('');cards?.querySelector('.player-card')?.addEventListener('click',()=>openSheet(MP.ownerId));}};
   const boot=()=>{if(!data)return setTimeout(boot,100);mountMP();mount();};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.CombatV071={start,startFromUI,stop,next,prev,setHP,damage,heal,detail,rollAttack:(id,i)=>rollAttack(id,i),rollDamage:(id,i)=>rollDamageFor(id,i)};
-  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,resource,deletePlayer,local,stop,broadcastCombat:broadcastCombatState,sync:hostSyncAll,syncPlayer:(pid)=>{if(MP.role!=='host')return false;let ok=false;MP.connections.forEach((conn,peer)=>{if(String(MP.owners.get(peer))===String(pid))ok=syncPlayerToPeer(peer)||ok});return ok},status:()=>({role:MP.role,room:MP.roomCode,connected:MP.connected,players:MP.connections.size})};
+  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,publishCreatedPlayer,resource,deletePlayer,local,stop,broadcastCombat:broadcastCombatState,sync:hostSyncAll,syncPlayer:(pid)=>{if(MP.role!=='host')return false;let ok=false;MP.connections.forEach((conn,peer)=>{if(String(MP.owners.get(peer))===String(pid))ok=syncPlayerToPeer(peer)||ok});return ok},status:()=>({role:MP.role,room:MP.roomCode,connected:MP.connected,players:MP.connections.size})};
 })();
 
 

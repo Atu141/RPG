@@ -363,6 +363,12 @@ function createPlayerSheet(){
   if(typeof V030!=='undefined'&&V030.ensure)V030.ensure();
   logAction(`${player.nome}: nova ficha criada pelo jogador com regras iniciais da campanha.`);
   saveLocal(); renderPlayerCards(); renderMaster(); renderCampaign();
+  // Em uma mesa multiplayer, a ficha criada no dispositivo do jogador
+  // precisa ser enviada ao Mestre. O saveLocal sozinho não basta porque
+  // o jogador ainda não possui MP.ownerId neste momento.
+  if(window.MultiplayerV071?.publishCreatedPlayer && window.MultiplayerV071.status?.().role==='player'){
+    window.MultiplayerV071.publishCreatedPlayer(player);
+  }
   closeCreateSheetModal();
   selectedPlayer=player; show('playerSheet'); renderSheet();
   toast(`Ficha criada: ${player.nome}`);
