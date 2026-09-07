@@ -243,15 +243,15 @@ function addRitualToPlayer(pid, ritualId){
   const maxCircle=p.classe==='Ocultista'?(Number(String(p.nex||'5').replace('%',''))>=85?4:Number(String(p.nex||'5').replace('%',''))>=55?3:Number(String(p.nex||'5').replace('%',''))>=25?2:1):1;
   if(Number(r.circulo)>maxCircle)return toast(`Este personagem ainda não pode conjurar ${r.circulo}º círculo no NEX ${p.nex}.`);
   p.rituais.push({nome:r.nome,tipo:r.tipo,circulo:r.circulo,custo:r.custo,dano:r.dano,disponivel:true});
-  logAction(`${p.nome}: ritual adicionado — ${r.nome} (${r.tipo}, ${r.circulo}º círculo).`); saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`Ritual adicionado: ${r.nome}`);
+  logAction(`${p.nome}: ritual adicionado — ${r.nome} (${r.tipo}, ${r.circulo}º círculo).`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`Ritual adicionado: ${r.nome}`);
 }
 function removeRitualFromPlayer(pid,index){
   const p=data.jogadores.find(x=>x.id===pid); if(!p)return; ensureRitualState(p); const r=p.rituais[index]; if(!r)return;
-  p.rituais.splice(index,1); logAction(`${p.nome}: ritual removido — ${r.nome}.`); saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast('Ritual removido');
+  p.rituais.splice(index,1); logAction(`${p.nome}: ritual removido — ${r.nome}.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast('Ritual removido');
 }
 function toggleRitualAvailability(pid,index){
   const p=data.jogadores.find(x=>x.id===pid); if(!p)return; ensureRitualState(p); const r=p.rituais[index]; if(!r)return;
-  r.disponivel=!r.disponivel; logAction(`${p.nome}: ritual ${r.nome} ${r.disponivel?'liberado':'bloqueado'} para o jogador.`); saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(r.disponivel?'Ritual liberado':'Ritual ocultado do jogador');
+  r.disponivel=!r.disponivel; logAction(`${p.nome}: ritual ${r.nome} ${r.disponivel?'liberado':'bloqueado'} para o jogador.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(r.disponivel?'Ritual liberado':'Ritual ocultado do jogador');
 }
 function ritualPlayerBlock(p){
   if(p.classe!=='Ocultista') return '';

@@ -1,3 +1,7 @@
+/* V1.1 — PeerJS legado desativado. A sincronização online é feita pelo Supabase em js/08-supabase.js. */
+if (window.HOTEL_USE_SUPABASE !== false) {
+  // Não inicializa o transporte PeerJS legado nesta versão.
+} else {
 /* Hotel Espelho RPG — módulo consolidado. */
 
 /* --- 47-session-sync-v080.js --- */
@@ -25,7 +29,7 @@
 /* V0.71 — Central de Combate + ficha de mesa multiplayer (presencial). */
 (function(){
   'use strict';
-  const MP={version:1,role:'offline',peer:null,hostPeerId:null,roomCode:null,connections:new Map(),owners:new Map(),ownerId:null,connected:false,applying:false};
+  const MP={version:1,role:'offline',peer:null,hostPeerId:null,roomCode:null,connections:new Map(),owners:new Map(),ownerId:null,connected:false,applying:false,playerRevisions:new Map(),localRevision:0};
   const $id=id=>document.getElementById(id);
   const h=v=>typeof esc==='function'?esc(v):String(v??'');
   const clone=o=>JSON.parse(JSON.stringify(o));
@@ -95,46 +99,23 @@
   function renderThreatButtons(){const host=$id('v071ThreatButtons');if(!host||!data)return;const xs=[...(data.monstros||[]),...(data.assassinos||[])];host.innerHTML=xs.map(x=>`<button class="v071-threat-chip" onclick="CombatV071.detail('${h(x.id)}')">☠ ${h(x.nome)} <small>PV ${h(x.pv??0)}/${h(x.pvMax??x.pvBase??'—')}</small></button>`).join('')||'<small class="muted">Adicione uma ameaça na seção Monstros ou use os quatro assassinos da campanha.</small>';}
   function startFromUI(){const ids=[...document.querySelectorAll('#v071CombatPanel input[type=checkbox]:checked')].map(x=>x.value);start(ids);}
   function publicSnapshot(){return {campanha:clone(data.campanha||{}),jogadores:clone(data.jogadores||[])};}
-  function playerSnapshot(playerId){const p=(data.jogadores||[]).find(x=>x.id===playerId);return {campanha:clone(data.campanha||{}),jogador:p?clone(p):null};}
+  function bumpPlayerRevision(playerId){const key=String(playerId||'');const next=Number(MP.playerRevisions.get(key)||0)+1;MP.playerRevisions.set(key,next);return next;}
+  function playerSnapshot(playerId){const p=(data.jogadores||[]).find(x=>x.id===playerId);return {campanha:clone(data.campanha||{}),jogador:p?clone(p):null,revision:Number(MP.playerRevisions.get(String(playerId))||0),ownerId:playerId};}
   function send(conn,msg){try{if(!conn)return false;if(conn.open){conn.send(msg);return true;}if(typeof conn.once==='function'){const key='__hotelEspelhoSendQueue';conn[key]=conn[key]||[];conn[key].push(msg);if(!conn.__hotelEspelhoSendHook){conn.__hotelEspelhoSendHook=true;conn.once('open',()=>{const q=conn[key]||[];conn[key]=[];conn.__hotelEspelhoSendHook=false;q.forEach(m=>send(conn,m));});}return false;}return false}catch(e){console.warn(e);return false}}
   function broadcast(msg){MP.connections.forEach(c=>send(c,msg));}
   function broadcastCombatState(){if(MP.role!=='host')return;const c=ensureCampaign();broadcast({type:'combat-state',combate:clone(c)});}
   function broadcastSessionState(){if(MP.role!=='host')return;broadcast({type:'session-state',campanha:clone(data.campanha||{})});}
 
-  function syncPlayerToPeer(peer){
-    if(MP.role!=='host')return false;
-    const conn=MP.connections.get(peer);
-    const pid=MP.owners.get(peer);
-    if(!conn||!pid)return false;
-    const msg={type:'player-state',...playerSnapshot(pid),ownerId:pid};
-    const ok=send(conn,msg);
-    if(!ok && conn.open!==true) {
-      // O envio será colocado na fila pelo send() e entregue no evento open.
-      console.debug('[Hotel Espelho] estado aguardando abertura do canal',pid);
-    }
-    return ok || Boolean(conn);
-  }
-  function syncPlayerNow(playerId){
-    if(MP.role!=='host')return false;
-    let found=false;
-    MP.connections.forEach((conn,peer)=>{
-      if(String(MP.owners.get(peer))===String(playerId)){
-        found=true;
-        syncPlayerToPeer(peer);
-      }
-    });
-    return found;
-  }
-
+  function syncPlayerToPeer(peer){if(MP.role!=='host')return false;const conn=MP.connections.get(peer);const pid=MP.owners.get(peer);if(!conn||!pid)return false;bumpPlayerRevision(pid);return send(conn,{type:'player-state',...playerSnapshot(pid)});}
   function hostBroadcastPlayerStates(){if(MP.role!=='host')return;MP.connections.forEach((conn,peer)=>syncPlayerToPeer(peer));}
   function hostSyncAll(){if(MP.role!=='host')return;broadcastSessionState();hostBroadcastPlayerStates();}
   function applySessionSnapshot(msg){if(MP.role!=='player'||!msg)return;MP.applying=true;try{if(msg.campanha)data.campanha=clone(msg.campanha);if(typeof saveLocal==='function')saveLocal();if(typeof renderMaster==='function')renderMaster();if(typeof renderSheet==='function'&&selectedPlayer)renderSheet();renderMPUI();}finally{MP.applying=false;}}
-  function applyPlayerSnapshot(msg){if(MP.role!=='player'||!msg)return;MP.applying=true;try{const p=msg.jogador;if(p){data.jogadores=[clone(p)];MP.ownerId=p.id;selectedPlayer=data.jogadores[0];}if(msg.campanha)data.campanha=clone(msg.campanha);if(typeof saveLocal==='function')saveLocal();renderPlayerCards();if(selectedPlayer)renderSheet();renderMPUI();}finally{MP.applying=false;}}
+  function applyPlayerSnapshot(msg){if(MP.role!=='player'||!msg)return;const incomingRev=Number(msg.revision||0);if(incomingRev<=Number(MP.localRevision||0)&&MP.localRevision>0)return;MP.localRevision=incomingRev;MP.applying=true;try{const p=msg.jogador;if(p){data.jogadores=[clone(p)];MP.ownerId=p.id;selectedPlayer=data.jogadores[0];}if(msg.campanha)data.campanha=clone(msg.campanha);if(typeof saveLocal==='function')saveLocal();renderPlayerCards();if(selectedPlayer){renderSheet();setTimeout(()=>{if(MP.role==='player'&&selectedPlayer)renderSheet();},0);}renderMPUI();}finally{MP.applying=false;}}
   function hostReceive(conn,msg){
     if(!msg)return;
     if(msg.type==='hello'){send(conn,{type:'welcome',ownerId:null,players:publicSnapshot().jogadores,room:MP.roomCode,campanha:clone(data.campanha||{})});return;}
-    if(msg.type==='sync-request'){const pid=MP.owners.get(conn.peer);if(pid){send(conn,{type:'player-state',...playerSnapshot(pid),ownerId:pid});}else{send(conn,{type:'welcome',ownerId:null,players:publicSnapshot().jogadores,room:MP.roomCode,campanha:clone(data.campanha||{})});}return;}
-    if(msg.type==='claim'){const p=data.jogadores.find(x=>x.id===msg.playerId);if(!p)return;MP.connections.set(conn.peer,conn);MP.owners.set(conn.peer,p.id);send(conn,{type:'player-state',...playerSnapshot(p.id)});return;}
+    if(msg.type==='sync-request'){const pid=MP.owners.get(conn.peer);if(pid){bumpPlayerRevision(pid);send(conn,{type:'player-state',...playerSnapshot(pid),ownerId:pid});}else{send(conn,{type:'welcome',ownerId:null,players:publicSnapshot().jogadores,room:MP.roomCode,campanha:clone(data.campanha||{})});}return;}
+    if(msg.type==='claim'){const p=data.jogadores.find(x=>x.id===msg.playerId);if(!p)return;MP.connections.set(conn.peer,conn);MP.owners.set(conn.peer,p.id);if(!MP.playerRevisions.has(String(p.id)))MP.playerRevisions.set(String(p.id),0);bumpPlayerRevision(p.id);send(conn,{type:'player-state',...playerSnapshot(p.id)});return;}
     if(msg.type==='player-deleted'&&msg.playerId){
       const deletedId=String(msg.playerId);
       if(MP.owners.get(conn.peer)===deletedId){MP.owners.delete(conn.peer);send(conn,{type:'player-deleted',playerId:deletedId});}
@@ -149,6 +130,7 @@
       // a propriedade da conexão. A partir daqui as atualizações dessa
       // ficha podem ser roteadas automaticamente para o mesmo jogador.
       MP.owners.set(conn.peer,incoming.id);
+      bumpPlayerRevision(incoming.id);
       logCombat(`${incoming.nome}: ficha sincronizada.`);
       persist();
       send(conn,{type:'player-state',...playerSnapshot(incoming.id),ownerId:incoming.id});
@@ -165,9 +147,10 @@
   const PEER_OPTIONS={host:'0.peerjs.com',port:443,path:'/',secure:true,debug:1,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}};
   function newPeer(id){try{return id?new Peer(id,PEER_OPTIONS):new Peer(PEER_OPTIONS)}catch(e){console.warn(e);return null}}
   function setupPeerHost(){
+    if(window.HOTEL_USE_SUPABASE!==false)return;
     if(!window.Peer)return toast('Canal multiplayer indisponível: biblioteca PeerJS não carregou.');
     if(MP.peer&&!MP.peer.destroyed){try{MP.peer.destroy()}catch(e){}}
-    MP.role='host';MP.roomCode=shortCode();
+    MP.role='host';MP.roomCode=shortCode();MP.playerRevisions=new Map((data.jogadores||[]).map(p=>[String(p.id),1]));
     MP.peer=newPeer();
     if(!MP.peer)return toast('Não foi possível iniciar o servidor da mesa.');
     MP.peer.on('open',id=>{MP.connected=true;MP.hostPeerId=id;renderMPUI();toast('Mesa pronta. Gere o link de convite.');});
@@ -184,13 +167,14 @@
     renderMPUI();
   }
   function connectPlayer(code){
+    if(window.HOTEL_USE_SUPABASE!==false)return;
     if(!window.Peer)return toast('Canal multiplayer indisponível: biblioteca PeerJS não carregou.');
     const raw=String(code||'').trim();
     const targetId=raw;
     if(targetId.length<4)return toast('Convite inválido.');
     const clean=targetId.replace(/^hotel-espelho-/i,'').toUpperCase();
     if(MP.peer&&!MP.peer.destroyed){try{MP.peer.destroy()}catch(e){}}
-    MP.role='player';MP.roomCode=clean;MP.connected=false;MP.ownerId=null;
+    MP.role='player';MP.roomCode=clean;MP.connected=false;MP.ownerId=null;MP.localRevision=0;
     MP.peer=newPeer();
     if(!MP.peer)return toast('Não foi possível iniciar a conexão com a mesa.');
     let settled=false;
@@ -248,16 +232,17 @@
     const invite=new URLSearchParams(location.search).get('convite');
     if(invite&&MP.role==='offline'&&!MP.connected){setTimeout(()=>connectPlayer(invite),250);}
   }
-  function local(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.ownerId=null;renderMPUI();toast('Modo local ativo.');}
-  function stop(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.roomCode=null;MP.ownerId=null;renderMPUI();toast('Sala encerrada.');}
+  function local(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.ownerId=null;MP.playerRevisions.clear();MP.localRevision=0;renderMPUI();toast('Modo local ativo.');}
+  function stop(){if(MP.peer){try{MP.peer.destroy()}catch(e){}}MP.role='offline';MP.connected=false;MP.connections.clear();MP.owners.clear();MP.roomCode=null;MP.ownerId=null;MP.playerRevisions.clear();MP.localRevision=0;renderMPUI();toast('Sala encerrada.');}
   const oldSave=window.saveLocal;
-  if(typeof oldSave==='function'&&!oldSave.__v071mp){const wrapped=function(){const r=oldSave.apply(this,arguments);if(!MP.applying)setTimeout(()=>{sendOwnState();hostSyncAll();},0);return r};wrapped.__v071mp=true;window.saveLocal=wrapped;}
+  let syncTimer=null;
+  if(typeof oldSave==='function'&&!oldSave.__v071mp){const wrapped=function(){const r=oldSave.apply(this,arguments);if(!MP.applying){clearTimeout(syncTimer);syncTimer=setTimeout(()=>{if(MP.role==='player')sendOwnState();if(MP.role==='host')hostSyncAll();},40);}return r};wrapped.__v071mp=true;window.saveLocal=wrapped;}
   const oldRenderMaster=window.renderMaster;window.renderMaster=function(){if(typeof oldRenderMaster==='function')oldRenderMaster.apply(this,arguments);if(document.getElementById('v071CombatPanel'))renderCombatPanel();renderThreatButtons();renderMPUI();};
   const oldRenderSheet=window.renderSheet;window.renderSheet=function(){if(typeof oldRenderSheet==='function')oldRenderSheet.apply(this,arguments);renderPlayerTracker();};
   const oldRenderCards=window.renderPlayerCards;window.renderPlayerCards=function(){if(typeof oldRenderCards==='function')oldRenderCards.apply(this,arguments);if(MP.role==='player'&&MP.ownerId){const cards=$id('playerCards');if(cards)cards.innerHTML=data.jogadores.filter(p=>p.id===MP.ownerId).map(p=>`<button class="player-card" data-id="${h(p.id)}"><div class="avatar">${h(p.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</div><div><b>${h(p.nome)}</b><small>${h(p.classe||'Classe não definida')} • NEX ${h(p.nex)}</small></div><span>→</span></button>`).join('');cards?.querySelector('.player-card')?.addEventListener('click',()=>openSheet(MP.ownerId));}};
   const boot=()=>{if(!data)return setTimeout(boot,100);mountMP();mount();};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.CombatV071={start,startFromUI,stop,next,prev,setHP,damage,heal,detail,rollAttack:(id,i)=>rollAttack(id,i),rollDamage:(id,i)=>rollDamageFor(id,i)};
-  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,publishCreatedPlayer,resource,deletePlayer,local,stop,broadcastCombat:broadcastCombatState,sync:hostSyncAll,syncPlayer:syncPlayerNow,status:()=>({role:MP.role,room:MP.roomCode,connected:MP.connected,players:MP.connections.size})};
+  window.MultiplayerV071={host:setupPeerHost,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,publishCreatedPlayer,resource,deletePlayer,local,stop,broadcastCombat:broadcastCombatState,sync:hostSyncAll,syncPlayer:(pid)=>{if(MP.role!=='host')return false;let ok=false;MP.connections.forEach((conn,peer)=>{if(String(MP.owners.get(peer))===String(pid))ok=syncPlayerToPeer(peer)||ok});return ok},status:()=>({role:MP.role,room:MP.roomCode,connected:MP.connected,players:MP.connections.size})};
 })();
 
 
@@ -274,3 +259,5 @@
   window.CombatSyncV087={snapshot:combatSnapshot,broadcast};
 })();
 
+
+}
