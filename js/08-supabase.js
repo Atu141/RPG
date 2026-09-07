@@ -137,7 +137,16 @@
   function boot(){
     if(!ready){console.warn('Supabase não configurado.');return;}
     if(!window.supabase?.createClient){toastSafe('Biblioteca Supabase não carregou.');return;}
-    client=window.supabase.createClient(C.url,C.anonKey);
+    // Cada aba/dispositivo precisa ter uma identidade Supabase independente.
+    // O armazenamento padrão do Supabase usa localStorage e, por isso, Mestre
+    // e Jogador abertos no mesmo navegador poderiam reutilizar o mesmo usuário
+    // anônimo. Isso fazia o JOIN reaproveitar o membro do Mestre e o contador
+    // permanecia em zero. sessionStorage mantém a sessão durante a aba, mas
+    // isola o Mestre e cada Jogador.
+    const tabKey='hotel-espelho-tab-id';
+    let tabId=sessionStorage.getItem(tabKey);
+    if(!tabId){tabId=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));sessionStorage.setItem(tabKey,tabId);}
+    client=window.supabase.createClient(C.url,C.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:sessionStorage,storageKey:`hotel-espelho-auth-${tabId}`}});
     const invite=new URLSearchParams(location.search).get('convite');
     if(invite){setTimeout(()=>connectPlayer(invite),300);}
     const oldSave=window.saveLocal;

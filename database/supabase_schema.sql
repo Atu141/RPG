@@ -46,13 +46,23 @@ end; $$;
 
 create or replace function public.join_rpg_session(session_code text)
 returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
-declare s public.rpg_sessions; m uuid; p text;
+declare s public.rpg_sessions; m uuid; p text; v_role text;
 begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
   select * into s from public.rpg_sessions where code=upper(trim(session_code));
   if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
-  insert into public.rpg_session_members(session_id,user_id,role) values(s.id,auth.uid(),'player') on conflict(session_id,user_id) do nothing returning id into m;
-  if m is null then select id into m from public.rpg_session_members where session_id=s.id and user_id=auth.uid(); end if;
+  select id, role, player_id into m, v_role, p
+  from public.rpg_session_members
+  where session_id=s.id and user_id=auth.uid();
+  if m is not null then
+    if v_role='host' then
+      raise exception 'HOST_CANNOT_JOIN_AS_PLAYER';
+    end if;
+  else
+    insert into public.rpg_session_members(session_id,user_id,role)
+    values(s.id,auth.uid(),'player')
+    returning id into m;
+  end if;
   select player_id into p from public.rpg_session_members where id=m;
   return jsonb_build_object('session_id',s.id,'code',s.code,'member_id',m,'player_id',p,'state',s.state);
 end; $$;
