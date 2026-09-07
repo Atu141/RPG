@@ -527,7 +527,7 @@ function addPlayerItem(pid, catalogType, catalogIndex, quantity){
   const existing=p.itens.find(i=>String(i.nome).toLowerCase()===base.nome.toLowerCase());
   if(existing) existing.quantidade=(Number(existing.quantidade)||0)+qty;
   else p.itens.push(normalizeItem({...base,quantidade:qty,equipado:false}));
-  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário${type==='weapon'?' (arma)':''}.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
+  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário${type==='weapon'?' (arma)':''}.`); saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${base.nome} adicionado`);
 }
 function openReadyItemCatalog(pid){
@@ -644,7 +644,7 @@ function saveNewItem(){
   if(existing) { existing.quantidade=(Number(existing.quantidade)||0)+qty; Object.assign(existing,{descricao:base.descricao,tipo:base.tipo,teste:base.teste,dano:base.dano,bonus:base.bonus}); }
   else player.itens.push(normalizeItem({...base,quantidade:qty,equipado}));
   logAction(`${player.nome}: novo item ${qty}x ${base.nome} criado/adicionado.`);
-  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); closeItemModal(); renderMaster();
+  saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); closeItemModal(); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=player;renderSheet();}
   toast(`Item criado: ${base.nome}`);
 }
@@ -653,7 +653,7 @@ function togglePlayerItemEquipped(pid,itemIndex){
   if(!item)return;
   item.equipado=!Boolean(item.equipado);
   logAction(`${p.nome}: ${item.nome} ${item.equipado?'equipado':'desequipado'}.`);
-  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
+  saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();}
   toast(`${item.nome} ${item.equipado?'equipado':'desequipado'}`);
 }
@@ -661,7 +661,7 @@ function removePlayerItem(pid,itemIndex,quantity){
   const p=data.jogadores.find(x=>x.id===pid); const item=p?.itens?.[Number(itemIndex)]; if(!item)return;
   const qty=Math.max(1,Number(quantity)||1); item.quantidade=(Number(item.quantidade)||0)-qty;
   if(item.quantidade<=0)p.itens.splice(Number(itemIndex),1);
-  logAction(`${p.nome}: ${qty}x ${item.nome} removido do inventário.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
+  logAction(`${p.nome}: ${qty}x ${item.nome} removido do inventário.`); saveLocal(); if(window.MultiplayerV071?.syncPlayer) window.MultiplayerV071.syncPlayer(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${item.nome} removido`);
 }
 function renderInventoryMaster(p){
@@ -747,7 +747,7 @@ function updatePlayerResource(id,resource,value){
   const maxKey=resource+'Max'; const max=Number(p[maxKey])||0;
   p[resource]=Math.max(0,Math.min(max,Number(value)||0));
   logAction(`${p.nome}: ${resource.toUpperCase()} atualizado para ${p[resource]}/${max}.`);
-  saveLocal(); window.MultiplayerV071?.syncPlayer?.(id);
+  saveLocal();
   if(selectedPlayer && selectedPlayer.id===id){ selectedPlayer=p; renderSheet(); }
   renderMaster(); toast(`${resource.toUpperCase()} atualizado`);
 }
@@ -755,7 +755,7 @@ function setSkillTraining(pid,index,trained){
   const player=data.jogadores.find(x=>x.id===pid); const skill=player?.pericias?.[index]; if(!skill)return;
   skill.treinada=Boolean(trained);
   logAction(`${player.nome}: ${skill.nome} ${skill.treinada?'marcada como treinada':'marcada como não treinada'}.`);
-  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); if(selectedPlayer?.id===pid){ selectedPlayer=player; renderSheet(); }
+  saveLocal(); renderMaster(); if(selectedPlayer?.id===pid){ selectedPlayer=player; renderSheet(); }
   toast(`${skill.nome}: ${skill.treinada?'Treinada (+5)':'Não treinada'}`);
 }
 
