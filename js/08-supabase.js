@@ -25,10 +25,13 @@
   async function copyInvite(){const url=inviteUrl();try{await navigator.clipboard.writeText(url);toastSafe('Link de convite copiado.');}catch(e){prompt('Copie o link de convite:',url)}return url;}
   function render(){
     const host=$('v071MultiplayerPanel'); if(!host)return;
+    // O painel da mesa existe estaticamente no HTML para não depender de
+    // montagem dinâmica durante a troca de telas/login.
+    host.hidden=false;
     const status=state.role==='host'?`MESTRE • ${state.connected?'ONLINE':'CONECTANDO'}`:state.role==='player'?`JOGADOR • ${state.connected?'ONLINE':'CONECTANDO'}`:'OFFLINE';
     const hostArea=state.role==='host'
       ? `<div><b>Link de convite</b><div class="v071-invite-url">${esc(inviteUrl())}</div><small>O estado da sessão fica salvo no PostgreSQL. O Mestre não precisa manter uma conexão PeerJS aberta.</small><div class="v071-actions"><button class="primary" onclick="MultiplayerV071.copyInvite()">🔗 COPIAR LINK</button><button class="ghost small" onclick="MultiplayerV071.stop()">ENCERRAR MESA</button></div></div><div><b>Jogadores</b><strong class="v071-connected-count">${(data.jogadores||[]).length}</strong><small>Sincronização em tempo real pelo Supabase.</small></div>`
-      : `<div><b>Modo jogador</b><small>Abra o link enviado pelo Mestre para entrar na mesa.</small><button class="primary" onclick="MultiplayerV071.host()">＋ CRIAR MESA (MESTRE)</button></div><div><button class="ghost" onclick="MultiplayerV071.local()">USAR FICHA SEM SINCRONIZAÇÃO</button></div>`;
+      : `<div><b>Mesa do Hotel Espelho</b><small>Crie uma mesa online para sincronizar Mestre e Jogadores pelo Supabase.</small><button class="primary" onclick="MultiplayerV071.host()">＋ CRIAR MESA (MESTRE)</button></div><div><b>Sem mesa ativa</b><small>Se você estiver usando somente a ficha local, pode continuar sem sincronização.</small><button class="ghost" onclick="MultiplayerV071.local()">USAR FICHA SEM SINCRONIZAÇÃO</button></div>`;
     host.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Sala da Mesa</h2><p>PostgreSQL + Realtime • estado persistente da campanha.</p></div></div><span class="sync-badge">${esc(status)}</span></div><div class="v071-mp-grid">${hostArea}</div>`;
     if(state.role==='player'&&state.connected)renderChooser(data.jogadores||[]);
   }

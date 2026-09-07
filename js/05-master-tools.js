@@ -1,3 +1,4 @@
+/* Hotel Espelho RPG — ferramentas do Mestre, versão refatorada V1.2. */
 /* Hotel Espelho RPG — módulo consolidado. */
 
 /* --- 56-v082-master-sheet-viewer.js --- */
@@ -67,19 +68,10 @@
       card.appendChild(actions);
     });
   }
-  function hook(){
-    const host=$('#masterPlayers');if(!host||host.__v082)return;
-    host.__v082=true;
-    host.addEventListener('click',e=>{const b=e.target.closest('[data-master-view-sheet]');if(b)open(b.dataset.masterViewSheet)});
-    const original=window.renderMasterBase;
-    if(typeof original==='function'&&!original.__v082){
-      const wrapped=function(){const r=original.apply(this,arguments);injectButtons();return r};wrapped.__v082=true;window.renderMasterBase=wrapped;
-      if(typeof renderMaster==='function'){const oldRender=window.renderMaster;if(!oldRender.__v082){window.renderMaster=function(){const r=oldRender.apply(this,arguments);injectButtons();return r};window.renderMaster.__v082=true;}}
-    }
-    injectButtons();
-  }
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(hook,0));
-  setTimeout(hook,600);
+  function bind(){ const host=$('#masterPlayers'); if(!host||host.__v082Bound)return; host.__v082Bound=true; host.addEventListener('click',e=>{const b=e.target.closest('[data-master-view-sheet]'); if(b){e.preventDefault();e.stopPropagation();open(b.dataset.masterViewSheet);}}); }
+  function init(){bind();injectButtons();}
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
+  setTimeout(init,600);
   window.MasterPlayerSheetV082={open,close,injectButtons};
 })();
 
@@ -142,28 +134,15 @@
     });
   }
 
-  function hook(){
-    const host=$('#masterPlayers');if(!host||host.__v084Delete)return;
-    host.__v084Delete=true;
-    host.addEventListener('click',e=>{
-      const b=e.target.closest('[data-master-delete-sheet]');
-      if(b){e.preventDefault();e.stopPropagation();deletePlayer(b.dataset.masterDeleteSheet);}
-    });
-    const old=window.renderMasterBase;
-    if(typeof old==='function'&&!old.__v084Delete){
-      const wrapped=function(){const r=old.apply(this,arguments);inject();return r};
-      wrapped.__v084Delete=true;window.renderMasterBase=wrapped;
-    }
-    inject();
-  }
-
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(hook,0));
-  setTimeout(hook,500);
+  function bind(){ const host=$('#masterPlayers'); if(!host||host.__v084Bound)return; host.__v084Bound=true; host.addEventListener('click',e=>{const b=e.target.closest('[data-master-delete-sheet]'); if(b){e.preventDefault();e.stopPropagation();deletePlayer(b.dataset.masterDeleteSheet);}}); }
+  function init(){bind();inject();}
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
+  setTimeout(init,500);
   window.MasterPlayerDeleteV084={delete:deletePlayer,inject};
 })();
 
 
-/* --- 59-v085-unified-map.js --- */
+
 /* V0.85 — Mapa unificado: exploração + mapa funcional do Hotel Espelho. */
 (function(){
   'use strict';
@@ -195,26 +174,45 @@
   function toggleDoor(k){if(typeof V030!=='undefined'&&V030.setDoor)V030.setDoor(k);}
   function moveKiller(id){if(typeof moveKillerFromMap==='function')moveKillerFromMap(id);}
   function zoom(delta){ensure();data.campanha.v085.zoom=Math.max(.7,Math.min(1.4,Number(data.campanha.v085.zoom)+delta));saveLocal();render();}
-  const old=window.renderHotelMap;window.renderHotelMap=render;
-  const boot=()=>{if(typeof data==='undefined'||!data)return setTimeout(boot,100);render();};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+  const boot=()=>{if(typeof data==='undefined'||!data)return setTimeout(boot,100);};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   window.V085={render,setFloor,investigate,toggleDoor,moveKiller,zoom};
 })();
 
 
-/* --- 60-v086-combat-ui.js --- */
-/* V0.86 — Central de combate aprimorada para uso presencial. */
+
+/* Controles de ficha do Mestre — implementação direta, sem sobrescrever renderizadores. */
 (function(){
   'use strict';
-  const $=id=>document.getElementById(id),h=v=>typeof esc==='function'?esc(v):String(v??'');
-  function ensure(){data.campanha=data.campanha||{};data.campanha.combateV071=data.campanha.combateV071||{ativo:false,rodada:1,ordem:[],indice:0,historico:[]};return data.campanha.combateV071;}
-  const ent=id=>{const all=[...(data.jogadores||[]),...(data.monstros||[]),...(data.assassinos||[])];return all.find(x=>String(x.id)===String(id));};
-  const alive=x=>x&&Number(x.pv??1)>0;
-  function render(){const host=$('v071CombatPanel');if(!host||!data)return;const c=ensure();if(!c.ativo){if(typeof CombatV071!=='undefined'&&CombatV071._renderBase)return CombatV071._renderBase();return;}const cur=ent(c.ordem[c.indice]);const rows=c.ordem.map((id,i)=>{const x=ent(id);if(!x)return '';const pct=Math.max(0,Math.min(100,(Number(x.pv)||0)/(Number(x.pvMax??x.pvBase??1)||1)*100));return `<button class="v086-turn-card ${i===c.indice?'active':''} ${alive(x)?'':'dead'}" onclick="CombatV086.select('${h(x.id)}')"><span class="v086-init">${i+1}</span><div><b>${h(x.nome)}</b><small>${h(x.tipo||'Participante')} • PV ${x.pv}/${x.pvMax??x.pvBase??'—'}</small><div class="v086-hp"><i style="width:${pct}%"></i></div></div><strong>${i===c.indice?'▶':''}</strong></button>`;}).join('');const attacks=(typeof attackList==='function'?attackList(cur):[]).map((a,i)=>`<button class="dice-btn" onclick="CombatV071.rollAttack('${h(cur.id)}',${i})">🎲 ${h(a.nome)}</button>`).join('');const hp=(c.ordem||[]).map(id=>ent(id)).filter(Boolean).map(x=>`<div class="v086-resource-row"><div><b>${h(x.nome)}</b><small>${h(x.tipo||'Participante')}</small></div><label>PV<input type="number" min="0" max="${Number(x.pvMax??x.pvBase??9999)}" value="${Number(x.pv??0)}" onchange="CombatV071.setHP('${h(x.id)}',this.value)"></label><button class="ghost small" onclick="CombatV071.damage('${h(x.id)}',prompt('Dano em ${h(x.nome)}:')||0)">− DANO</button><button class="ghost small" onclick="CombatV071.heal('${h(x.id)}',prompt('Cura em ${h(x.nome)}:')||0)">＋ CURA</button></div>`).join('');const hist=(c.historico||[]).slice(0,12).map(e=>`<div><time>${new Date(e.at).toLocaleTimeString()}</time><span>${h(e.text)}</span></div>`).join('')||'<small class="muted">Sem eventos.</small>';
-    host.innerHTML=`<div class="panel-title"><div><span class="icon">⚔</span><div><p class="eyebrow">COMBATE EM ANDAMENTO</p><h2>Rodada ${c.rodada} • ${h(cur?.nome||'—')}</h2><p>Controle de turno, PV e ações rápidas.</p></div></div><button class="ghost small" onclick="CombatV071.stop()">ENCERRAR</button></div><div class="v086-combat-layout"><section><h3>Iniciativa</h3><div class="v086-turn-list">${rows}</div></section><section><div class="v086-current"><span>TURNO ATUAL</span><b>${h(cur?.nome||'—')}</b><div class="v086-turn-actions"><button class="primary" onclick="CombatV071.prev()">← ANTERIOR</button><button class="primary" onclick="CombatV071.next()">PRÓXIMO →</button></div>${attacks||'<small class="muted">Nenhum ataque cadastrado.</small>'}</div><h3>Recursos</h3><div class="v086-resource-list">${hp}</div></section></div><details class="v071-history" open><summary>Histórico</summary>${hist}</details>`;
+  const $=id=>document.getElementById(id);
+  const escV=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const campaign=()=>{data.campanha=data.campanha||{};return data.campanha;};
+  function released(id){return Array.isArray(campaign().escolhaClasseLiberadaPara)&&campaign().escolhaClasseLiberadaPara.map(String).includes(String(id));}
+  function release(id){
+    const c=campaign();
+    if(Number(c.andarAtual)!==5)return toast('A escolha de classe só pode ser liberada no 5º andar.');
+    const p=(data.jogadores||[]).find(x=>String(x.id)===String(id)); if(!p)return;
+    if(p.classe)return toast(`${p.nome} já possui a classe ${p.classe}.`);
+    const ids=Array.isArray(c.escolhaClasseLiberadaPara)?c.escolhaClasseLiberadaPara.map(String):[];
+    const sid=String(id), next=released(id)?ids.filter(x=>x!==sid):[...new Set([...ids,sid])];
+    c.escolhaClasseLiberadaPara=next; c.escolhaClasseLiberada=next.length>0;
+    logAction(`${p.nome}: escolha de classe ${next.includes(sid)?'liberada':'bloqueada'} pelo Mestre.`); saveLocal();
+    window.MultiplayerV071?.sync?.(); renderMaster();
+    if(selectedPlayer?.id===p.id)renderSheet();
+    toast(next.includes(sid)?`Classe liberada para ${p.nome}`:`Classe bloqueada para ${p.nome}`);
   }
-  function select(id){const c=ensure();const i=c.ordem.findIndex(x=>String(x)===String(id));if(i<0)return;c.indice=i;saveLocal();render();}
-  function boot(){if(typeof CombatV071==='undefined'||!data)return setTimeout(boot,100);if(!CombatV071._renderBase)CombatV071._renderBase=window.renderCombatPanel;window.renderCombatPanel=render;render();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-  window.CombatV086={render,select};
+  function playerId(card){return card.querySelector('[data-resource][data-id]')?.dataset.id||null;}
+  function refresh(){
+    const host=$('masterPlayers'); if(!host)return;
+    host.querySelectorAll('.v12-master-actions').forEach(x=>x.remove());
+    host.querySelectorAll('.master-player-card').forEach(card=>{
+      const id=playerId(card); if(!id)return; const p=(data.jogadores||[]).find(x=>String(x.id)===String(id)); if(!p)return;
+      const actions=document.createElement('div'); actions.className='v12-master-actions';
+      const canRelease=!p.classe&&Number(campaign().andarAtual)===5;
+      actions.innerHTML=`<button type="button" class="dice-btn" data-v12-view="${escV(id)}">▣ VER FICHA COMPLETA</button><button type="button" class="dice-btn ${released(id)?'secondary':''}" data-v12-release="${escV(id)}" ${canRelease?'':'disabled'}>${p.classe?'✓ CLASSE DEFINIDA':released(id)?'🔒 BLOQUEAR CLASSE':'🎓 LIBERAR CLASSE'}</button><button type="button" class="dice-btn" data-v12-item="${escV(id)}">🎒 ADICIONAR ITEM</button><button type="button" class="ghost" data-v12-delete="${escV(id)}">🗑 EXCLUIR FICHA</button>`;
+      card.appendChild(actions);
+    });
+  }
+  function bind(){const host=$('masterPlayers');if(!host||host.__v12Actions)return;host.__v12Actions=true;host.addEventListener('click',e=>{const b=e.target.closest('[data-v12-view],[data-v12-release],[data-v12-item],[data-v12-delete]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.v12View)return window.MasterPlayerSheetV082?.open(b.dataset.v12View);if(b.dataset.v12Release)return release(b.dataset.v12Release);if(b.dataset.v12Item)return createAndAddPlayerItem(b.dataset.v12Item);if(b.dataset.v12Delete)return window.MasterPlayerDeleteV084?.delete(b.dataset.v12Delete);});}
+  window.MasterPlayerTools={refresh,release};
+  document.addEventListener('DOMContentLoaded',()=>{bind();refresh();});
 })();
-

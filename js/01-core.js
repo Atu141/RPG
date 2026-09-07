@@ -955,7 +955,7 @@ function renderQuickPlayerTools(){
   const box=document.createElement('div'); box.id='playerQuickTools'; box.className='player-quick-tools panel'; box.innerHTML=`<div class="quick-head"><div><p class="eyebrow">AÇÕES RÁPIDAS</p><h2>Você está no ${data.campanha.andarAtual}º andar</h2></div><div class="quick-resource"><b>PV ${p.pv}/${p.pvMax}</b><b>PE ${p.pe}/${p.peMax}</b><b>SAN ${p.san}/${p.sanMax}</b></div></div><div class="quick-actions"><button class="dice-btn" onclick="openAttributeDice('${p.id}','FOR')">TESTAR FOR</button><button class="dice-btn" onclick="openAttributeDice('${p.id}','AGI')">TESTAR AGI</button><button class="dice-btn" onclick="openAttributeDice('${p.id}','INT')">TESTAR INT</button><button class="dice-btn" onclick="openAttributeDice('${p.id}','PRE')">TESTAR PRE</button><button class="dice-btn" onclick="openAttributeDice('${p.id}','VIG')">TESTAR VIG</button>${data.campanha.perseguicaoAtiva?'<button class="dice-btn danger-action" onclick="openHorrorScreen(selectedPlayer)">☠ PERSEGUIÇÃO</button>':''}</div><div class="exploration-public"><div><p class="eyebrow">EXPLORAÇÃO</p><div class="room-chips">${rooms}</div></div><div><p class="eyebrow">PISTAS REVELADAS</p><div class="public-clues">${clues}</div></div><div><p class="eyebrow">EVENTO</p><b>${esc(data.campanha.eventoAtual||'Nenhum evento em andamento.')}</b></div></div>`;
   const target=$('#sheetContent'); if(target) target.prepend(box);
 }
-function renderSheet(){ renderSheetBase(); renderQuickPlayerTools(); renderAlerts(); }
+function renderSheet(){ if(selectedPlayer && typeof ensureRitualState==='function') ensureRitualState(selectedPlayer); renderSheetBase(); renderQuickPlayerTools(); renderAlerts(); if(window.ConditionUI?.renderPlayer) window.ConditionUI.renderPlayer(); if(window.V030?.renderPlayerSystems) window.V030.renderPlayerSystems(); }
 
 function getFloorRooms(floor){
   const obj=typeof floor==='number'||typeof floor==='string' ? data?.andares?.find(a=>Number(a.id)===Number(floor)) : floor;
@@ -996,7 +996,7 @@ function setMapFloor(floor){
 function toggleMapRoom(floorId,room){ toggleRoomInvestigated(Number(floorId),room); renderHotelMap(); }
 function moveKillerFromMap(id){ moveKiller(id); renderHotelMap(); }
 
-function renderMaster(){ renderMasterBase(); renderHotelMap(); }
+function renderMaster(){ renderMasterBase(); if(window.V030?.render) window.V030.render(); if(window.V085?.render) window.V085.render(); else renderHotelMap(); window.MasterPlayerTools?.refresh?.(); window.ConditionUI?.renderMaster?.(); window.CombatV090?.render?.(); window.SyncV092?.render?.(); window.renderSessionPanel?.(); }
 
 // ===== Inicialização e rolagem =====
 
@@ -1354,12 +1354,6 @@ const V030={
   render(){this.ensure();this.renderMasterSystems();this.renderPlayerSystems();}
 };
 
-const __renderMasterV030=renderMaster;
-renderMaster=function(){__renderMasterV030();V030.render();};
-const __renderSheetV030=renderSheet;
-renderSheet=function(){__renderSheetV030();V030.renderPlayerSystems();};
-const __loadDataV030=loadData;
-loadData=async function(useSaved=true){await __loadDataV030(useSaved);V030.render();};
 
 
 /* --- 08-migrations.js --- */

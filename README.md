@@ -1,70 +1,62 @@
 # Arquivo Paranormal — O Hotel Espelho
-## V1.1.1 — Etapa 1 gratuita: Vercel + Supabase PostgreSQL + Realtime
+## V1.2 — Arquitetura refatorada + Vercel + Supabase Free
 
-Esta versão substitui o transporte PeerJS por uma arquitetura persistente: o PostgreSQL/Supabase é a fonte oficial da sessão e o Supabase Realtime distribui as alterações aos jogadores.
+Esta versão mantém as funcionalidades da V1.1.3, mas remove as camadas antigas de composição da interface do Mestre que sobrescreviam `renderMaster`, `renderSheet` e outros pontos de entrada. O Supabase continua sendo a fonte persistente da sessão e o Realtime continua sendo o mecanismo de atualização online.
 
-## O que foi alterado
-- Vercel pode hospedar o frontend estático.
-- Supabase Free fornece PostgreSQL + Realtime + Auth anônimo.
-- O estado da campanha é salvo na tabela `rpg_sessions`.
-- Mestre e jogadores recebem alterações via Realtime.
-- Inventário, armas equipadas, rituais, PV, PE, SAN, perícias, classe, condições e posição fazem parte do estado persistente.
-- PeerJS deixa de ser o transporte da mesa.
-- Correções de sincronização para criação/exclusão de fichas e prevenção de disputa pela mesma ficha.
-- SQL preparado para ser executado novamente sem apagar as tabelas existentes.
-- O navegador do Mestre não é mais o servidor da sessão.
+## Principais mudanças da V1.2
+- Removida a antiga Central `V0.98` (`UIV098`) do runtime.
+- Removido o transporte PeerJS do carregamento da aplicação.
+- `05-master-tools.js` passou a ser uma camada única de ferramentas do Mestre, sem wrappers de `renderMaster`/`renderMasterBase`.
+- `06-master-systems.js` concentra combate, estado de sessão, horror, mapa auxiliar, ameaças e ferramentas de backup sem substituir renderizadores globais.
+- `renderMaster()` e `renderSheet()` permanecem definidos no núcleo (`01-core.js`) e chamam explicitamente os módulos opcionais por APIs (`V030`, `V085`, `MasterPlayerTools`, `ConditionUI`, `CombatV090`, `SyncV092`).
+- Condições e rituais não sobrescrevem mais `renderMaster`/`renderSheet`; o núcleo chama seus renderizadores diretamente.
+- A Sala da Mesa permanece como elemento permanente no `index.html`, e o Supabase apenas preenche seu conteúdo.
+- Painel de combate, rastreador de recursos e sessão/backup também possuem containers permanentes no HTML.
+- Controles do Mestre por ficha ficam em um único ponto: visualizar ficha, liberar/bloquear classe, adicionar item e excluir ficha.
 
-## Configuração do Supabase
-1. Crie um projeto no Supabase no plano Free.
-2. No Dashboard, abra **Authentication → Providers** e habilite **Anonymous Sign-Ins**.
-3. Abra **SQL Editor**.
-4. Cole e execute todo o arquivo `supabase_schema.sql`.
-5. Vá em **Project Settings → API**.
-6. Copie a **Project URL** e a chave pública **Publishable key / anon key**. Nunca use `service_role`.
-7. Abra `js/supabase-config.js`.
-8. Preencha:
-
-```js
-window.SUPABASE_CONFIG = {
-  url: 'https://SEU-PROJETO.supabase.co',
-  anonKey: 'SUA_CHAVE_PUBLICA'
-};
+## Arquitetura ativa
+```text
+01-core.js
+  ├─ estado, fichas, inventário, renderização principal
+  ├─ mapa funcional V030
+  └─ chamadas explícitas aos módulos de UI/sistema
+02-rules.js
+  ├─ regras e motor de jogo
+  ├─ rituais
+  └─ condições, sem wrappers de renderização
+03-threats.js
+  └─ catálogo e ameaças
+05-master-tools.js
+  ├─ ficha do jogador para o Mestre
+  ├─ exclusão de ficha
+  ├─ controles por ficha
+  └─ mapa unificado V085
+06-master-systems.js
+  ├─ combate V090
+  ├─ status/sessão
+  ├─ horror/eventos
+  └─ backup local
+07-mobile.js
+  └─ navegação mobile
+08-supabase.js
+  └─ PostgreSQL + Auth anônimo + Realtime
 ```
 
-## Deploy no Vercel
-1. Suba este projeto para um repositório GitHub.
-2. No Vercel, **Add New → Project**.
-3. Importe o repositório.
-4. Para este projeto não é necessário framework nem build command.
-5. Use a pasta raiz do projeto.
-6. Faça o Deploy.
-7. Abra a URL fornecida pelo Vercel.
+## Supabase
+1. Habilite **Authentication → Providers → Anonymous Sign-Ins**.
+2. Execute `supabase_schema.sql` no SQL Editor. O script é reexecutável e não deve apagar as tabelas existentes.
+3. Em `js/supabase-config.js`, informe somente a Project URL e a Publishable key. Nunca coloque uma Secret/service_role key no frontend.
+4. Publique a pasta no Vercel.
 
-## Teste inicial
-1. Abra a URL do Vercel no celular do Mestre.
-2. Faça login como Mestre normalmente.
-3. Na Central da Mesa, pressione **CRIAR MESA (MESTRE)**.
-4. Copie o link de convite.
-5. Abra o link em outro celular.
-6. O jogador será autenticado anonimamente e entrará na sessão.
-7. Escolha uma ficha ou crie uma nova.
-8. Teste PV, PE, SAN, classe, perícias, condições, posição, inventário, arma equipada e rituais.
-9. Feche e reabra o navegador do jogador para confirmar que a sessão continua persistida.
-
-## Limites do Free
-O Supabase Free atualmente inclui 500 MB de banco por projeto, 1 GB de Storage, 5 GB de egress, 2 milhões de mensagens Realtime e 200 conexões Realtime simultâneas. Projetos Free podem ser pausados após uma semana de inatividade.
-
-## Segurança
-- A chave `service_role` nunca deve ser colocada no frontend.
-- A aplicação usa autenticação anônima do Supabase.
-- RLS protege as tabelas.
-- O convite usa um código de sessão de 6 caracteres.
-- Esta etapa é adequada para o uso privado da campanha; para publicação pública será necessário evoluir permissões, contas e auditoria.
-
-## Arquivos novos
-- `supabase_schema.sql` — banco, RLS, RPCs e Realtime.
-- `js/supabase-config.js` — URL e chave pública do projeto.
-- `js/08-supabase.js` — sincronização persistente.
+## Teste recomendado
+1. Mestre faz login.
+2. A seção **Sala da Mesa** deve aparecer diretamente na Central do Mestre.
+3. Clique em **CRIAR MESA (MESTRE)**.
+4. Confirme no Supabase que uma linha foi criada em `rpg_sessions`.
+5. Abra o convite em outro dispositivo.
+6. Crie/assuma uma ficha.
+7. Teste classe, item, arma, ritual, PV, PE, SAN e condições.
+8. Confirme as alterações em tempo real no jogador.
 
 ## Observação
-O arquivo `fichas.json` continua servindo como base inicial/local. O estado da sessão criada pelo Mestre passa a ser persistido no Supabase.
+`fichas.json`, `itens.json`, `armas.json`, `rituais.json` e `ameacas.json` continuam sendo catálogos/base local. A sessão criada pelo Mestre é persistida no Supabase.

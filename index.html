@@ -35,7 +35,11 @@
 <section id="masterScreen" class="screen">
   <div class="hero"><div><p class="eyebrow">CENTRAL DO MESTRE</p><h1>O <span>Hotel Espelho</span></h1><p class="muted">Controle manual de fichas, ameaças e rolagens.</p></div><button id="logoutBtn" class="ghost">SAIR</button></div><div id="masterProfilePanel" class="panel master-profile-panel"></div>
   <div class="master-toolbar"><div><b>Arquivo de fichas</b><small>Dados carregados de <code>fichas.json</code></small></div><button id="reloadJson" class="ghost">↻ Recarregar JSON</button></div>
-  <div id="hotelMap" class="panel hotel-map-panel"></div><div id="v030Systems" class="v030-systems"></div><div class="grid master-grid"><div class="panel"><div class="panel-title"><div><span class="icon">♟</span><div><h2>Jogadores</h2><p>PV alterado manualmente pelo mestre</p></div></div></div><div id="masterPlayers" class="cards-list"></div></div>
+  <div id="hotelMap" class="panel hotel-map-panel"></div>
+  <section id="v071MultiplayerPanel" class="panel v071-multiplayer-panel" aria-live="polite"></section>
+  <section id="v071CombatPanel" class="panel v071-combat-panel" aria-live="polite"></section>
+  <section id="v12SessionPanel" class="panel v12-session-panel"><div class="panel-title"><div><span class="icon">💾</span><div><h2>Sessão e Backup</h2><p>Ferramentas administrativas da sessão do Mestre.</p></div></div></div><div id="v12SessionContent"></div></section>
+  <div id="v030Systems" class="v030-systems"></div><div class="grid master-grid"><div class="panel"><div class="panel-title"><div><span class="icon">♟</span><div><h2>Jogadores</h2><p>PV alterado manualmente pelo mestre</p></div></div></div><div id="masterPlayers" class="cards-list"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">☠</span><div><h2>Monstros</h2><p>PV e ataques</p></div></div></div><div id="masterMonsters" class="cards-list"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">◈</span><div><h2>Controle da campanha</h2><p>Andar, objetivo e perseguição</p></div></div></div><div id="campaignInfo" class="campaign-info"></div></div>
   <div class="panel"><div class="panel-title"><div><span class="icon">🔪</span><div><h2>Os 4 Assassinos</h2><p>Informações exclusivas do Mestre</p></div></div></div><div id="killerInfo" class="cards-list"></div></div>
@@ -103,12 +107,18 @@
 <script src="js/02-rules.js"></script>
 <script src="js/03-threats.js"></script>
 <script>window.HOTEL_USE_SUPABASE=true;</script>
-<script src="js/04-network.js"></script>
 <script src="js/05-master-tools.js"></script>
-<script src="js/06-master-console.js"></script>
+<script src="js/06-master-systems.js"></script>
 <script src="js/07-mobile.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/08-supabase.js"></script>
 <script>window.addEventListener('DOMContentLoaded', () => initializeApp(), {once:true});</script>
+<script>
+(function(){
+ function renderSessionPanel(){const el=document.getElementById('v12SessionContent');if(!el||!window.SessionV097)return;el.innerHTML='<div class="v098-session-grid"><div><h3>Backup local</h3><p class="muted">Exporte ou restaure uma cópia do estado local desta sessão.</p><div class="v098-actions"><button class="primary" onclick="SessionV097.export()">EXPORTAR BACKUP</button><button class="ghost" onclick="SessionV097.import()">IMPORTAR BACKUP</button><button class="ghost" onclick="SessionV097.newSession()">NOVA SESSÃO</button></div></div><div><h3>Histórico</h3><div class="v098-history">${SessionV097.renderHistory()}</div></div></div>';}
+ document.addEventListener('DOMContentLoaded',()=>{setTimeout(renderSessionPanel,300);setInterval(renderSessionPanel,2000);});
+ window.renderSessionPanel=renderSessionPanel;
+})();
+</script>
 </body></html>
