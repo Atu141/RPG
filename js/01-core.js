@@ -244,7 +244,7 @@ function setSkillDT(value){
 function skillLabel(skill){ return `${skill.requerTreinamento?'* ':''}${skill.nome}`; }
 
 async function loadData(useSaved=true){
-  const response = await fetch('fichas.json?ts=' + Date.now(), {cache:'no-store'});
+  const response = await fetch('../data/fichas.json?ts=' + Date.now(), {cache:'no-store'});
   if(!response.ok) throw new Error(`Não foi possível carregar fichas.json (HTTP ${response.status})`);
   const jsonData = await response.json();
   data = normalizeData(jsonData);
@@ -1262,6 +1262,8 @@ function toast(message){
 
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-screen]').forEach(button => {
+    if(button.__hotelScreenBound)return;
+    button.__hotelScreenBound=true;
     button.addEventListener('click', () => show(button.dataset.screen));
   });
   document.addEventListener('click',e=>{if(e.target.id==='closeHorror')closeHorrorScreen();});
@@ -1365,7 +1367,7 @@ loadData=async function(useSaved=true){
   const clueVersion=Number(data._clueSchemaVersion||0);
   if(clueVersion<2){
     try{
-      const response=await fetch('fichas.json?ts='+Date.now(),{cache:'no-store'});
+      const response=await fetch('../data/fichas.json?ts='+Date.now(),{cache:'no-store'});
       const fresh=await response.json();
       const revealed=new Set((data.campanha.pistasReveladas||[]).map(String));
       (data.pistas||[]).forEach(p=>{if(p.revelada)revealed.add(String(p.id));});

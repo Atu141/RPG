@@ -5,7 +5,7 @@
 <title>O Hotel Espelho — One-Shot Ordem Paranormal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="grain"></div>
@@ -13,6 +13,23 @@
   <div class="brand"><div class="sigil">✦</div><div><strong>ARQUIVO PARANORMAL</strong><span>ONE-SHOT • O HOTEL ESPELHO</span></div></div>
   <div class="top-actions"><button class="role-btn active" data-screen="playerHome">FICHAS</button><button class="role-btn" data-screen="masterLogin">MESTRE</button><span class="status"><i></i> Sessão</span></div>
 </header>
+<script>
+(function(){
+  function switchScreen(id){
+    document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+    var target=document.getElementById(id);
+    if(!target)return;
+    target.classList.add('active');
+    document.querySelectorAll('.role-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-screen')===id || (id==='playerSheet' && btn.getAttribute('data-screen')==='playerHome'));
+    });
+  }
+  window.__hotelSwitchScreen=switchScreen;
+  document.querySelectorAll('.role-btn[data-screen]').forEach(function(btn){
+    btn.addEventListener('click',function(){switchScreen(btn.getAttribute('data-screen'));});
+  });
+})();
+</script>
 <main>
 <section id="playerHome" class="screen active">
   <div class="hero"><div><p class="eyebrow">VISÃO DOS JOGADORES</p><h1>Escolha sua <span>ficha</span></h1><p class="muted">Acesso somente à ficha individual. Perícias treinadas recebem +5; perícias com * exigem treinamento.</p></div></div>
@@ -34,7 +51,7 @@
 
 <section id="masterScreen" class="screen">
   <div class="hero"><div><p class="eyebrow">CENTRAL DO MESTRE</p><h1>O <span>Hotel Espelho</span></h1><p class="muted">Controle manual de fichas, ameaças e rolagens.</p></div><button id="logoutBtn" class="ghost">SAIR</button></div><div id="masterProfilePanel" class="panel master-profile-panel"></div>
-  <div class="master-toolbar"><div><b>Arquivo de fichas</b><small>Dados carregados de <code>fichas.json</code></small></div><button id="reloadJson" class="ghost">↻ Recarregar JSON</button></div>
+  <div class="master-toolbar"><div><b>Arquivo de fichas</b><small>Dados carregados de <code>data/fichas.json</code></small></div><button id="reloadJson" class="ghost">↻ Recarregar JSON</button></div>
   <div id="hotelMap" class="panel hotel-map-panel"></div>
   <section id="v071MultiplayerPanel" class="panel v071-multiplayer-panel" aria-live="polite"></section>
   <section id="v071CombatPanel" class="panel v071-combat-panel" aria-live="polite"></section>
@@ -81,14 +98,14 @@
   <button class="close" id="closeReadyItemModal">×</button>
   <p class="eyebrow">CATÁLOGO DO MESTRE</p>
   <h2>Itens prontos</h2>
-  <p class="muted">Selecione um item de <b>itens.json</b> ou uma arma de <b>armas.json</b> para adicionar diretamente ao inventário de <b id="readyItemModalPlayerName"></b>.</p>
+  <p class="muted">Selecione um item de <b>data/itens.json</b> ou uma arma de <b>data/armas.json</b> para adicionar diretamente ao inventário de <b id="readyItemModalPlayerName"></b>.</p>
   <input id="readyItemModalPlayer" type="hidden">
   <div class="ready-item-toolbar">
     <input id="readyItemSearch" class="control-input" type="search" placeholder="Pesquisar item ou arma..." autocomplete="off">
     <select id="readyItemCategory" class="control-select">
       <option value="all">Todos</option>
-      <option value="item">Itens — itens.json</option>
-      <option value="weapon">Armas — armas.json</option>
+      <option value="item">Itens — data/itens.json</option>
+      <option value="weapon">Armas — data/armas.json</option>
     </select>
   </div>
   <div id="readyItemList" class="ready-item-list"></div>
@@ -111,7 +128,7 @@
 <script src="js/06-master-systems.js"></script>
 <script src="js/07-mobile.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-config.js"></script>
+<script src="config/supabase-config.js"></script>
 <script src="js/08-supabase.js"></script>
 <script>window.addEventListener('DOMContentLoaded', () => initializeApp(), {once:true});</script>
 <script>

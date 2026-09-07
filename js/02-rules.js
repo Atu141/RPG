@@ -195,7 +195,7 @@ let RITUAL_CATALOG = [];
 let RITUAL_CATALOG_READY = false;
 async function loadRitualCatalog(){
   try{
-    const response=await fetch('rituais.json?ts='+Date.now(),{cache:'no-store'});
+    const response=await fetch('../data/rituais.json?ts='+Date.now(),{cache:'no-store'});
     if(!response.ok) throw new Error('HTTP '+response.status);
     const payload=await response.json();
     const list=Array.isArray(payload)?payload:payload.rituais;
@@ -533,11 +533,11 @@ const ConditionEngine=(()=>{
   window.loadGameCatalogs=async function(){
     let itemsOk=false; let weaponsOk=false;
     try{
-      const r=await fetch('itens.json?ts='+Date.now(),{cache:'no-store'}); if(!r.ok)throw Error('HTTP '+r.status); const j=await r.json(); const list=Array.isArray(j)?j:j.itens;
+      const r=await fetch('../data/itens.json?ts='+Date.now(),{cache:'no-store'}); if(!r.ok)throw Error('HTTP '+r.status); const j=await r.json(); const list=Array.isArray(j)?j:j.itens;
       if(Array.isArray(list)){ data.itensDisponiveis=list.map(x=>normalizeItem(x)); itemsOk=true; }
     }catch(e){console.error('Erro ao carregar itens.json',e);toast('Não foi possível carregar itens.json.');}
     try{
-      const r=await fetch('armas.json?ts='+Date.now(),{cache:'no-store'}); if(!r.ok)throw Error('HTTP '+r.status);
+      const r=await fetch('../data/armas.json?ts='+Date.now(),{cache:'no-store'}); if(!r.ok)throw Error('HTTP '+r.status);
       const j=await r.json(); const list=Array.isArray(j)?j:j.armas;
       if(Array.isArray(list)){ window.WEAPON_CATALOG=list.map((x,i)=>({id:x.id||`arma_${String(i+1).padStart(3,'0')}`,nome:String(x.nome||''),categoria:String(x.categoria||''),grupo:String(x.grupo||''),dano:String(x.dano||''),critico:String(x.critico||''),alcance:String(x.alcance||''),tipoDano:String(x.tipoDano||''),espacos:Number(x.espacos)||0,proficiencia:String(x.proficiencia||''),teste:String(x.teste||'Pontaria')})).filter(x=>x.nome&&x.dano); weaponsOk=true; }
     }catch(e){console.error('Erro ao carregar armas.json',e);toast('Não foi possível carregar armas.json.'); window.WEAPON_CATALOG=[];}

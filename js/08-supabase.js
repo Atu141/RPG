@@ -37,7 +37,7 @@
   }
   function renderChooser(players){const host=$('mpPlayerChooser');if(!host)return;host.innerHTML=`<div class="v071-chooser"><b>Escolha sua ficha</b><div>${players.map(p=>`<button class="v071-player-choice" onclick="MultiplayerV071.claim('${esc(p.id)}')"><span>${esc(p.nome)}</span><small>${esc(p.classe||'Classe não definida')} • NEX ${esc(p.nex)}</small></button>`).join('')||'<small class="muted">Nenhuma ficha disponível.</small>'}</div><button class="ghost small" onclick="MultiplayerV071.requestCreate()">＋ CRIAR MINHA FICHA</button></div>`;}
   async function createSession(){
-    if(!valid())return toastSafe('Configure o Supabase em js/supabase-config.js antes de criar a mesa.');
+    if(!valid())return toastSafe('Configure o Supabase em config/supabase-config.js antes de criar a mesa.');
     try{
       await ensureAuth();
       const {data:r,error}=await client.rpc('create_rpg_session',{initial_state:snapshot()});
@@ -47,7 +47,7 @@
     }catch(e){console.error(e);toastSafe(`Não foi possível criar a mesa: ${e.message||e}`)}
   }
   async function connectPlayer(code){
-    if(!valid())return toastSafe('Configure o Supabase em js/supabase-config.js antes de entrar na mesa.');
+    if(!valid())return toastSafe('Configure o Supabase em config/supabase-config.js antes de entrar na mesa.');
     const clean=String(code||'').trim().toUpperCase();if(!clean)return toastSafe('Convite inválido.');
     try{
       await ensureAuth();
