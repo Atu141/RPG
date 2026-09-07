@@ -1,9 +1,9 @@
 # Arquivo Paranormal — O Hotel Espelho
-## V1.2 — Arquitetura refatorada + Vercel + Supabase Free
+## V1.3 — Arquitetura refatorada + Vercel + Supabase Free
 
 Esta versão mantém as funcionalidades da V1.1.3, mas remove as camadas antigas de composição da interface do Mestre que sobrescreviam `renderMaster`, `renderSheet` e outros pontos de entrada. O Supabase continua sendo a fonte persistente da sessão e o Realtime continua sendo o mecanismo de atualização online.
 
-## Principais mudanças da V1.2
+## Principais mudanças da V1.3
 - Removida a antiga Central `V0.98` (`UIV098`) do runtime.
 - Removido o transporte PeerJS do carregamento da aplicação.
 - `05-master-tools.js` passou a ser uma camada única de ferramentas do Mestre, sem wrappers de `renderMaster`/`renderMasterBase`.
@@ -60,3 +60,10 @@ Esta versão mantém as funcionalidades da V1.1.3, mas remove as camadas antigas
 
 ## Observação
 `fichas.json`, `itens.json`, `armas.json`, `rituais.json` e `ameacas.json` continuam sendo catálogos/base local. A sessão criada pelo Mestre é persistida no Supabase.
+
+
+## V1.3 — Sincronização resiliente
+- Supabase Realtime continua como canal principal.
+- O Mestre consulta periodicamente o estado persistido em `rpg_sessions` para recuperar eventos de Realtime que não cheguem ao navegador.
+- O contador de jogadores usa `rpg_session_members`, distinguindo jogadores conectados de fichas cadastradas.
+- O schema explicita `pgcrypto` no schema `extensions` e usa `extensions.gen_random_bytes`.

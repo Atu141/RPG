@@ -2,7 +2,7 @@
 -- Etapa 1 gratuita: Supabase Auth (anônimo) + PostgreSQL + Realtime
 -- Execute este script inteiro no SQL Editor do Supabase.
 
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists public.rpg_sessions (
   id uuid primary key default gen_random_uuid(),
@@ -31,12 +31,12 @@ alter table public.rpg_sessions enable row level security;
 alter table public.rpg_session_members enable row level security;
 
 create or replace function public.create_rpg_session(initial_state jsonb)
-returns jsonb language plpgsql security definer set search_path=public,auth as $$
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare v_id uuid; v_code text; v_member uuid;
 begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
   loop
-    v_code := upper(substr(encode(gen_random_bytes(8),'hex'),1,6));
+    v_code := upper(substr(encode(extensions.gen_random_bytes(8),'hex'),1,6));
     exit when not exists(select 1 from public.rpg_sessions where code=v_code);
   end loop;
   insert into public.rpg_sessions(code,host_user_id,state) values(v_code,auth.uid(),coalesce(initial_state,'{}'::jsonb)) returning id into v_id;
@@ -45,7 +45,7 @@ begin
 end; $$;
 
 create or replace function public.join_rpg_session(session_code text)
-returns jsonb language plpgsql security definer set search_path=public,auth as $$
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare s public.rpg_sessions; m uuid; p text;
 begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
@@ -58,7 +58,7 @@ begin
 end; $$;
 
 create or replace function public.claim_rpg_player(p_session_id uuid,p_player_id text)
-returns jsonb language plpgsql security definer set search_path=public,auth as $$
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare s public.rpg_sessions; exists_player boolean; pname text;
 begin
   select * into s from public.rpg_sessions where id=p_session_id;
@@ -73,7 +73,7 @@ begin
 end; $$;
 
 create or replace function public.create_rpg_player(p_session_id uuid,p_name text,p_origin text)
-returns jsonb language plpgsql security definer set search_path=public,auth as $$
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare s public.rpg_sessions; p jsonb; pid text;
 begin
   select * into s from public.rpg_sessions where id=p_session_id;
@@ -87,7 +87,7 @@ begin
 end; $$;
 
 create or replace function public.update_rpg_player(p_session_id uuid,p_player_id text,p_player jsonb)
-returns jsonb language plpgsql security definer set search_path=public,auth as $$
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare s public.rpg_sessions; arr jsonb; outarr jsonb:='[]'::jsonb; j jsonb;
 begin
   select * into s from public.rpg_sessions where id=p_session_id;

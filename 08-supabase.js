@@ -8,7 +8,7 @@
   const clone=o=>JSON.parse(JSON.stringify(o));
   const $=id=>document.getElementById(id);
   const toastSafe=m=>typeof toast==='function'?toast(m):console.warn(m);
-  const state={role:'offline',connected:false,sessionId:null,code:null,userId:null,memberId:null,playerId:null,channel:null,pushTimer:null,applying:false};
+  const state={role:'offline',connected:false,sessionId:null,code:null,userId:null,memberId:null,playerId:null,memberCount:0,channel:null,pushTimer:null,pollTimer:null,applying:false};
   let client=null;
 
   function snapshot(){return clone({campanha:data?.campanha||{},jogadores:data?.jogadores||[],monstros:data?.monstros||[],assassinos:data?.assassinos||[]});}
@@ -30,7 +30,7 @@
     host.hidden=false;
     const status=state.role==='host'?`MESTRE • ${state.connected?'ONLINE':'CONECTANDO'}`:state.role==='player'?`JOGADOR • ${state.connected?'ONLINE':'CONECTANDO'}`:'OFFLINE';
     const hostArea=state.role==='host'
-      ? `<div><b>Link de convite</b><div class="v071-invite-url">${esc(inviteUrl())}</div><small>O estado da sessão fica salvo no PostgreSQL. O Mestre não precisa manter uma conexão PeerJS aberta.</small><div class="v071-actions"><button class="primary" onclick="MultiplayerV071.copyInvite()">🔗 COPIAR LINK</button><button class="ghost small" onclick="MultiplayerV071.stop()">ENCERRAR MESA</button></div></div><div><b>Jogadores</b><strong class="v071-connected-count">${(data.jogadores||[]).length}</strong><small>Sincronização em tempo real pelo Supabase.</small></div>`
+      ? `<div><b>Link de convite</b><div class="v071-invite-url">${esc(inviteUrl())}</div><small>O estado da sessão fica salvo no PostgreSQL. O Mestre não precisa manter uma conexão PeerJS aberta.</small><div class="v071-actions"><button class="primary" onclick="MultiplayerV071.copyInvite()">🔗 COPIAR LINK</button><button class="ghost small" onclick="MultiplayerV071.stop()">ENCERRAR MESA</button></div></div><div><b>Jogadores</b><strong class="v071-connected-count">${state.memberCount}</strong><small>${(data.jogadores||[]).length} ficha(s) cadastrada(s) • sincronização em tempo real pelo Supabase.</small></div>`
       : `<div><b>Mesa do Hotel Espelho</b><small>Crie uma mesa online para sincronizar Mestre e Jogadores pelo Supabase.</small><button class="primary" onclick="MultiplayerV071.host()">＋ CRIAR MESA (MESTRE)</button></div><div><b>Sem mesa ativa</b><small>Se você estiver usando somente a ficha local, pode continuar sem sincronização.</small><button class="ghost" onclick="MultiplayerV071.local()">USAR FICHA SEM SINCRONIZAÇÃO</button></div>`;
     host.innerHTML=`<div class="panel-title"><div><span class="icon">◉</span><div><h2>Sala da Mesa</h2><p>PostgreSQL + Realtime • estado persistente da campanha.</p></div></div><span class="sync-badge">${esc(status)}</span></div><div class="v071-mp-grid">${hostArea}</div>`;
     if(state.role==='player'&&state.connected)renderChooser(data.jogadores||[]);
@@ -58,11 +58,38 @@
       subscribe();render();toastSafe('Conectado à mesa.');
     }catch(e){console.error(e);toastSafe(`Não foi possível entrar na mesa: ${e.message||e}`)}
   }
+  async function refreshServerState(){
+    if(!valid()||!state.sessionId||state.applying)return;
+    try{
+      const {data:r,error}=await client.from('rpg_sessions').select('state,updated_at').eq('id',state.sessionId).single();
+      if(error)throw error;
+      if(r?.state)applyState(r.state);
+    }catch(e){console.warn('Supabase state refresh',e.message||e)}
+  }
+  async function refreshMemberCount(){
+    if(!valid()||!state.sessionId)return;
+    try{
+      const {count,error}=await client.from('rpg_session_members').select('id',{count:'exact',head:true}).eq('session_id',state.sessionId).eq('role','player');
+      if(error)throw error;
+      state.memberCount=Number(count)||0;
+      render();
+    }catch(e){console.warn('Supabase member count',e.message||e)}
+  }
+  function startPolling(){
+    clearInterval(state.pollTimer);
+    state.pollTimer=setInterval(()=>{
+      if(!state.sessionId||state.role==='offline'){clearInterval(state.pollTimer);state.pollTimer=null;return;}
+      refreshServerState();
+      refreshMemberCount();
+    },1500);
+    refreshMemberCount();
+  }
   function subscribe(){
     if(state.channel)client.removeChannel(state.channel);
     state.channel=client.channel(`rpg-session-${state.sessionId}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'rpg_sessions',filter:`id=eq.${state.sessionId}`},payload=>{
       if(payload?.new?.state)applyState(payload.new.state);
-    }).subscribe(status=>{if(status==='SUBSCRIBED'){state.connected=true;render();}});
+      refreshMemberCount();
+    }).subscribe(status=>{if(status==='SUBSCRIBED'){state.connected=true;render();refreshServerState();refreshMemberCount();startPolling();}});
   }
   function applyState(st){if(!st||state.applying)return;state.applying=true;try{
     data.campanha=clone(st.campanha||{});data.monstros=clone(st.monstros||[]);data.assassinos=clone(st.assassinos||[]);
@@ -106,7 +133,7 @@
   async function deletePlayer(id){if(state.role!=='host')return;try{const st=snapshot();st.jogadores=st.jogadores.filter(p=>String(p.id)!==String(id));await saveServer(st);applyState(st);}catch(e){console.error(e)}}
   async function resource(pid,key,value){if(state.role==='host'){const p=data.jogadores.find(x=>String(x.id)===String(pid));if(!p)return;const max=Number(p[key+'Max'])||0;p[key]=Math.max(0,Math.min(max,Number(value)||0));persist();selectedPlayer=p;renderSheet();schedulePush();}else if(state.role==='player'){const p=data.jogadores.find(x=>String(x.id)===String(pid));if(!p)return;const max=Number(p[key+'Max'])||0;p[key]=Math.max(0,Math.min(max,Number(value)||0));persist();selectedPlayer=p;renderSheet();schedulePush();}}
   function local(){stop(false);toastSafe('Modo local ativo.');}
-  function stop(show=true){if(state.channel&&client)client.removeChannel(state.channel);state.channel=null;state.role='offline';state.connected=false;state.sessionId=null;state.code=null;state.memberId=null;state.playerId=null;render();if(show)toastSafe('Sala encerrada.');}
+  function stop(show=true){if(state.channel&&client)client.removeChannel(state.channel);state.channel=null;clearInterval(state.pollTimer);state.pollTimer=null;clearTimeout(state.pushTimer);state.role='offline';state.connected=false;state.sessionId=null;state.code=null;state.memberId=null;state.playerId=null;state.memberCount=0;render();if(show)toastSafe('Sala encerrada.');}
   function boot(){
     if(!ready){console.warn('Supabase não configurado.');return;}
     if(!window.supabase?.createClient){toastSafe('Biblioteca Supabase não carregou.');return;}
@@ -117,7 +144,7 @@
     if(typeof oldSave==='function'&&!oldSave.__supabaseV11){const wrapped=function(){const r=oldSave.apply(this,arguments);if(!state.applying)schedulePush();return r};wrapped.__supabaseV11=true;window.saveLocal=wrapped;}
     render();
   }
-  window.MultiplayerV071={host:createSession,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,publishCreatedPlayer:()=>true,resource,deletePlayer,local,stop,sync:()=>saveServer(snapshot()),syncPlayer:()=>saveServer(snapshot()),status:()=>clone({role:state.role,room:state.code,connected:state.connected,players:(data?.jogadores||[]).length})};
+  window.MultiplayerV071={host:createSession,connect:connectPlayer,copyInvite,claim:claimPlayer,requestCreate,publishCreatedPlayer:()=>true,resource,deletePlayer,local,stop,sync:()=>saveServer(snapshot()),syncPlayer:()=>saveServer(snapshot()),status:()=>clone({role:state.role,room:state.code,connected:state.connected,players:(data?.jogadores||[]).length,connectedPlayers:state.memberCount})};
   window.HotelSupabase={state,client:()=>client,snapshot,saveServer,applyState};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
