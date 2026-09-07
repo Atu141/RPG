@@ -138,8 +138,52 @@
   function broadcastRoster(){broadcast({type:'roster',players:clone(data.jogadores||[]),room:MP.roomCode});}
   function inviteUrl(){const base=window.location.href.split('#')[0].split('?')[0];return `${base}?convite=${encodeURIComponent(MP.hostPeerId||`hotel-espelho-${String(MP.roomCode||'').toLowerCase()}`)}`;}
   async function copyInvite(){const url=inviteUrl();try{await navigator.clipboard.writeText(url);toast('Link de convite copiado.');}catch(e){window.prompt('Copie o link de convite:',url);}return url;}
-  function setupPeerHost(){if(!window.Peer)return toast('Multiplayer requer internet para o canal de conexão.');MP.role='host';MP.roomCode=shortCode();const id=`hotel-espelho-${MP.roomCode.toLowerCase()}`;MP.peer=new Peer(id);MP.peer.on('open',()=>{MP.connected=true;MP.hostPeerId=id;renderMPUI();toast('Mesa pronta. Gere o link de convite.');});MP.peer.on('connection',conn=>{MP.connections.set(conn.peer,conn);conn.on('open',()=>send(conn,{type:'hello',room:MP.roomCode,players:clone(data.jogadores||[]),campanha:clone(data.campanha||{})}));conn.on('data',msg=>hostReceive(conn,msg));conn.on('close',()=>{MP.connections.delete(conn.peer);MP.owners.delete(conn.peer);});});MP.peer.on('error',e=>{console.warn(e);toast(`Falha no canal multiplayer (${e?.type||'erro'}). Tente criar a sala novamente.`);});renderMPUI();}
-  function connectPlayer(code){if(!window.Peer)return toast('Multiplayer requer internet para o canal de conexão.');const raw=String(code||'').trim();const clean=raw.replace(/^hotel-espelho-/i,'').toUpperCase();if(clean.length<4)return toast('Convite inválido.');MP.role='player';MP.roomCode=clean;MP.peer=new Peer();MP.peer.on('open',()=>{const conn=MP.peer.connect(`hotel-espelho-${clean.toLowerCase()}`,{reliable:true});MP.hostPeerId=conn.peer;conn.on('open',()=>{MP.connected=true;MP.connections.set(conn.peer,conn);send(conn,{type:'hello'});setTimeout(()=>send(conn,{type:'sync-request'}),500);renderMPUI();toast('Conectado à mesa.');});conn.on('data',msg=>{if(msg.type==='welcome'){MP.ownerId=null;if(msg.campanha){MP.applying=true;try{data.campanha=clone(msg.campanha);if(typeof saveLocal==='function')saveLocal();}finally{MP.applying=false;}}renderPlayerChooser(msg.players||[]);renderMPUI();}if(msg.type==='session-state')applySessionSnapshot(msg);if(msg.type==='roster'&&!MP.ownerId){renderPlayerChooser(msg.players||[]);}if(msg.type==='player-deleted'){MP.applying=true;try{data.jogadores=[];selectedPlayer=null;if(typeof saveLocal==='function')saveLocal();renderPlayerCards();renderMPUI();toast('Sua ficha foi removida pelo Mestre.');}finally{MP.applying=false;}}if(msg.type==='combat-state'&&msg.combate){MP.applying=true;try{data.campanha=data.campanha||{};data.campanha.combateV071=clone(msg.combate);if(typeof saveLocal==='function')saveLocal();if(typeof renderCombatPanel==='function')renderCombatPanel();}finally{MP.applying=false;}}if(msg.type==='player-state'||msg.type==='created')applyPlayerSnapshot(msg);});conn.on('close',()=>{MP.connected=false;renderMPUI();toast('Conexão com o Mestre encerrada.');});});MP.peer.on('error',e=>{console.warn(e);toast(`Não foi possível entrar na sala (${e?.type||'erro'}). Verifique o link e a conexão.`);});renderMPUI();}
+  const PEER_OPTIONS={host:'0.peerjs.com',port:443,path:'/',secure:true,debug:1,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}};
+  function newPeer(id){try{return id?new Peer(id,PEER_OPTIONS):new Peer(PEER_OPTIONS)}catch(e){console.warn(e);return null}}
+  function setupPeerHost(){
+    if(!window.Peer)return toast('Canal multiplayer indisponível: biblioteca PeerJS não carregou.');
+    if(MP.peer&&!MP.peer.destroyed){try{MP.peer.destroy()}catch(e){}}
+    MP.role='host';MP.roomCode=shortCode();
+    MP.peer=newPeer();
+    if(!MP.peer)return toast('Não foi possível iniciar o servidor da mesa.');
+    MP.peer.on('open',id=>{MP.connected=true;MP.hostPeerId=id;renderMPUI();toast('Mesa pronta. Gere o link de convite.');});
+    MP.peer.on('connection',conn=>{
+      MP.connections.set(conn.peer,conn);
+      const hello=()=>send(conn,{type:'hello',room:MP.roomCode,players:clone(data.jogadores||[]),campanha:clone(data.campanha||{})});
+      conn.on('open',hello);
+      conn.on('data',msg=>hostReceive(conn,msg));
+      conn.on('error',e=>{console.warn('PeerJS data connection error',e);toast(`Falha na conexão do jogador (${e?.type||'webrtc'}).`);});
+      conn.on('close',()=>{MP.connections.delete(conn.peer);MP.owners.delete(conn.peer);renderMPUI();});
+    });
+    MP.peer.on('disconnected',()=>{MP.connected=false;renderMPUI();try{MP.peer.reconnect()}catch(e){}});
+    MP.peer.on('error',e=>{console.warn('PeerJS host error',e);toast(`Falha no canal multiplayer (${e?.type||'erro'}).`);});
+    renderMPUI();
+  }
+  function connectPlayer(code){
+    if(!window.Peer)return toast('Canal multiplayer indisponível: biblioteca PeerJS não carregou.');
+    const raw=String(code||'').trim();
+    const targetId=raw;
+    if(targetId.length<4)return toast('Convite inválido.');
+    const clean=targetId.replace(/^hotel-espelho-/i,'').toUpperCase();
+    if(MP.peer&&!MP.peer.destroyed){try{MP.peer.destroy()}catch(e){}}
+    MP.role='player';MP.roomCode=clean;MP.connected=false;MP.ownerId=null;
+    MP.peer=newPeer();
+    if(!MP.peer)return toast('Não foi possível iniciar a conexão com a mesa.');
+    let settled=false;
+    const failTimer=setTimeout(()=>{if(!settled){console.warn('PeerJS player connection timeout');toast('Tempo esgotado para conectar ao Mestre. Abra novamente o link com o Mestre mantendo a página dele aberta.');}},15000);
+    MP.peer.on('open',()=>{
+      const hostId=targetId;
+      const conn=MP.peer.connect(hostId,{reliable:true,serialization:'json',metadata:{room:clean}});
+      MP.hostPeerId=hostId;
+      conn.on('open',()=>{settled=true;clearTimeout(failTimer);MP.connected=true;MP.connections.set(conn.peer,conn);send(conn,{type:'hello'});setTimeout(()=>send(conn,{type:'sync-request'}),500);renderMPUI();toast('Conectado à mesa.');});
+      conn.on('data',msg=>{if(msg.type==='welcome'){MP.ownerId=null;if(msg.campanha){MP.applying=true;try{data.campanha=clone(msg.campanha);if(typeof saveLocal==='function')saveLocal();}finally{MP.applying=false;}}renderPlayerChooser(msg.players||[]);renderMPUI();}if(msg.type==='session-state')applySessionSnapshot(msg);if(msg.type==='roster'&&!MP.ownerId){renderPlayerChooser(msg.players||[]);}if(msg.type==='player-deleted'){MP.applying=true;try{data.jogadores=[];selectedPlayer=null;if(typeof saveLocal==='function')saveLocal();renderPlayerCards();renderMPUI();toast('Sua ficha foi removida pelo Mestre.');}finally{MP.applying=false;}}if(msg.type==='combat-state'&&msg.combate){MP.applying=true;try{data.campanha=data.campanha||{};data.campanha.combateV071=clone(msg.combate);if(typeof saveLocal==='function')saveLocal();if(typeof renderCombatPanel==='function')renderCombatPanel();}finally{MP.applying=false;}}if(msg.type==='player-state'||msg.type==='created')applyPlayerSnapshot(msg);});
+      conn.on('error',e=>{settled=true;clearTimeout(failTimer);console.warn('PeerJS player connection error',e);toast(`Não foi possível conectar ao Mestre (${e?.type||'webrtc'}).`);});
+      conn.on('close',()=>{MP.connected=false;renderMPUI();toast('Conexão com o Mestre encerrada.');});
+    });
+    MP.peer.on('disconnected',()=>{try{MP.peer.reconnect()}catch(e){}});
+    MP.peer.on('error',e=>{console.warn('PeerJS player error',e);if(e?.type==='peer-unavailable')toast('Mesa não encontrada. O Mestre precisa manter a página aberta.');else toast(`Não foi possível entrar na sala (${e?.type||'erro'}).`);});
+    renderMPUI();
+  }
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&MP.role==='player'&&MP.connected){const conn=MP.connections.values().next().value;if(conn)send(conn,{type:'sync-request'});}});
   window.addEventListener('focus',()=>{if(MP.role==='player'&&MP.connected){const conn=MP.connections.values().next().value;if(conn)send(conn,{type:'sync-request'});}});
   setInterval(()=>{if(MP.role==='host'&&MP.connected)hostSyncAll();},3000);
