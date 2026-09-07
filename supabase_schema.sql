@@ -4,10 +4,7 @@
 
 create extension if not exists pgcrypto;
 
-drop table if exists public.rpg_session_members cascade;
-drop table if exists public.rpg_sessions cascade;
-
-create table public.rpg_sessions (
+create table if not exists public.rpg_sessions (
   id uuid primary key default gen_random_uuid(),
   code text not null unique check (code ~ '^[A-Z0-9]{6}$'),
   host_user_id uuid not null references auth.users(id) on delete cascade,
@@ -16,7 +13,7 @@ create table public.rpg_sessions (
   updated_at timestamptz not null default now()
 );
 
-create table public.rpg_session_members (
+create table if not exists public.rpg_session_members (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references public.rpg_sessions(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -26,9 +23,9 @@ create table public.rpg_session_members (
   unique(session_id,user_id)
 );
 
-create index rpg_sessions_host_idx on public.rpg_sessions(host_user_id);
-create index rpg_members_session_idx on public.rpg_session_members(session_id);
-create index rpg_members_user_idx on public.rpg_session_members(user_id);
+create index if not exists rpg_sessions_host_idx on public.rpg_sessions(host_user_id);
+create index if not exists rpg_members_session_idx on public.rpg_session_members(session_id);
+create index if not exists rpg_members_user_idx on public.rpg_session_members(user_id);
 
 alter table public.rpg_sessions enable row level security;
 alter table public.rpg_session_members enable row level security;
@@ -54,7 +51,8 @@ begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
   select * into s from public.rpg_sessions where code=upper(trim(session_code));
   if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
-  insert into public.rpg_session_members(session_id,user_id,role) values(s.id,auth.uid(),'player') on conflict(session_id,user_id) do update set role='player' returning id into m;
+  insert into public.rpg_session_members(session_id,user_id,role) values(s.id,auth.uid(),'player') on conflict(session_id,user_id) do nothing returning id into m;
+  if m is null then select id into m from public.rpg_session_members where session_id=s.id and user_id=auth.uid(); end if;
   select player_id into p from public.rpg_session_members where id=m;
   return jsonb_build_object('session_id',s.id,'code',s.code,'member_id',m,'player_id',p,'state',s.state);
 end; $$;
@@ -66,6 +64,7 @@ begin
   select * into s from public.rpg_sessions where id=p_session_id;
   if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
   if not exists(select 1 from public.rpg_session_members where session_id=p_session_id and user_id=auth.uid()) then raise exception 'NOT_MEMBER'; end if;
+  if exists(select 1 from public.rpg_session_members where session_id=p_session_id and player_id=p_player_id and user_id<>auth.uid()) then raise exception 'PLAYER_ALREADY_CLAIMED'; end if;
   select exists(select 1 from jsonb_array_elements(coalesce(s.state->'jogadores','[]'::jsonb)) j where j->>'id'=p_player_id) into exists_player;
   if not exists_player then raise exception 'PLAYER_NOT_FOUND'; end if;
   update public.rpg_session_members set player_id=p_player_id where session_id=p_session_id and user_id=auth.uid();
@@ -94,6 +93,7 @@ begin
   select * into s from public.rpg_sessions where id=p_session_id;
   if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
   if not exists(select 1 from public.rpg_session_members where session_id=p_session_id and user_id=auth.uid() and player_id=p_player_id) then raise exception 'PLAYER_NOT_ASSIGNED'; end if;
+  p_player := jsonb_set(coalesce(p_player,'{}'::jsonb),'{id}',to_jsonb(p_player_id),true);
   arr:=coalesce(s.state->'jogadores','[]'::jsonb);
   for j in select * from jsonb_array_elements(arr) loop
     if j->>'id'=p_player_id then outarr:=outarr||jsonb_build_array(p_player); else outarr:=outarr||jsonb_build_array(j); end if;
@@ -102,12 +102,20 @@ begin
   return jsonb_build_object('ok',true);
 end; $$;
 
+drop policy if exists rpg_sessions_select_member on public.rpg_sessions;
+drop policy if exists rpg_sessions_update_host on public.rpg_sessions;
+drop policy if exists rpg_members_select_member on public.rpg_session_members;
 create policy rpg_sessions_select_member on public.rpg_sessions for select to authenticated using (host_user_id=auth.uid() or exists(select 1 from public.rpg_session_members m where m.session_id=id and m.user_id=auth.uid()));
 create policy rpg_sessions_update_host on public.rpg_sessions for update to authenticated using (host_user_id=auth.uid()) with check (host_user_id=auth.uid());
 create policy rpg_members_select_member on public.rpg_session_members for select to authenticated using (user_id=auth.uid() or exists(select 1 from public.rpg_sessions s where s.id=session_id and s.host_user_id=auth.uid()));
 
--- Habilita os eventos de UPDATE para o Realtime.
-alter publication supabase_realtime add table public.rpg_sessions;
+-- Habilita os eventos de UPDATE para o Realtime, sem falhar se já estiver habilitado.
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='rpg_sessions') then
+    alter publication supabase_realtime add table public.rpg_sessions;
+  end if;
+end $$;
 
 grant execute on function public.create_rpg_session(jsonb) to authenticated;
 grant execute on function public.join_rpg_session(text) to authenticated;

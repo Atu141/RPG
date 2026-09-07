@@ -1,5 +1,5 @@
 # Arquivo Paranormal — O Hotel Espelho
-## V1.1 — Etapa 1 gratuita: Vercel + Supabase PostgreSQL + Realtime
+## V1.1.1 — Etapa 1 gratuita: Vercel + Supabase PostgreSQL + Realtime
 
 Esta versão substitui o transporte PeerJS por uma arquitetura persistente: o PostgreSQL/Supabase é a fonte oficial da sessão e o Supabase Realtime distribui as alterações aos jogadores.
 
@@ -10,6 +10,8 @@ Esta versão substitui o transporte PeerJS por uma arquitetura persistente: o Po
 - Mestre e jogadores recebem alterações via Realtime.
 - Inventário, armas equipadas, rituais, PV, PE, SAN, perícias, classe, condições e posição fazem parte do estado persistente.
 - PeerJS deixa de ser o transporte da mesa.
+- Correções de sincronização para criação/exclusão de fichas e prevenção de disputa pela mesma ficha.
+- SQL preparado para ser executado novamente sem apagar as tabelas existentes.
 - O navegador do Mestre não é mais o servidor da sessão.
 
 ## Configuração do Supabase

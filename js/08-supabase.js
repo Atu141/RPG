@@ -64,7 +64,7 @@
   function applyState(st){if(!st||state.applying)return;state.applying=true;try{
     data.campanha=clone(st.campanha||{});data.monstros=clone(st.monstros||[]);data.assassinos=clone(st.assassinos||[]);
     const incoming=clone(st.jogadores||[]);
-    if(state.role==='player'&&state.playerId){const mine=incoming.find(p=>String(p.id)===String(state.playerId));if(mine){data.jogadores=[mine];selectedPlayer=data.jogadores[0];}}
+    if(state.role==='player'&&state.playerId){const mine=incoming.find(p=>String(p.id)===String(state.playerId));if(mine){data.jogadores=[mine];selectedPlayer=data.jogadores[0];}else{data.jogadores=[];selectedPlayer=null;state.playerId=null;toastSafe('Sua ficha não está mais disponível nesta mesa.');}}
     else if(state.role==='host'){data.jogadores=incoming;}
     if(typeof saveLocal==='function')saveLocal();
     renderPlayerCards?.();if(selectedPlayer)renderSheet?.();renderMaster?.();render?.();
@@ -91,9 +91,10 @@
     try{
       const {data:r,error}=await client.rpc('create_rpg_player',{p_session_id:state.sessionId,p_name:name,p_origin:origem});if(error)throw error;
       state.playerId=r.player_id;
-      let base=typeof buildNewPlayer==='function'?buildNewPlayer(name):{id:r.player_id,nome:name};
+      let base=typeof buildNewPlayer==='function'?buildNewPlayer(name,origem):{id:r.player_id,nome:name,origem,profissao:origem};
       base.id=r.player_id;base.nome=name;base.origem=origem;base.profissao=origem;if(typeof applyOriginProfile==='function')applyOriginProfile(base);
-      await saveServer({...r.state,jogadores:(r.state.jogadores||[]).map(p=>String(p.id)===String(r.player_id)?base:p)});
+      data.jogadores=[base];selectedPlayer=base;saveLocal();
+      await saveServer(snapshot());
       const {data:joined,error:readError}=await client.from('rpg_sessions').select('state').eq('id',state.sessionId).single();if(readError)throw readError;
       applyState(joined.state);render();toastSafe('Ficha criada e vinculada à mesa.');
     }
