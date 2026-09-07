@@ -527,7 +527,7 @@ function addPlayerItem(pid, catalogType, catalogIndex, quantity){
   const existing=p.itens.find(i=>String(i.nome).toLowerCase()===base.nome.toLowerCase());
   if(existing) existing.quantidade=(Number(existing.quantidade)||0)+qty;
   else p.itens.push(normalizeItem({...base,quantidade:qty,equipado:false}));
-  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário${type==='weapon'?' (arma)':''}.`); saveLocal(); renderMaster();
+  logAction(`${p.nome}: ${qty}x ${base.nome} adicionado ao inventário${type==='weapon'?' (arma)':''}.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${base.nome} adicionado`);
 }
 function openReadyItemCatalog(pid){
@@ -644,7 +644,7 @@ function saveNewItem(){
   if(existing) { existing.quantidade=(Number(existing.quantidade)||0)+qty; Object.assign(existing,{descricao:base.descricao,tipo:base.tipo,teste:base.teste,dano:base.dano,bonus:base.bonus}); }
   else player.itens.push(normalizeItem({...base,quantidade:qty,equipado}));
   logAction(`${player.nome}: novo item ${qty}x ${base.nome} criado/adicionado.`);
-  saveLocal(); closeItemModal(); renderMaster();
+  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); closeItemModal(); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=player;renderSheet();}
   toast(`Item criado: ${base.nome}`);
 }
@@ -653,7 +653,7 @@ function togglePlayerItemEquipped(pid,itemIndex){
   if(!item)return;
   item.equipado=!Boolean(item.equipado);
   logAction(`${p.nome}: ${item.nome} ${item.equipado?'equipado':'desequipado'}.`);
-  saveLocal(); renderMaster();
+  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();}
   toast(`${item.nome} ${item.equipado?'equipado':'desequipado'}`);
 }
@@ -661,7 +661,7 @@ function removePlayerItem(pid,itemIndex,quantity){
   const p=data.jogadores.find(x=>x.id===pid); const item=p?.itens?.[Number(itemIndex)]; if(!item)return;
   const qty=Math.max(1,Number(quantity)||1); item.quantidade=(Number(item.quantidade)||0)-qty;
   if(item.quantidade<=0)p.itens.splice(Number(itemIndex),1);
-  logAction(`${p.nome}: ${qty}x ${item.nome} removido do inventário.`); saveLocal(); renderMaster();
+  logAction(`${p.nome}: ${qty}x ${item.nome} removido do inventário.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${qty}x ${item.nome} removido`);
 }
 function renderInventoryMaster(p){
@@ -739,7 +739,7 @@ function setMasterClass(pid,classe){
   const allowed=Object.keys(CLASS_PROFILES); const p=data.jogadores.find(x=>x.id===pid);
   if(!p)return; if(!classe){ resetClassChoice(pid); return; } if(!allowed.includes(classe))return;
   applyClassProfile(p,classe); p.classeEscolhidaEm=p.classeEscolhidaEm||'Definida pelo Mestre';
-  logAction(`${p.nome}: classe definida pelo Mestre como ${classe}.`); saveLocal(); renderMaster(); renderPlayerCards();
+  logAction(`${p.nome}: classe definida pelo Mestre como ${classe}.`); saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); renderPlayerCards();
   if(selectedPlayer?.id===pid){selectedPlayer=p;renderSheet();} toast(`${p.nome}: ${classe}`);
 }
 function updatePlayerResource(id,resource,value){
@@ -747,7 +747,7 @@ function updatePlayerResource(id,resource,value){
   const maxKey=resource+'Max'; const max=Number(p[maxKey])||0;
   p[resource]=Math.max(0,Math.min(max,Number(value)||0));
   logAction(`${p.nome}: ${resource.toUpperCase()} atualizado para ${p[resource]}/${max}.`);
-  saveLocal();
+  saveLocal(); window.MultiplayerV071?.syncPlayer?.(id);
   if(selectedPlayer && selectedPlayer.id===id){ selectedPlayer=p; renderSheet(); }
   renderMaster(); toast(`${resource.toUpperCase()} atualizado`);
 }
@@ -755,7 +755,7 @@ function setSkillTraining(pid,index,trained){
   const player=data.jogadores.find(x=>x.id===pid); const skill=player?.pericias?.[index]; if(!skill)return;
   skill.treinada=Boolean(trained);
   logAction(`${player.nome}: ${skill.nome} ${skill.treinada?'marcada como treinada':'marcada como não treinada'}.`);
-  saveLocal(); renderMaster(); if(selectedPlayer?.id===pid){ selectedPlayer=player; renderSheet(); }
+  saveLocal(); window.MultiplayerV071?.syncPlayer?.(pid); renderMaster(); if(selectedPlayer?.id===pid){ selectedPlayer=player; renderSheet(); }
   toast(`${skill.nome}: ${skill.treinada?'Treinada (+5)':'Não treinada'}`);
 }
 
@@ -1400,7 +1400,7 @@ const HotelGame=(()=>{
   }
   function roomId(floor,room){return `${Number(floor)}::${String(room).trim().toLowerCase()}`;}
   function setDoor(floor,room,status){const h=ensure();const id=roomId(floor,room);h.portas[id]=['aberta','fechada','trancada','selada'].includes(status)?status:'fechada';saveLocal();renderMaster();toast(`Porta: ${status}.`);}
-  function setPosition(pid,floor,room){const p=data.jogadores.find(x=>x.id===pid);const n=Number(floor);if(!p||n<1||n>9)return toast('Andar inválido.');const h=ensure();h.posicoes[pid]={andar:n,sala:String(room||'Corredor Central')};data.campanha.andarAtual=n;saveLocal();renderMaster();if(selectedPlayer?.id===pid)renderSheet();toast(`${p.nome} → ${n}º / ${room||'Corredor Central'}`);}
+  function setPosition(pid,floor,room){const p=data.jogadores.find(x=>x.id===pid);const n=Number(floor);if(!p||n<1||n>9)return toast('Andar inválido.');const h=ensure();h.posicoes[pid]={andar:n,sala:String(room||'Corredor Central')};data.campanha.andarAtual=n;saveLocal();window.MultiplayerV071?.syncPlayer?.(pid);renderMaster();if(selectedPlayer?.id===pid)renderSheet();toast(`${p.nome} → ${n}º / ${room||'Corredor Central'}`);}
   function addPOI(nome,andar,sala,tipo='Ponto de Interesse',descricao=''){const h=ensure();const n=String(nome||'').trim();if(!n)return null;const poi={id:'poi-'+Date.now(),nome:n,andar:Number(andar)||5,sala:String(sala||'Corredor Central'),tipo,descricao,ativo:true};h.pois.push(poi);saveLocal();renderMaster();return poi;}
   function togglePOI(id){const x=ensure().pois.find(p=>p.id===id);if(!x)return;x.ativo=!x.ativo;saveLocal();renderMaster();}
   function render(){const host=$('#hotelGamePanel');if(!host||!data)return;const h=ensure();const positions=data.jogadores.map(p=>{const x=h.posicoes[p.id]||{andar:5,sala:'—'};return `<div class="hg-row"><b>${esc(p.nome)}</b><span>${x.andar}º • ${esc(x.sala)}</span><select class="control-select" onchange="HotelGame.setPosition('${p.id}',this.value,this.options[this.selectedIndex].dataset.room||'Corredor Central')"><option value="${x.andar}" data-room="${esc(x.sala)}">${x.andar}º • ${esc(x.sala)}</option>${[1,2,3,4,5,6,7,8,9].filter(n=>n!==Number(x.andar)).map(n=>`<option value="${n}" data-room="Corredor Central">${n}º • Corredor Central</option>`).join('')}</select></div>`}).join('');const pois=h.pois.map(p=>`<div class="hg-poi ${p.ativo?'':'off'}"><div><b>◈ ${esc(p.nome)}</b><small>${p.andar}º • ${esc(p.sala)} • ${esc(p.tipo)}</small></div><button class="dice-btn secondary" onclick="HotelGame.togglePOI('${p.id}')">${p.ativo?'ATIVO':'INATIVO'}</button></div>`).join('')||'<small class="muted">Nenhum ponto de interesse personalizado.</small>';host.innerHTML=`<div class="hg-head"><div><span class="eyebrow">V0.52 • MAPA DE JOGO</span><h2>Hotel — Estado Operacional</h2><p>Posições, portas e pontos de interesse são controlados pelo Mestre.</p></div></div><div class="hg-grid"><div><h3>Posições</h3>${positions}</div><div><h3>Pontos de interesse</h3>${pois}</div></div>`;}

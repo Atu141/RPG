@@ -1,3 +1,18 @@
+# V1.0.11 — Correção de sincronização Mestre → Jogador
+
+Esta versão corrige a perda de sincronização observada após equipar uma arma. O estado completo da ficha recebe revisão incremental no Mestre e as alterações de inventário, armas, rituais, recursos, classe, perícias e posição são enviadas explicitamente ao jogador.
+
+## Fluxo de teste recomendado
+1. Mestre cria a mesa pelo celular.
+2. Jogador entra pelo convite.
+3. Validar PV, PE, SAN, perícias, classe, posição e condições.
+4. Adicionar item.
+5. Equipar arma.
+6. Desequipar arma.
+7. Adicionar/remover ritual e alterar disponibilidade.
+8. Alterar PV/PE/SAN e perícias após o equipamento.
+9. Alterar posição e condição novamente.
+
 # Arquivo Paranormal — O Hotel Espelho
 
 ## V1.0.6 — Correção de sincronização GitHub Pages / PeerJS
