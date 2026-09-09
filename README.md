@@ -103,9 +103,8 @@ Arquivo Paranormal/
 - Objetivo: impedir que uma falha de inicialização de outro módulo bloqueie o acesso à tela do Mestre.
 
 
-## V1.4.3 — sincronização resiliente
-- Identidade Supabase isolada por aba.
-- Presença de jogadores por `last_seen`.
-- RPC `get_rpg_session_status` para estado + contagem atômica.
-- RPC `heartbeat_rpg_session` para presença online.
-- Mestre recupera estado pelo RPC a cada 1,5 s; Realtime continua ativo.
+## V1.4.4
+- Corrigidos caminhos dos catálogos para execução hospedada a partir de index.html.
+- Polling de recuperação iniciado independentemente do status do Realtime.
+- Criação de ficha usa o estado retornado pelo servidor como fonte oficial.
+- Realtime preparado também para rpg_session_members.
