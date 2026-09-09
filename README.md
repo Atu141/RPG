@@ -103,7 +103,7 @@ Arquivo Paranormal/
 - Objetivo: impedir que uma falha de inicialização de outro módulo bloqueie o acesso à tela do Mestre.
 
 
-## V1.4.2 — sincronização resiliente
+## V1.4.3 — sincronização resiliente
 - Identidade Supabase isolada por aba.
 - Presença de jogadores por `last_seen`.
 - RPC `get_rpg_session_status` para estado + contagem atômica.

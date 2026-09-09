@@ -75,10 +75,22 @@
     state.pollTimer=setInterval(()=>{if(!state.sessionId||state.role==='offline'){stopTimers();return;}refreshServerState();},1500);
     refreshServerState();
   }
+  async function sendHeartbeat(){
+    if(!client||!state.sessionId||state.role!=='player')return;
+    try{
+      const {data:r,error}=await client.rpc('heartbeat_rpg_session',{p_session_id:state.sessionId});
+      if(error)throw error;
+      if(r&&Number.isFinite(Number(r.member_count)))state.memberCount=Number(r.member_count);
+      render();
+    }catch(e){
+      console.warn('Supabase heartbeat',e.message||e);
+    }
+  }
+
   function startHeartbeat(){
     clearInterval(state.heartbeatTimer);
-    state.heartbeatTimer=setInterval(async()=>{if(!state.sessionId||state.role!=='player')return;try{await client.rpc('heartbeat_rpg_session',{p_session_id:state.sessionId});}catch(e){console.warn('Supabase heartbeat',e.message||e)}},10000);
-    client.rpc('heartbeat_rpg_session',{p_session_id:state.sessionId}).catch(()=>{});
+    state.heartbeatTimer=setInterval(sendHeartbeat,10000);
+    sendHeartbeat();
   }
   function stopTimers(){clearInterval(state.pollTimer);state.pollTimer=null;clearInterval(state.heartbeatTimer);state.heartbeatTimer=null;}
 
