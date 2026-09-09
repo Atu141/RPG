@@ -96,6 +96,20 @@ begin
   return jsonb_build_object('player_id',pid,'state',s.state);
 end; $$;
 
+create or replace function public.get_rpg_session_status(p_session_id uuid)
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
+declare s public.rpg_sessions; member_count integer;
+begin
+  if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
+  select * into s from public.rpg_sessions where id=p_session_id;
+  if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
+  if not (s.host_user_id=auth.uid() or exists(select 1 from public.rpg_session_members m where m.session_id=s.id and m.user_id=auth.uid())) then
+    raise exception 'NOT_MEMBER';
+  end if;
+  select count(*)::integer into member_count from public.rpg_session_members where session_id=s.id and role='player';
+  return jsonb_build_object('state',s.state,'updated_at',s.updated_at,'member_count',member_count);
+end; $$;
+
 create or replace function public.update_rpg_player(p_session_id uuid,p_player_id text,p_player jsonb)
 returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
 declare s public.rpg_sessions; arr jsonb; outarr jsonb:='[]'::jsonb; j jsonb;
@@ -125,9 +139,6 @@ begin
   if not exists (select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='rpg_sessions') then
     alter publication supabase_realtime add table public.rpg_sessions;
   end if;
-  if not exists (select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='rpg_session_members') then
-    alter publication supabase_realtime add table public.rpg_session_members;
-  end if;
 end $$;
 
 grant execute on function public.create_rpg_session(jsonb) to authenticated;
@@ -135,3 +146,4 @@ grant execute on function public.join_rpg_session(text) to authenticated;
 grant execute on function public.claim_rpg_player(uuid,text) to authenticated;
 grant execute on function public.create_rpg_player(uuid,text,text) to authenticated;
 grant execute on function public.update_rpg_player(uuid,text,jsonb) to authenticated;
+grant execute on function public.get_rpg_session_status(uuid) to authenticated;

@@ -61,17 +61,18 @@
   async function refreshServerState(){
     if(!valid()||!state.sessionId||state.applying)return;
     try{
-      const {data:r,error}=await client.from('rpg_sessions').select('state,updated_at').eq('id',state.sessionId).single();
+      const {data:r,error}=await client.rpc('get_rpg_session_status',{p_session_id:state.sessionId});
       if(error)throw error;
       if(r?.state)applyState(r.state);
-    }catch(e){console.warn('Supabase state refresh',e.message||e)}
+      if(r?.member_count!==undefined){state.memberCount=Number(r.member_count)||0;render();}
+    }catch(e){console.warn('Supabase status refresh',e.message||e)}
   }
   async function refreshMemberCount(){
     if(!valid()||!state.sessionId)return;
     try{
-      const {count,error}=await client.from('rpg_session_members').select('id',{count:'exact',head:true}).eq('session_id',state.sessionId).eq('role','player');
+      const {data:r,error}=await client.rpc('get_rpg_session_status',{p_session_id:state.sessionId});
       if(error)throw error;
-      state.memberCount=Number(count)||0;
+      state.memberCount=Number(r?.member_count)||0;
       render();
     }catch(e){console.warn('Supabase member count',e.message||e)}
   }
@@ -80,16 +81,15 @@
     state.pollTimer=setInterval(()=>{
       if(!state.sessionId||state.role==='offline'){clearInterval(state.pollTimer);state.pollTimer=null;return;}
       refreshServerState();
-      refreshMemberCount();
     },1500);
-    refreshMemberCount();
+    refreshServerState();
   }
   function subscribe(){
     if(state.channel)client.removeChannel(state.channel);
     state.channel=client.channel(`rpg-session-${state.sessionId}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'rpg_sessions',filter:`id=eq.${state.sessionId}`},payload=>{
       if(payload?.new?.state)applyState(payload.new.state);
-      refreshMemberCount();
-    }).subscribe(status=>{if(status==='SUBSCRIBED'){state.connected=true;render();refreshServerState();refreshMemberCount();startPolling();}});
+      refreshServerState();
+    }).subscribe(status=>{if(status==='SUBSCRIBED'){state.connected=true;render();refreshServerState();startPolling();}});
   }
   function applyState(st){if(!st||state.applying)return;state.applying=true;try{
     data.campanha=clone(st.campanha||{});data.monstros=clone(st.monstros||[]);data.assassinos=clone(st.assassinos||[]);
@@ -117,34 +117,21 @@
     catch(e){console.error(e);toastSafe(`Não foi possível assumir a ficha: ${e.message||e}`)}
   }
   async function requestCreate(){
-    if(state.role!=='player')return;
-    const name=prompt('Nome do personagem:');
-    if(!name)return;
-    const origem=prompt('Profissão / Origem (ex.: Atleta):','Atleta');
-    if(!ORIGIN_PROFILES[origem])return toastSafe('Origem inválida.');
+    if(state.role!=='player')return;const name=prompt('Nome do personagem:');if(!name)return;const origem=prompt('Profissão / Origem (ex.: Atleta):','Atleta');if(!ORIGIN_PROFILES[origem])return toastSafe('Origem inválida.');
     try{
-      const {data:r,error}=await client.rpc('create_rpg_player',{
-        p_session_id:state.sessionId,
-        p_name:name,
-        p_origin:origem
-      });
-      if(error)throw error;
-      if(!r?.player_id||!r?.state)throw new Error('O servidor não retornou a ficha criada.');
-
-      // A RPC já gravou a ficha no estado oficial da mesa.
-      // O cliente apenas aplica o estado devolvido pelo servidor; não fazemos
-      // um segundo update com um snapshot local que poderia sobrescrever dados.
+      const {data:r,error}=await client.rpc('create_rpg_player',{p_session_id:state.sessionId,p_name:name,p_origin:origem});if(error)throw error;
+      if(!r?.player_id||!r?.state)throw new Error('O Supabase não retornou a ficha criada. Verifique se o SQL atualizado foi executado.');
       state.playerId=String(r.player_id);
       applyState(r.state);
-      selectedPlayer=data.jogadores.find(p=>String(p.id)===state.playerId)||null;
-      if(selectedPlayer)renderSheet();
-      render();
-      await syncNow();
+      let base=(data.jogadores||[]).find(p=>String(p.id)===state.playerId);
+      if(!base){base=typeof buildNewPlayer==='function'?buildNewPlayer(name,origem):{id:state.playerId,nome:name,origem,profissao:origem};}
+      base.id=state.playerId;base.nome=name;base.origem=origem;base.profissao=origem;if(typeof applyOriginProfile==='function')applyOriginProfile(base);
+      data.jogadores=[base];selectedPlayer=base;saveLocal();renderSheet?.();render();
+      await saveServer(snapshot());
+      await refreshServerState();
       toastSafe('Ficha criada e vinculada à mesa.');
-    }catch(e){
-      console.error('Supabase create player',e);
-      toastSafe(`Não foi possível criar a ficha: ${e.message||e}`);
     }
+    catch(e){console.error(e);toastSafe(`Não foi possível criar a ficha: ${e.message||e}`)}
   }
   async function deletePlayer(id){if(state.role!=='host')return;try{const st=snapshot();st.jogadores=st.jogadores.filter(p=>String(p.id)!==String(id));await saveServer(st);applyState(st);}catch(e){console.error(e)}}
   async function resource(pid,key,value){if(state.role==='host'){const p=data.jogadores.find(x=>String(x.id)===String(pid));if(!p)return;const max=Number(p[key+'Max'])||0;p[key]=Math.max(0,Math.min(max,Number(value)||0));persist();selectedPlayer=p;renderSheet();schedulePush();}else if(state.role==='player'){const p=data.jogadores.find(x=>String(x.id)===String(pid));if(!p)return;const max=Number(p[key+'Max'])||0;p[key]=Math.max(0,Math.min(max,Number(value)||0));persist();selectedPlayer=p;renderSheet();schedulePush();}}

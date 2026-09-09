@@ -39,7 +39,7 @@
 
 /* --- 45-threats-v0708.js --- */
 (function(){
-  async function load(){try{const r=await fetch('data/ameacas.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const j=await r.json();window.THREAT_CATALOG=Array.isArray(j)?j:(Array.isArray(j.ameacas)?j.ameacas:[]);return true}catch(e){console.error('Erro ao carregar ameacas.json',e);window.THREAT_CATALOG=[];return false}}
+  async function load(){try{const r=await fetch('../data/ameacas.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const j=await r.json();window.THREAT_CATALOG=Array.isArray(j)?j:(Array.isArray(j.ameacas)?j.ameacas:[]);return true}catch(e){console.error('Erro ao carregar ameacas.json',e);window.THREAT_CATALOG=[];return false}}
   const catalog=id=>(window.THREAT_CATALOG||[]).find(x=>x.id===id||x.catalogId===id)||null;
   function instance(base,extra={}){if(!base)throw Error('Ameaça não encontrada');const id=`threat_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;const x=JSON.parse(JSON.stringify(base));Object.assign(x,extra,{id,catalogId:base.catalogId||base.id,instancia:true});x.pv=Number(extra.pv??base.pvBase??base.pv??0);x.pvMax=Number(extra.pvMax??base.pvBase??base.pvMax??base.pv??0);x.condicoes=Array.isArray(extra.condicoes)?extra.condicoes:[];return x}
   function add(id,extra={}){const x=instance(catalog(id),extra);data.monstros=data.monstros||[];data.monstros.push(x);GameEngineV070?.log?.('THREAT_ADDED',{nome:x.nome,resumo:`Ameaça adicionada: ${x.nome}`});GameEngineV070?.persist?.();return x}
