@@ -101,3 +101,11 @@ Arquivo Paranormal/
 - Navegação FICHAS/MESTRE vinculada por um handler independente dos módulos principais.
 - Mantido o handler do núcleo com proteção contra dupla vinculação.
 - Objetivo: impedir que uma falha de inicialização de outro módulo bloqueie o acesso à tela do Mestre.
+
+
+## V1.4.2 — sincronização resiliente
+- Identidade Supabase isolada por aba.
+- Presença de jogadores por `last_seen`.
+- RPC `get_rpg_session_status` para estado + contagem atômica.
+- RPC `heartbeat_rpg_session` para presença online.
+- Mestre recupera estado pelo RPC a cada 1,5 s; Realtime continua ativo.

@@ -20,8 +20,11 @@ create table if not exists public.rpg_session_members (
   player_id text,
   role text not null default 'player' check (role in ('host','player')),
   created_at timestamptz not null default now(),
+  last_seen timestamptz not null default now(),
   unique(session_id,user_id)
 );
+
+alter table public.rpg_session_members add column if not exists last_seen timestamptz not null default now();
 
 create index if not exists rpg_sessions_host_idx on public.rpg_sessions(host_user_id);
 create index if not exists rpg_members_session_idx on public.rpg_session_members(session_id);
@@ -51,20 +54,48 @@ begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
   select * into s from public.rpg_sessions where code=upper(trim(session_code));
   if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
+
   select id, role, player_id into m, v_role, p
   from public.rpg_session_members
   where session_id=s.id and user_id=auth.uid();
+
   if m is not null then
-    if v_role='host' then
-      raise exception 'HOST_CANNOT_JOIN_AS_PLAYER';
-    end if;
+    if v_role='host' then raise exception 'HOST_CANNOT_JOIN_AS_PLAYER'; end if;
+    update public.rpg_session_members set last_seen=now() where id=m;
   else
-    insert into public.rpg_session_members(session_id,user_id,role)
-    values(s.id,auth.uid(),'player')
+    insert into public.rpg_session_members(session_id,user_id,role,last_seen)
+    values(s.id,auth.uid(),'player',now())
     returning id into m;
   end if;
+
   select player_id into p from public.rpg_session_members where id=m;
   return jsonb_build_object('session_id',s.id,'code',s.code,'member_id',m,'player_id',p,'state',s.state);
+end; $$;
+
+create or replace function public.heartbeat_rpg_session(p_session_id uuid)
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
+declare c integer;
+begin
+  if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
+  update public.rpg_session_members set last_seen=now()
+  where session_id=p_session_id and user_id=auth.uid();
+  if not found then raise exception 'NOT_MEMBER'; end if;
+  select count(*)::integer into c from public.rpg_session_members
+  where session_id=p_session_id and role='player' and last_seen > now()-interval '30 seconds';
+  return jsonb_build_object('member_count',c);
+end; $$;
+
+create or replace function public.get_rpg_session_status(p_session_id uuid)
+returns jsonb language plpgsql security definer set search_path=public,auth,extensions as $$
+declare s public.rpg_sessions; c integer;
+begin
+  if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
+  select * into s from public.rpg_sessions where id=p_session_id;
+  if s.id is null then raise exception 'SESSION_NOT_FOUND'; end if;
+  if not exists(select 1 from public.rpg_session_members where session_id=p_session_id and user_id=auth.uid()) then raise exception 'NOT_MEMBER'; end if;
+  select count(*)::integer into c from public.rpg_session_members
+    where session_id=p_session_id and role='player' and last_seen > now()-interval '30 seconds';
+  return jsonb_build_object('state',s.state,'updated_at',s.updated_at,'member_count',c);
 end; $$;
 
 create or replace function public.claim_rpg_player(p_session_id uuid,p_player_id text)
@@ -130,5 +161,7 @@ end $$;
 grant execute on function public.create_rpg_session(jsonb) to authenticated;
 grant execute on function public.join_rpg_session(text) to authenticated;
 grant execute on function public.claim_rpg_player(uuid,text) to authenticated;
+grant execute on function public.heartbeat_rpg_session(uuid) to authenticated;
+grant execute on function public.get_rpg_session_status(uuid) to authenticated;
 grant execute on function public.create_rpg_player(uuid,text,text) to authenticated;
 grant execute on function public.update_rpg_player(uuid,text,jsonb) to authenticated;
